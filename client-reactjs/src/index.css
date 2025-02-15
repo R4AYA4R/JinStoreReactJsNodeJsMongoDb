@@ -1,0 +1,40 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Miniver&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); /* импортируем шрифты из google fonts, копируем эту строку из google fonts,там выбираем get embed code и во вкладке @import копируем это,чтобы подключился нужный шрифт */
+
+*,*::after,*::before{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
+}
+
+body{
+  font-size: 16px;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  color: #030712;
+  overflow-x: hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+}
+
+.container{
+
+  max-width: 1360px;
+  padding: 0 10px;
+  margin: 0 auto;
+
+}
+
+ul{
+
+  list-style: none; /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
+
+}
+
+a{
+  color: inherit;  /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
+  text-decoration: none; /* убираем подчеркивание ссылок */
+}
