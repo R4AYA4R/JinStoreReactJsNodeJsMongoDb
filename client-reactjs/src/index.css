@@ -38,3 +38,135 @@ a{
   color: inherit;  /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
   text-decoration: none; /* убираем подчеркивание ссылок */
 }
+
+.sectionTop{
+  padding: 166px 0;
+  background-image: url('/public/images/sectionTop/elements01.jpg');
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.sectionTop__subtitle{
+  border-radius: 6px;
+  max-width: 138px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #166534;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  background-image: linear-gradient(to right,rgba(22,163,74,50), rgba(34,197,94,0) 60%);
+}
+
+.sectionTop__title{
+  font-size: 58px;
+  font-weight: 700;
+  color: #39245F;
+  max-width: 580px;
+  line-height: 63px;
+  margin-bottom: 10px;
+}
+
+.sectionTop__desc{
+  font-size: 16px;
+  font-weight: 400;
+  color: #030712;
+  max-width: 472px;
+  line-height: 22.4px;
+  margin-bottom: 42px;
+}
+
+.sectionTop__link{
+  background-color: #634C9F;
+  padding: 12px 12px 12px 18px;
+  display: flex;
+  align-items: center;
+  gap:8px;
+  max-width: 136px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.sectionTop__link::before{
+  content: "";
+  width: 0;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 8px;
+  opacity: 0;
+  transition:all 1s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sectionTop__link:hover{
+  cursor: pointer;
+}
+
+.sectionTop__link:hover.sectionTop__link::before{
+  opacity: 1;
+  animation: sectionTopLinkAnim 1s linear forwards;
+}
+
+.sectionTop__link:hover .sectionTop__link-arrowImg{
+  animation: sectionTopLinkArrowAnim 1s ease 1s infinite;
+}
+
+.sectionTop__link-text{
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+@keyframes sectionTopLinkAnim {
+  
+  0%{
+    width: 0px;
+    border-left: 2px solid #fff;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    border-right: none;
+  }
+
+  50%{
+    width: 69px;
+    border-left: 2px solid #fff;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    border-right: none;
+  }
+
+  100%{
+    width: 139px;
+    border-left: 2px solid #fff;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    border-right: 2px solid #fff;
+  }
+
+}
+
+@keyframes sectionTopLinkArrowAnim {
+
+  0%{
+    transform:translateX(0);
+  }
+
+  50%{
+    transform:translateX(60%);
+  }
+
+  70%{
+    transform:translateX(-30%);
+  }
+
+  90%{
+    transform:translateX(30%);
+  }
+
+  100%{
+    transform:translateX(0);
+  }
+
+}
