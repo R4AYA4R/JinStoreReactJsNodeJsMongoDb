@@ -3,6 +3,7 @@
 
 import Header from "./components/header/Header";
 import SectionCategoryItems from "./components/SectionCategoryItems";
+import SectionNewArrivals from "./components/SectionNewArrivals";
 import SectionTop from "./components/SectionTop";
 
 function App() {
@@ -13,6 +14,10 @@ function App() {
       <main className="main">
         <SectionTop/>
         <SectionCategoryItems/>
+        <div className="sectionOuterGradient">
+          <SectionNewArrivals/>
+
+        </div>
       </main>
     </>
 
