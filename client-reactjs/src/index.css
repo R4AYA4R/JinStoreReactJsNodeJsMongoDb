@@ -138,7 +138,7 @@ a{
   }
 
   100%{
-    width: 139px;
+    width: 137px;
     border-left: 2px solid #fff;
     border-top: 2px solid #fff;
     border-bottom: 2px solid #fff;
@@ -365,4 +365,74 @@ a{
   position: absolute;
   top: 10px;
   left: 0;
+}
+
+.sectionDontMiss{
+  padding: 35px 0;
+}
+
+.sectionDontMiss__inner{
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 30px;
+}
+
+.sectionDontMiss__item{
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.sectionDontMiss__itemProvides{
+  background-image: url('/public/images/sectionDontMiss/banner-04.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.sectionDontMiss__itemShopping{
+  background-image: url('/public/images/sectionDontMiss/banner-05.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.sectionDontMiss__itemGet{
+  background-image: url('/public/images/sectionDontMiss/banner-06.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.sectionDontMiss__itemWhere{
+  background-image: url('/public/images/sectionDontMiss/banner-07.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.sectionDontMiss__item-subtitle{
+  font-size: 12px;
+  font-weight: 500;
+  color: #EA580C;
+  margin-bottom: 10px;
+}
+
+.sectionDontMiss__item-title{
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+  letter-spacing: -0.8px;
+}
+
+.sectionDontMiss__item-desc{
+  font-size: 13px;
+  font-weight: 400;
+  color: #6B7280;
+  margin-bottom: 20px;
+}
+
+.sectionDontMiss__item-link{
+  max-width: 109px;
+  margin-bottom: 200px;
 }

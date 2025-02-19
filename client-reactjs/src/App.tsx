@@ -3,6 +3,7 @@
 
 import Header from "./components/header/Header";
 import SectionCategoryItems from "./components/SectionCategoryItems";
+import SectionDontMiss from "./components/SectionDontMiss";
 import SectionNewArrivals from "./components/SectionNewArrivals";
 import SectionTop from "./components/SectionTop";
 
@@ -16,7 +17,7 @@ function App() {
         <SectionCategoryItems/>
         <div className="sectionOuterGradient">
           <SectionNewArrivals/>
-
+          <SectionDontMiss/>
         </div>
       </main>
     </>
