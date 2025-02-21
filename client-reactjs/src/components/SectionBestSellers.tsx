@@ -17,7 +17,7 @@ const SectionBestSellers = () => {
                     </div>
                     <div className="sectionBestSellers__itemsBlock">
                         <div className="sectionBestSellers__itemsBlockSide">
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemTop sectionBestSellers__itemsBlockSide-item">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -43,7 +43,8 @@ const SectionBestSellers = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item">
+                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item">
+
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -128,7 +129,7 @@ const SectionBestSellers = () => {
                         </div>
 
                         <div className="sectionBestSellers__itemsBlockSide">
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item">
+                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemTop">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>

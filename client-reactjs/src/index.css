@@ -265,18 +265,36 @@ a{
 }
 
 .sectionNewArrivals__items-item{
-  border-right: 1px solid #E5E7EB;
+  position: relative;
   padding: 15px;
+  transition:all .5s ease;
+  border-right: 1px solid #E5E7EB;
+}
+
+.sectionNewArrivals__item-inner{
   display: flex;
   flex-direction: column;
   justify-content: end;
-  position: relative;
-  transition:all .5s ease;
 }
+
+.sectionNewArrivals__items-itemFirst{
+  border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
+}
+
+.sectionNewArrivals__items-itemLast{
+  border-bottom-right-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
 
 .sectionNewArrivals__items-item:hover{
   cursor: pointer;
   background-color: rgba(0,0,0,0.1);
+}
+
+.sectionNewArrivals__items-itemNoHover{
+  background-color: #fff !important; /* указываем !important,чтобы указать,что этот стиль важный,и чтобы он переписал предыдущий такой стиль,даже если он уже указан,в данном случае указываем так,чтобы применился задний фон белый,делаем это,когда наводим мышкой на кнопку добавления товара в корзину,чтобы задний фон карточки товара стал белый */
 }
 
 .sectionNewArrivals__item-img{
@@ -370,6 +388,59 @@ a{
   top: 10px;
   left: 0;
 }
+
+.sectionNewArrivals__cartBlock-btn{
+  padding: 9px 15px;
+  background-color: #fff;
+  border: 1px solid #634c9f;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap:76px;
+  margin-top: 13px;
+  transition:all .5s ease;
+}
+
+.sectionNewArrivals__cartBlock-btn:hover{
+  background-color: rgba(177, 161, 216, 0.3);
+  border:1px solid #fff;
+  cursor: pointer;
+}
+
+.sectionNewArrivals__cartBlock-btn:hover .cartBlock__btn-img{
+  animation: cartBlockBtnImg 1s ease infinite;
+}
+
+@keyframes cartBlockBtnImg{
+
+  0%{
+    transform:translateX(0);
+  }
+
+  50%{
+    transform:translateX(-60%);
+  }
+
+  70%{
+    transform:translateX(30%);
+  }
+
+  90%{
+    transform:translateX(-30%);
+  }
+
+  100%{
+    transform:translateX(0);
+  }
+
+}
+
+.cartBlock__btn-text{
+  font-size: 13px;
+  font-weight: 500;
+  color: #634C9F;
+}
+
 
 .sectionDontMiss{
   padding: 35px 0;
@@ -495,10 +566,25 @@ a{
   padding: 30px;
 }
 
+.sectionBestSellers__itemsBlockSide-itemTop{
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
 .sectionBestSellers__itemsBlockSide-itemLast{
   border-bottom: none;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
+}
+
+.sectionBestSellers__cartBlock-btn{
+  left: auto;
+  right: 20px;
+  bottom: 70px;
+}
+
+.sectionBestSellers__cartBlock-btnLast{
+  bottom: 60px;
 }
 
 .sectionBestSellers__midBlock-item{
