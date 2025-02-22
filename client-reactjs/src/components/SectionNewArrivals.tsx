@@ -2,22 +2,6 @@ import { useState } from "react";
 
 const SectionNewArrivals = () => {
 
-    const [classesForItem,setClassesForItem] = useState('sectionNewArrivals__items-item'); // указываем состояние для дефолтного класса карточки товара
-
-
-    // функция для добавления класса для карточки товара
-    const addNoHoverClass = () => {
-        
-        setClassesForItem((prev) => prev + ' sectionNewArrivals__items-itemNoHover'); // изменяем наше состояние classesForItem на prev(предыдущее значение,то есть текущее) и плюс строка с пробелом и названием другого класса,делаем так,чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый
-
-    }
-
-    // функция для удаления класса sectionNewArrivals__items-itemNoHover для карточки товара,то есть в данном случае просто указываем состоянию classesForItem значение с дефолтным классом для карточки товара,это чтобы когда убираем курсор мыши с кнопки добавления товара в корзину класс для карточки товара был обычный(дефолтный)
-    const removeNoHoverClass = () => {
-        
-        setClassesForItem('sectionNewArrivals__items-item');
-
-    }
 
     return (
         <section className="sectionNewArrivals">
@@ -32,7 +16,7 @@ const SectionNewArrivals = () => {
                     </div>
                     <div className="sectionNewArrivals__items">
                         {/* указываем класс этому элементу для карточки товара со значением нашего состояния classesForItem,чтобы когда наводим мышкой на кнопку добавления товара в корзину,изменять задний фон карточки товара на белый,а в данном случае еще и добавляем другой класс,чтобы сделать border-radius(радиус границы) правильным только для первой карточки товара */}
-                        <div className={`${classesForItem} sectionNewArrivals__items-itemFirst`}>
+                        <div className="sectionNewArrivals__items-item sectionNewArrivals__items-itemFirst">
                             {/* потом по этому элементу иннера будем кликать,чтобы перейти на страницу товара,делаем его отдельно от кнопки добавления товара в корзину,чтобы их клики отличались,то есть чтобы можно было отдельно кликать на кнопку и на этот иннер */}
                             <div className="sectionNewArrivals__item-inner">
                                 {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
@@ -57,14 +41,14 @@ const SectionNewArrivals = () => {
                                 </div>
                             </div>
                             <div className="sectionNewArrivals__item-cartBlock">
-                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                                <button className="sectionNewArrivals__cartBlock-btn" onMouseEnter={addNoHoverClass} onMouseLeave={removeNoHoverClass}>
+                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный, этот функционал теперь не используем,так как теперь не меняем задний фон карточки товара,а только картинки и текста  */}
+                                <button className="sectionNewArrivals__cartBlock-btn">
                                     <p className="cartBlock__btn-text">Add to cart</p>
                                     <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
                                 </button>
                             </div>
                         </div>
-                        <div className={`${classesForItem}`}>
+                        <div className="sectionNewArrivals__items-item">
                             <div className="sectionNewArrivals__item-inner">
                                 {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                 <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -88,14 +72,13 @@ const SectionNewArrivals = () => {
                                 </div>
                             </div>
                             <div className="sectionNewArrivals__item-cartBlock">
-                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                                <button className="sectionNewArrivals__cartBlock-btn" onMouseEnter={addNoHoverClass} onMouseLeave={removeNoHoverClass}>
+                                <button className="sectionNewArrivals__cartBlock-btn">
                                     <p className="cartBlock__btn-text">Add to cart</p>
                                     <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
                                 </button>
                             </div>
                         </div>
-                        <div className={`${classesForItem}`}>
+                        <div className="sectionNewArrivals__items-item">
                             <div className="sectionNewArrivals__item-inner">
                                 {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                 <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -119,14 +102,13 @@ const SectionNewArrivals = () => {
                                 </div>
                             </div>
                             <div className="sectionNewArrivals__item-cartBlock">
-                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                                <button className="sectionNewArrivals__cartBlock-btn" onMouseEnter={addNoHoverClass} onMouseLeave={removeNoHoverClass}>
+                                <button className="sectionNewArrivals__cartBlock-btn">
                                     <p className="cartBlock__btn-text">Add to cart</p>
                                     <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
                                 </button>
                             </div>
                         </div>
-                        <div className={`${classesForItem}`}>
+                        <div className="sectionNewArrivals__items-item">
                             <div className="sectionNewArrivals__item-inner">
                                 {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                 <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -150,8 +132,7 @@ const SectionNewArrivals = () => {
                                 </div>
                             </div>
                             <div className="sectionNewArrivals__item-cartBlock">
-                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                                <button className="sectionNewArrivals__cartBlock-btn" onMouseEnter={addNoHoverClass} onMouseLeave={removeNoHoverClass}>
+                                <button className="sectionNewArrivals__cartBlock-btn">
                                     <p className="cartBlock__btn-text">Add to cart</p>
                                     <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
                                 </button>
@@ -159,7 +140,7 @@ const SectionNewArrivals = () => {
                         </div>
 
                         {/* будем потом по id для этого item указывать ему класс без правой границы(border),когда будем пробегаться по массиву товаров */}
-                        <div className={`${classesForItem} sectionNewArrivals__items-itemNoBorder sectionNewArrivals__items-itemLast}`}>
+                        <div className="sectionNewArrivals__items-item sectionNewArrivals__items-itemNoBorder sectionNewArrivals__items-itemLast">
                             <div className="sectionNewArrivals__item-inner">
                                 {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                 <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -183,8 +164,7 @@ const SectionNewArrivals = () => {
                                 </div>
                             </div>
                             <div className="sectionNewArrivals__item-cartBlock">
-                                {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                                <button className="sectionNewArrivals__cartBlock-btn" onMouseEnter={addNoHoverClass} onMouseLeave={removeNoHoverClass}>
+                                <button className="sectionNewArrivals__cartBlock-btn">
                                     <p className="cartBlock__btn-text">Add to cart</p>
                                     <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
                                 </button>

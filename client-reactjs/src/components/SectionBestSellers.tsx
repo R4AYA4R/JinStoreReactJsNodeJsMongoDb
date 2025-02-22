@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 const SectionBestSellers = () => {
 
@@ -17,7 +18,8 @@ const SectionBestSellers = () => {
                     </div>
                     <div className="sectionBestSellers__itemsBlock">
                         <div className="sectionBestSellers__itemsBlockSide">
-                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemTop sectionBestSellers__itemsBlockSide-item">
+                            {/* указываем класс этому элементу для карточки товара со значением нашего состояния classesForItem,чтобы когда наводим мышкой на кнопку добавления товара в корзину,изменять задний фон карточки товара на белый,а в данном случае еще и добавляем другой класс,чтобы сделать border-radius(радиус границы) правильным только для первой карточки товара */}
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -41,9 +43,16 @@ const SectionBestSellers = () => {
                                         <p className="item__priceBlock-priceSale">$0.50</p>
                                         <p className="item__priceBlock-priceUsual">$1.99</p>
                                     </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item">
 
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
@@ -69,9 +78,16 @@ const SectionBestSellers = () => {
                                         <p className="item__priceBlock-priceSale">$2.45</p>
                                         <p className="item__priceBlock-priceUsual">$4.13</p>
                                     </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemLast">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -95,6 +111,12 @@ const SectionBestSellers = () => {
                                     <div className="sectionNewArrivals__item-priceBlock">
                                         <p className="item__priceBlock-priceSale">$9.50</p>
                                         <p className="item__priceBlock-priceUsual">$11.20</p>
+                                    </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -125,11 +147,17 @@ const SectionBestSellers = () => {
                                     <p className="item__priceBlock-priceUsual">$9.99</p>
                                 </div>
                                 <p className="sectoinBestSellers__midBlock-itemDesc">Vivamus adipiscing nisl ut dolor dignissim semper. Nulla luctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.</p>
+                                <div className="sectionNewArrivals__item-cartBlock">
+                                    <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn sectionBestSellers__midItem-cartBtn">
+                                        <p className="cartBlock__btn-text">Add to cart</p>
+                                        <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <div className="sectionBestSellers__itemsBlockSide">
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemTop">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -154,9 +182,15 @@ const SectionBestSellers = () => {
                                         <p className="item__priceBlock-priceSale">$14.89</p>
                                         <p className="item__priceBlock-priceUsual">$17.89</p>
                                     </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -180,9 +214,15 @@ const SectionBestSellers = () => {
                                         <p className="item__priceBlock-priceSale">$12.89</p>
                                         <p className="item__priceBlock-priceUsual">$14.89</p>
                                     </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="sectionBestSellers__itemsBlockSide-item sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-itemLast">
+                            <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemLast">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
                                     <div className="sectionNewArrivals__item-saleBlock">20%</div>
@@ -205,6 +245,12 @@ const SectionBestSellers = () => {
                                     <div className="sectionNewArrivals__item-priceBlock">
                                         <p className="item__priceBlock-priceSale">$7.75</p>
                                         <p className="item__priceBlock-priceUsual">$8.75</p>
+                                    </div>
+                                    <div className="sectionNewArrivals__item-cartBlock">
+                                        <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
+                                            <p className="cartBlock__btn-text">Add to cart</p>
+                                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                                        </button>
                                     </div>
                                 </div>
                             </div>

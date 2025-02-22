@@ -287,12 +287,6 @@ a{
   border-top-right-radius: 8px;
 }
 
-
-.sectionNewArrivals__items-item:hover{
-  cursor: pointer;
-  background-color: rgba(0,0,0,0.1);
-}
-
 .sectionNewArrivals__items-itemNoHover{
   background-color: #fff !important; /* указываем !important,чтобы указать,что этот стиль важный,и чтобы он переписал предыдущий такой стиль,даже если он уже указан,в данном случае указываем так,чтобы применился задний фон белый,делаем это,когда наводим мышкой на кнопку добавления товара в корзину,чтобы задний фон карточки товара стал белый */
 }
@@ -302,9 +296,17 @@ a{
   align-self: center;
   margin-bottom: 20px;
   max-width: 177px;
-  max-height: 178px;
+  max-height: 175px;
   min-width: 165px;
+  transition:all .5s ease;
+  opacity: 1;
 }
+
+.sectionNewArrivals__item-img:hover{
+  cursor: pointer;
+  opacity: 0.7;
+}
+
 
 .sectionNewArrivals__item-saleBlock{
   position: absolute;
@@ -345,6 +347,12 @@ a{
   font-weight: 500;
   color: #030712;
   margin-bottom: 10px;
+  transition:all .5s ease;
+}
+
+.sectionNewArrivals__item-text:hover{
+  cursor: pointer;
+  color:#EA580C;
 }
 
 .sectionNewArrivals__item-starsBlock{
@@ -400,6 +408,7 @@ a{
   margin-top: 13px;
   transition:all .5s ease;
 }
+
 
 .sectionNewArrivals__cartBlock-btn:hover{
   background-color: rgba(177, 161, 216, 0.3);
@@ -563,7 +572,7 @@ a{
   display: flex;
   flex-direction: row;
   gap:25px;
-  padding: 30px;
+  padding: 25px;
 }
 
 .sectionBestSellers__itemsBlockSide-itemTop{
@@ -583,6 +592,10 @@ a{
   bottom: 70px;
 }
 
+.sectionBestSellers__cartBlock-btn{
+  gap: 60px;
+}
+
 .sectionBestSellers__cartBlock-btnLast{
   bottom: 60px;
 }
@@ -590,7 +603,7 @@ a{
 .sectionBestSellers__midBlock-item{
   display: flex;
   flex-direction: column;
-  padding: 34px;
+  padding: 22px;
   border-radius: 8px;
   border:4px solid #DC2626;
 }
@@ -620,5 +633,14 @@ a{
   font-size: 13px;
   font-weight: 400;
   color: #4B5563;
-  margin: 28px 0 145px;
+  margin-top: 28px;
+  padding-bottom: 22px;
+  margin-bottom: 9px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.sectionBestSellers__midItem-cartBtn{
+  width: 100%;
+  justify-content: space-between;
+  margin: 25px 0 48px;
 }
