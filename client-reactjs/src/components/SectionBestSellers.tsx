@@ -147,6 +147,8 @@ const SectionBestSellers = () => {
                                     <p className="item__priceBlock-priceUsual">$9.99</p>
                                 </div>
                                 <p className="sectoinBestSellers__midBlock-itemDesc">Vivamus adipiscing nisl ut dolor dignissim semper. Nulla luctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.</p>
+                                <p className="sectionBestSellers__midBlock-itemSubDesc">This product is about to run out</p>
+                                <div className="sectionBestSellers__midBlock-itemGradient"></div>
                                 <div className="sectionNewArrivals__item-cartBlock">
                                     <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn sectionBestSellers__midItem-cartBtn">
                                         <p className="cartBlock__btn-text">Add to cart</p>
