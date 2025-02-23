@@ -6,6 +6,7 @@ import SectionBestSellers from "./components/SectionBestSellers";
 import SectionCategoryItems from "./components/SectionCategoryItems";
 import SectionDontMiss from "./components/SectionDontMiss";
 import SectionNewArrivals from "./components/SectionNewArrivals";
+import SectionPromo from "./components/SectionPromo";
 import SectionTop from "./components/SectionTop";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <SectionNewArrivals/>
           <SectionDontMiss/>
           <SectionBestSellers/>
+          <SectionPromo/>
         </div>
       </main>
     </>

@@ -41,10 +41,9 @@ a{
 
 .sectionTop{
   padding: 166px 0;
-  background-image: url('/public/images/sectionTop/elements01.jpg');
+  background-image: url('/public/images/sectionTop/elements01.jpg'); /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
   background-position: right;
   background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .sectionTop__subtitle{
@@ -644,3 +643,100 @@ a{
   justify-content: space-between;
   margin: 25px 0 48px;
 }
+
+.sectionPromo{
+  padding: 30px 0 90px;
+}
+
+.sectionPromo__promoTop{
+  padding: 21px 31px;
+  background-image: url('/public/images/sectionPromo/promoImg.png'); /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 30px;
+  border-radius: 6px;
+  border: 1px solid #FFF7ED;
+  background-size: contain; /* указываем это свойство,чтобы виднелась граница блока,у которого картинка на заднем фоне,иначе не видно границы(border),даже когда ее указываешь */
+}
+
+.sectionPromo__promoTop-title{
+  font-size: 22px;
+  font-weight: 700;
+  color: #EA580C;
+}
+
+.sectionPromo__promoTop-desc{
+  font-size: 14px;
+  font-weight: 400;
+  color: #6B7280;
+  letter-spacing: -0.32px;
+}
+
+.sectionPromo__sales{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 30px;
+}
+
+.sectionPromo__sales-item{
+  border-radius: 6px;
+  padding: 33px 20px;
+}
+
+.sectionPromo__sales-itemFirst{
+  background-image: url('/public/images/sectionPromo/banner-17.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.sectionPromo__sales-itemSecond{
+  background-image: url('/public/images/sectionPromo/banner-18.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.sectionPromo__sales-itemThird{
+  background-image: url('/public/images/sectionPromo/banner-19.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.sectionPromo__item-subtitle{
+  font-size: 12px;
+  font-weight: 500;
+  color: #EA580C;
+  margin-bottom: 10px;
+}
+
+.sectionPromo__item-title{
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  letter-spacing: -0.88px;
+}
+
+.sectionPromo__item-titleFirst{
+  max-width: 211px;
+}
+
+.sectionPromo__item-titleSecond{
+  max-width: 235px;
+}
+
+.sectionPromo__item-titleThird{
+  max-width: 225px;
+}
+
+.sectionPromo__item-text{
+  font-size: 13px;
+  font-weight: 400;
+  color: #6B7280;
+  margin-bottom: 18px;
+  letter-spacing: -0.32px;
+}
+
+.sectionPromo__item-link{
+  margin-bottom: 0;
+}
+
