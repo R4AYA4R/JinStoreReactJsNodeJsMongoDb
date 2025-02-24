@@ -403,7 +403,8 @@ a{
   border-radius: 40px;
   display: flex;
   align-items: center;
-  gap:76px;
+  justify-content: space-between;
+  width: 100%;
   margin-top: 13px;
   transition:all .5s ease;
 }
