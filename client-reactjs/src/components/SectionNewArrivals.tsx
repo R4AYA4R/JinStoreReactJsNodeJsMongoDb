@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { RefObject, useRef, useState } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionNewArrivals = () => {
 
+    const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     return (
-        <section className="sectionNewArrivals">
+        <section ref={sectionNewArrivals} id="sectionNewArrivals" className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active" : "sectionNewArrivals"}>
             <div className="container">
                 <div className="sectionNewArrivals__inner">
                     <div className="sectionNewArrivals__top">

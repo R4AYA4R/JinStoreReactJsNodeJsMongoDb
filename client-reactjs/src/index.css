@@ -44,7 +44,16 @@ a{
   background-image: url('/public/images/sectionTop/elements01.jpg'); /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
   background-position: right;
   background-repeat: no-repeat;
+  transform:translateX(-50%);
+  opacity: 0;
+  transition:all 1s ease;
 }
+
+.sectionTop__active{
+  transform:translateX(0);
+  opacity: 1;
+}
+
 
 .sectionTop__subtitle{
   border-radius: 6px;
@@ -172,6 +181,14 @@ a{
 
 .sectionCategoryItems{
   padding: 40px 0;
+  transform: translateX(50%);
+  transition:all 1s ease;
+  opacity: 0;
+}
+
+.sectionCategoryItems__active{
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .sectionCategoryItems__inner{
@@ -210,6 +227,14 @@ a{
 
 .sectionNewArrivals{
   padding: 60px 0 20px;
+  transform: translateX(-50%);
+  transition: all 1s ease;
+  opacity: 0;
+}
+
+.sectionNewArrivals__active{
+  transform: translateX(0);
+  opacity: 1;
 }
 
 .sectionOuterGradient{
@@ -453,6 +478,14 @@ a{
 
 .sectionDontMiss{
   padding: 35px 0;
+  opacity: 0;
+  transform: translateX(50%);
+  transition: all 1s ease;
+}
+
+.sectionDontMiss__active{
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .sectionDontMiss__inner{

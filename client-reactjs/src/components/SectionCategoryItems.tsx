@@ -1,8 +1,14 @@
+import { RefObject, useRef } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionCategoryItems = () => {
 
-    return(
-        <section className="sectionCategoryItems">
+    const sectionCategoryItems = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionCategoryItems as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+    return (
+        <section ref={sectionCategoryItems} id="sectionCategoryItems" className={onScreen.sectionCategoryItemsIntersecting ? "sectionCategoryItems sectionCategoryItems__active" : "sectionCategoryItems"}>
             <div className="container">
                 <div className="sectionCategoryItems__inner">
                     <div className="sectionCategoryItems__item">
