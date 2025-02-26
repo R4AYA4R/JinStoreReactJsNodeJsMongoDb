@@ -1,8 +1,15 @@
+import { RefObject, useRef } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionPromo = () => {
 
+    const sectionDontMiss = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionDontMiss as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
     return (
-        <section className="sectionPromo">
+        // указываем такой же id как и у секции sectionDontMiss,так как эти секции находятся в разных друг от друга местах,и мы уже прописывали логику для этого id в файле useIsOnScreen,также используем такие же классы,как и для sectionDontMiss,просто добавляем свой отдельный для sectionPromo,это чтобы заново не прописывать отдельную такую же анимацию и проверку на id в файле useIsOnScreen
+        <section className={onScreen.sectionDontMissIntersecting ? " sectionDontMiss sectionPromo sectionDontMiss__active" : "sectionPromo sectionDontMiss"} ref={sectionDontMiss} id="sectionDontMiss" >
             <div className="container">
                 <div className="sectionPromo__inner">
                     <div className="sectionPromo__promoTop">

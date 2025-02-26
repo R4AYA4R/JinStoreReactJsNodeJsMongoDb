@@ -239,6 +239,7 @@ a{
 
 .sectionOuterGradient{
   background-image: linear-gradient(rgba(236,235,238,1), rgba(255,255,255,0) 100%);
+  width: 100vw;
 }
 
 .sectionNewArrivals__top{
@@ -557,6 +558,14 @@ a{
 
 .sectionBestSellers{
   padding: 25px 0;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: all 1s ease;
+}
+
+.sectionBestSellers__active{
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .sectionBestSellers__top{
@@ -597,6 +606,43 @@ a{
   border:1px solid #E5E7EB;
   border-radius: 8px;
 }
+
+.sectionBestSellers__itemsBlockSideLeft{
+  opacity: 0;
+  transform: translateX(-50%);
+  transition:all 1s ease;
+  transition-delay: .5s; /* указываем задержку по времени перед анимацией */
+}
+
+.sectionBestSellers__itemsBlockSideLeft-active{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sectionBestSellers__itemsBlockSideRight{
+  opacity: 0;
+  transform: translateX(50%);
+  transition:all 1s ease;
+  transition-delay: 1s; /* указываем задержку по времени перед анимацией */
+}
+
+.sectionBestSellers__itemsBlockSideRight-active{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sectionBestSellers__itemsBlock-midBlockPassive{
+  opacity: 0;
+  transform: translateY(-30%);
+  transition:all 1s ease;
+  transition-delay: 2s; /* указываем задержку по времени перед анимацией */
+}
+
+.sectionBestSellers__itemsBlock-midBlock--active{
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 .sectionBestSellers__itemsBlockSide-item{
   position: relative;

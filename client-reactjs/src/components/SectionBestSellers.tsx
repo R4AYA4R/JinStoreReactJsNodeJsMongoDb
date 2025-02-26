@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { RefObject, useRef, useState } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionBestSellers = () => {
 
+    const sectionBestSellers = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionBestSellers as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+
+    const leftBlockItemsRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную leftBlockItemsRef,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+
+    const rightBlockItemsRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную leftBlockItems,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+
+    const midBlockItemRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную leftBlockItems,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+    
+    const onScreenLeftBlock = useIsOnScreen(leftBlockItemsRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на leftBlockItemsRef),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,передаем в наш хук useIsOnScreen еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+
+    const onScreenRightBlock = useIsOnScreen(rightBlockItemsRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на leftBlockItemsRef),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,передаем в наш хук useIsOnScreen еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+
+    const onScreenMidBlock = useIsOnScreen(midBlockItemRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на leftBlockItemsRef),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,передаем в наш хук useIsOnScreen еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
+
     return (
-        <section className="sectionBestSellers">
+        <section id="sectionBestSellers" className={onScreen.sectionBestSellersIntersecting ? "sectionBestSellers sectionBestSellers__active" : "sectionBestSellers"} ref={sectionBestSellers}>
             <div className="container">
                 <div className="sectionBestSellers__inner">
                     <div className="sectionBestSellers__top">
@@ -17,7 +35,7 @@ const SectionBestSellers = () => {
                         </a>
                     </div>
                     <div className="sectionBestSellers__itemsBlock">
-                        <div className="sectionBestSellers__itemsBlockSide">
+                        <div className={onScreenLeftBlock.sectionLeftBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft sectionBestSellers__itemsBlockSideLeft-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft"} ref={leftBlockItemsRef} id="leftBlockItems">
                             {/* указываем класс этому элементу для карточки товара со значением нашего состояния classesForItem,чтобы когда наводим мышкой на кнопку добавления товара в корзину,изменять задний фон карточки товара на белый,а в данном случае еще и добавляем другой класс,чтобы сделать border-radius(радиус границы) правильным только для первой карточки товара */}
                             <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
                                 <div className="sectionBestSellers__item-imgBlock">
@@ -122,7 +140,7 @@ const SectionBestSellers = () => {
                             </div>
                         </div>
 
-                        <div className="sectionBestSellers__itemsBlock-midBlock">
+                        <div className={onScreenMidBlock.sectionMidBlockItemsIntersecting ? "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive sectionBestSellers__itemsBlock-midBlock--active" : "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive"} ref={midBlockItemRef} id="midBlockItems">
                             <div className="sectionBestSellers__midBlock-item sectionNewArrivals__items-item">
                                 <div className="sectionBestSellers__item-imgBlock sectionBestSellers__midItem-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
@@ -158,7 +176,7 @@ const SectionBestSellers = () => {
                             </div>
                         </div>
 
-                        <div className="sectionBestSellers__itemsBlockSide">
+                        <div className={onScreenRightBlock.sectionRightBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight sectionBestSellers__itemsBlockSideRight-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight"} ref={rightBlockItemsRef} id="rightBlockItems">
                             <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
                                 <div className="sectionBestSellers__item-imgBlock">
                                     {/* будем потом проверять объект товара,есть ли у него скидка и тд,в зависимости от этого будем показывать или не показывать эти блоки скидок */}
