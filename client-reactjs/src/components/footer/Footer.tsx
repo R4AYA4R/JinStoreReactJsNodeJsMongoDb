@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import cl from './Footer.module.css'; // импортируем cl(классы,можем по-любому назвать это) из нашего файла Footer.module.css,чтобы потом указывать классы через точку типа cl.footer(footer в данном случае название класса в файле Footer.module.css и так указываем остальные классы)
 
 const Footer = () => {
@@ -33,49 +34,49 @@ const Footer = () => {
                             <ul className={cl.mainBlock__list}>
                                 <h3 className={cl.list__title}>Make Money with Us</h3>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Sell on JinStore</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Sell on JinStore</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Become an Affilate</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Become an Affilate</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Advertise Your Products</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Advertise Your Products</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Sell-Publish with Us</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Sell-Publish with Us</Link>
                                 </li>
                             </ul>
                             <ul className={cl.mainBlock__list}>
                                 <h3 className={cl.list__title}>Let Us Help You</h3>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Accessibility Statement</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Accessibility Statement</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Returns & Replacements</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Returns & Replacements</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Shipping Rates & Policies</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Shipping Rates & Policies</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Privacy Policy</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Privacy Policy</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Terms and Conditions</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Terms and Conditions</Link>
                                 </li>
                             </ul>
                             <ul className={cl.mainBlock__list}>
                                 <h3 className={cl.list__title}>Get to Know Us</h3>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Careers for JinStore</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Careers for JinStore</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>About JinStore</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>About JinStore</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Customer reviews</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Customer reviews</Link>
                                 </li>
                                 <li className={cl.list__item}>
-                                    <a href="#" className={cl.list__link}>Social Responsibility</a>
+                                    <Link to="/aboutUs" className={cl.list__link}>Social Responsibility</Link>
                                 </li>
                             </ul>
                         </div>

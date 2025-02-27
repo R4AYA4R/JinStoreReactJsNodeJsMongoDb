@@ -1,5 +1,6 @@
 import { RefObject, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { Link } from "react-router-dom";
 
 const SectionBestSellers = () => {
 
@@ -29,10 +30,10 @@ const SectionBestSellers = () => {
                             <h3 className="sectionBestSellers__top-title">BEST SELLERS</h3>
                             <p className="sectionBestSellers__top-text">Dont miss this opportunity at a special discount just for this week.</p>
                         </div>
-                        <a href="#" className="sectionNewArrivals__top-link">
+                        <Link to="/catalog" className="sectionNewArrivals__top-link">
                             <p className="sectionNewArrivals__top-linkText">View All</p>
                             <img src="/images/sectionNewArrivals/Icon.png" alt="" className="sectionNewArrivals__top-linkImg" />
-                        </a>
+                        </Link>
                     </div>
                     <div className="sectionBestSellers__itemsBlock">
                         <div className={onScreenLeftBlock.sectionLeftBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft sectionBestSellers__itemsBlockSideLeft-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft"} ref={leftBlockItemsRef} id="leftBlockItems">

@@ -1,5 +1,6 @@
 import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { Link } from "react-router-dom";
 
 const SectionPromo = () => {
 
@@ -21,28 +22,28 @@ const SectionPromo = () => {
                             <p className="sectionPromo__item-subtitle">Only This Week</p>
                             <h3 className="sectionPromo__item-title sectionPromo__item-titleFirst">We provide you the best quality products</h3>
                             <p className="sectionPromo__item-text">A family place for grocery</p>
-                            <a href="#" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
+                            <Link to="/catalog" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
                                 <p className="sectionNewArrivals__top-linkText">Shop Now</p>
                                 <img src="/images/sectionNewArrivals/Icon.png" alt="" className="sectionNewArrivals__top-linkImg" />
-                            </a>
+                            </Link>
                         </div>
                         <div className="sectionPromo__sales-item sectionPromo__sales-itemSecond">
                             <p className="sectionPromo__item-subtitle">Only This Week</p>
                             <h3 className="sectionPromo__item-title sectionPromo__item-titleSecond">We make your grocery shopping more exciting</h3>
                             <p className="sectionPromo__item-text">Eat one every day</p>
-                            <a href="#" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
+                            <Link to="/catalog" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
                                 <p className="sectionNewArrivals__top-linkText">Shop Now</p>
                                 <img src="/images/sectionNewArrivals/Icon.png" alt="" className="sectionNewArrivals__top-linkImg" />
-                            </a>
+                            </Link>
                         </div>
                         <div className="sectionPromo__sales-item sectionPromo__sales-itemThird">
                             <p className="sectionPromo__item-subtitle">Only This Week</p>
                             <h3 className="sectionPromo__item-title sectionPromo__item-titleThird">The one supermarket that saves your money</h3>
                             <p className="sectionPromo__item-text">Breakfast made better</p>
-                            <a href="#" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
+                            <Link to="/catalog" className="sectionNewArrivals__top-link sectionDontMiss__item-link sectionPromo__item-link">
                                 <p className="sectionNewArrivals__top-linkText">Shop Now</p>
                                 <img src="/images/sectionNewArrivals/Icon.png" alt="" className="sectionNewArrivals__top-linkImg" />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

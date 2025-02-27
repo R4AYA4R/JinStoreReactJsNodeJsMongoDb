@@ -1,5 +1,6 @@
 import { RefObject, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { Link } from "react-router-dom";
 
 const SectionNewArrivals = () => {
 
@@ -13,10 +14,10 @@ const SectionNewArrivals = () => {
                 <div className="sectionNewArrivals__inner">
                     <div className="sectionNewArrivals__top">
                         <h2 className="sectionNewArrivals__title">New Arrivals</h2>
-                        <a href="#" className="sectionNewArrivals__top-link">
+                        <Link to="/catalog" className="sectionNewArrivals__top-link">
                             <p className="sectionNewArrivals__top-linkText">View All</p>
                             <img src="/images/sectionNewArrivals/Icon.png" alt="" className="sectionNewArrivals__top-linkImg" />
-                        </a>
+                        </Link>
                     </div>
                     <div className="sectionNewArrivals__items">
                         {/* указываем класс этому элементу для карточки товара со значением нашего состояния classesForItem,чтобы когда наводим мышкой на кнопку добавления товара в корзину,изменять задний фон карточки товара на белый,а в данном случае еще и добавляем другой класс,чтобы сделать border-radius(радиус границы) правильным только для первой карточки товара */}

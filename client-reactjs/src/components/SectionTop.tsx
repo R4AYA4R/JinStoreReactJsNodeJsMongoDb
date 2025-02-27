@@ -1,5 +1,6 @@
 import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { Link } from "react-router-dom";
 
 const SectionTop = () => {
 
@@ -16,10 +17,11 @@ const SectionTop = () => {
                     <h1 className="sectionTop__title">Shopping with us for better quality and the best price</h1>
                     <p className="sectionTop__desc">We have prepared special discounts for you on grocery products.
                     Don't miss these opportunities...</p>
-                    <a href="#" className="sectionTop__link">
+                    {/* используем тут Link,чтобы при клике на эту ссылку перекидывать пользователя на страницу по маршруту /catalog,указываем этот маршрут в to */}
+                    <Link to="/catalog" className="sectionTop__link">
                         <p className="sectionTop__link-text">Shop Now</p>
                         <img src="/images/sectionTop/ArrowRight.png" alt="" className="sectionTop__link-arrowImg" />
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>
