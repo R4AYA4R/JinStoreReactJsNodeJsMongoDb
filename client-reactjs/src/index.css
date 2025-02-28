@@ -848,3 +848,119 @@ a{
   margin-bottom: 0;
 }
 
+.sectionCatalog{
+  padding: 25px 0 60px;
+}
+
+.sectionCatalog__topBlock{
+  display: flex;
+  align-items: center;
+  gap:10px;
+  margin-bottom: 30px;
+}
+
+.sectionCatalog__topBlock-title{
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  color: #9CA3AF;
+}
+
+.sectionCatalog__topBlock-subtitle{
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  color: #030712;
+}
+
+.filterBar__categories-title{
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.28px;
+  color: #030712;
+  margin-bottom: 20px;
+}
+
+.sectionCatalog__mainBlock{
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap:30px;
+}
+
+.sectionCatalog__filterBar-categories{
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.filterBar__categories-label{
+  display: flex;
+  align-items: center;
+  gap:10px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  max-width: 220px;
+}
+
+.categories__label-input{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip:rect(0 0 0 0);  /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+}
+
+.categories__label-radioStyle{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border:1px solid #D1D5DB;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
+  border-radius: 50%;
+  transition:all .5s ease;
+}
+
+.categories__label-radioStyle--active{
+  border: 1px solid #634C9F;
+}
+
+.label__radioStyle-before{
+  opacity: 0;
+  transition:opacity .5s ease;
+}
+
+.label__radioStyle-before--active{
+  opacity: 1; 
+  display: block;
+  width: 11px;
+  height: 11px;
+  background-color: #634C9F;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%,-50%);
+  border-radius: 50%;
+}
+
+.filterBar__categories-label:hover .categories__label-radioStyle{
+  border: 1px solid #634C9F;
+}
+
+.categories__label-text{
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: #030712;
+  margin-left: 28px;
+  transition:all .5s ease;
+}
+
+.categories__label-text--active{
+  color: #634C9F;
+}
+
+.categories__label-amount{
+  font-size: 14px;
+  color: #808080;
+  opacity: 1;
+  transition:all .5s ease;
+}
