@@ -942,7 +942,15 @@ a{
 }
 
 .filterBar__categories-label:hover .categories__label-radioStyle{
-  border: 1px solid #634C9F;
+  border: 1px solid #634c9f;
+}
+
+.filterBar__categories-label:hover .categories__label-text{
+  color: rgba(99, 76, 159,0.8);
+}
+
+.filterBar__categories-label:hover .categories__label-text--active{
+  color: rgba(99, 76, 159,1);
 }
 
 .categories__label-text{
@@ -963,4 +971,65 @@ a{
   color: #808080;
   opacity: 1;
   transition:all .5s ease;
+}
+
+
+.filterBar__priceFilterBlock{
+  margin-top: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.priceFilterBlock__title{
+  margin-bottom: 20px;
+}
+
+.priceFilterBlock__inputRangeSlider{
+  width: 100%;
+  height: 3px;
+  margin-bottom: 20px;
+}
+
+/* стили для всей полоски инпута range у ReactSlider */
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__track{
+  height: 3px;
+}
+
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__track:hover{
+  cursor: pointer;
+}
+
+/* стили для полоски до первого ползунка */
+.inputRangeSlider__track.inputRangeSlider__track-0{
+  background-color: #D1D5DB;
+  border-radius: 10px;
+}
+
+/* стили для полоски между ползунками */
+.inputRangeSlider__track.inputRangeSlider__track-1{
+  background-color: #111827;
+}
+
+/* стили для полоски после второго ползунка */
+.inputRangeSlider__track.inputRangeSlider__track-2{
+  background-color: #D1D5DB;
+  border-radius: 10px;
+}
+
+/* стили для 1 ползунка инпута(слайдера) */
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__thumb{
+  top: -5px;
+  width: 14px;
+  height: 14px;
+  background-color: #111827;
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden; /* указываем это свойство,чтобы не были видны цифры внутри кнопки ползунка,которые по дефолту есть в ReactSlider */
+}
+
+.priceFilterBlock__text{
+  font-size: 14px;
+  font-weight: 400;
+  color: #030712;
+  letter-spacing: -0.32px;
 }
