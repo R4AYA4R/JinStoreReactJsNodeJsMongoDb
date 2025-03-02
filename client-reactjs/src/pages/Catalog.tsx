@@ -6,7 +6,7 @@ const Catalog = () => {
 
     const [filterCategories, setFilterCategories] = useState('');
 
-    const [filterPrice, setFilterPrice] = useState<number[]>([0,50]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго,указываем ему в generic тип как number и что это массив [],иначе выдает ошибку
+    const [filterPrice, setFilterPrice] = useState<number[]>([0, 50]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго,указываем ему в generic тип как number и что это массив [],иначе выдает ошибку
 
     return (
         <main className="main">
@@ -66,7 +66,7 @@ const Catalog = () => {
                                         thumbClassName="inputRangeSlider__thumb"
 
                                         trackClassName="inputRangeSlider__track"
-                                       
+
                                         defaultValue={[0, 50]} // поле для дефолтного значения минимального(первый элемент массива) и максимального(второй элемент массива)
 
                                         max={50} // поле для максимального значения
@@ -77,27 +77,38 @@ const Catalog = () => {
                                         // renderThumb={(props,state) => <div {...props}>{state.valueNow}</div>}
 
                                         // деструктуризируем поле key и ...restProps из props(параметр у этой функции callback),чтобы потом отдельно передать в div,так как выдает ошибку в версии react 19,если сделать как код выше
-                                        renderThumb={(props, state) =>{
+                                        renderThumb={(props, state) => {
 
-                                            const {key, ...restProps} = props; // деструктуризируем отдельно поле key из props,и остальные параметры,которые есть у props,разворачиваем в этот объект и указываем им название restProps(...restProps),потом отдельно указываем этому div поле key и остальные параметры у props(restProps),разворачиваем restProps в объект,таким образом передаем их этому div {...restProps}
+                                            const { key, ...restProps } = props; // деструктуризируем отдельно поле key из props,и остальные параметры,которые есть у props,разворачиваем в этот объект и указываем им название restProps(...restProps),потом отдельно указываем этому div поле key и остальные параметры у props(restProps),разворачиваем restProps в объект,таким образом передаем их этому div {...restProps}
 
                                             return (
                                                 <div key={key} {...restProps}>{state.valueNow}</div>
                                             );
-                                            
+
                                         }}
 
                                         onChange={(value, index) => setFilterPrice(value)} // при изменении изменяем значение состояния массива filterPrice(в параметрах функция callback принимает value(массив текущих значений этого инпута) и index(индекс кнопки элемента массива,то есть за какую кнопку сейчас дергали))
 
                                     />
-                                    
+
                                     {/* выводим минимальное текущее значение инпута range (наш ReactSlider) по индексу 0 из нашего массива filterPrice (filterPrice[0]) и выводим максимальное текущее значение по индексу 1 из нашего массива filterPrice (filterPrice[1]) */}
                                     <p className="priceFilterBlock__text">Price: ${filterPrice[0]} - ${filterPrice[1]}</p>
 
                                 </div>
                             </div>
                             <div className="sectionCatalog__mainBlock-productsBlock">
-                                productsBlock
+                                <div className="sectionCatalog__productsBlock-searchBlock">
+                                    <div className="productsBlock__searchBlock-inputBlock">
+                                        <input type="text" className="productsBlock__searchBlock-input" placeholder="Search for products..." />
+                                        <img src="/images/sectionCatalog/SearchImg.png" alt="" className="searchBlock__inputBlock-inputImg" />
+                                    </div>
+                                    <div className="searchBlock__sortBlock">
+                                        sortBy
+                                    </div>
+                                </div>
+                                <div className="sectionCatalog__productsBlock-products">
+                                    products
+                                </div>
                             </div>
                         </div>
                     </div>

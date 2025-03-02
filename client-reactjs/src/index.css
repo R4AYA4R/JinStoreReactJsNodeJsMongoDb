@@ -1033,3 +1033,36 @@ a{
   color: #030712;
   letter-spacing: -0.32px;
 }
+
+
+.sectionCatalog__productsBlock-searchBlock{
+  display: flex;
+  align-items: center;  
+  justify-content: space-between;
+}
+
+.productsBlock__searchBlock-input{
+  padding: 14.5px 43px 14.5px 18px;
+  border-radius: 8px;
+  background-color: #F3F4F6;
+  border: none;
+  outline: none;
+  min-width: 300px;
+}
+
+.productsBlock__searchBlock-input::placeholder{
+  letter-spacing: -0.28px;
+  font-size: 14px;
+  font-family: 'Inter',sans-serif;
+  color: #6B7280;
+}
+
+.productsBlock__searchBlock-inputBlock{
+  position: relative;
+}
+
+.searchBlock__inputBlock-inputImg{
+  position: absolute;
+  top: 11px;
+  right: 12px;
+}
