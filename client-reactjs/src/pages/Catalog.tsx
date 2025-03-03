@@ -8,6 +8,19 @@ const Catalog = () => {
 
     const [filterPrice, setFilterPrice] = useState<number[]>([0, 50]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго,указываем ему в generic тип как number и что это массив [],иначе выдает ошибку
 
+    const [activeSortBlock,setActiveSortBlock] = useState(false);
+
+    const [sortBlockValue,setSortBlockValue] = useState('');
+
+
+    const sortItemHandlerRating = () => {
+
+        setSortBlockValue('Rating'); // изменяем состояние sortBlockValue на значение Rating
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+
+    }
+
     return (
         <main className="main">
             <section className="sectionCatalog">
@@ -103,7 +116,19 @@ const Catalog = () => {
                                         <img src="/images/sectionCatalog/SearchImg.png" alt="" className="searchBlock__inputBlock-inputImg" />
                                     </div>
                                     <div className="searchBlock__sortBlock">
-                                        sortBy
+                                        <p className="sortBlock__text">Sort By:</p>
+                                        <div className="sortBlock__inner">
+                                            <div className="sortBlock__topBlock" onClick={()=>setActiveSortBlock((prev) => !prev)}>
+                                                {/* если sortBlockValue true,то есть если в sortBlockValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
+                                                <p className={sortBlockValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{sortBlockValue}</p>
+                                                <img src="/images/sectionCatalog/ArrowDown.png" alt="" className={activeSortBlock ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
+                                            </div>
+                                            <div className={activeSortBlock ? "sortBlock__optionsBlock sortBlock__optionsBlock--active" : "sortBlock__optionsBlock"}>
+                                                <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerRating}>
+                                                    <p className="optionsBlock__item-text">Rating</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="sectionCatalog__productsBlock-products">

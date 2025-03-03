@@ -1066,3 +1066,95 @@ a{
   top: 11px;
   right: 12px;
 }
+
+.searchBlock__sortBlock{
+  display: flex;
+  align-items: center;
+  gap:15px;
+}
+
+.sortBlock__text{
+  font-size: 16px;
+  font-weight: 400;
+  color: #020617;
+  letter-spacing: -0.24px;
+}
+
+.sortBlock__inner{
+  position: relative;
+}
+
+.sortBlock__topBlock{
+  display: flex;
+  align-items: center;
+  gap:50px;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background-color: #F3F4F6;
+  cursor: pointer;
+  border-radius: 6px;
+  min-width: 220px;
+  min-height: 45px;
+}
+
+.sortBlock__topBlock-text{
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: #9CA3AF;
+  opacity: 0;
+  transition:all .5s ease;
+}
+
+.sortBlock__topBlock-text--active{
+  opacity: 1;
+}
+
+
+
+.sortBlock__topBlock-img{
+  transform:rotate(0deg);
+  transition:all .5s ease;
+}
+
+.sortBlock__topBlock-img--active{
+  transform:rotate(180deg);
+}
+
+.sortBlock__optionsBlock{
+  max-height: 0;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  opacity: 0;
+  background-color: #fff;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.15);
+  transition:all 1s ease;
+  z-index: -2;
+  overflow: hidden;  /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
+}
+
+.sortBlock__optionsBlock--active{
+  max-height: 100px;
+  opacity: 1;
+  z-index: 5;
+}
+
+.sortBlock__optionsBlock-item{
+  padding: 12px 0 10px 10px;
+  transition:all .5s ease;
+}
+
+.sortBlock__optionsBlock-item:hover{
+  cursor: pointer;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.optionsBlock__item-text{
+  font-size: 14px;
+  font-weight: 400;
+  color: #020617;
+  letter-spacing: -0.32px;
+}
