@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ReactSlider from 'react-slider'; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется,перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 
@@ -8,9 +8,9 @@ const Catalog = () => {
 
     const [filterPrice, setFilterPrice] = useState<number[]>([0, 50]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго,указываем ему в generic тип как number и что это массив [],иначе выдает ошибку
 
-    const [activeSortBlock,setActiveSortBlock] = useState(false);
+    const [activeSortBlock, setActiveSortBlock] = useState(false);
 
-    const [sortBlockValue,setSortBlockValue] = useState('');
+    const [sortBlockValue, setSortBlockValue] = useState('');
 
 
     const sortItemHandlerRating = () => {
@@ -86,6 +86,8 @@ const Catalog = () => {
 
                                         min={0} // поле для минимального значения
 
+                                        value={filterPrice} // указываем поле value как наше состояние filterPrice(массив из 2 элементов для минимального и максимального значения фильтра цены),указываем это,чтобы при изменении состояния filterPrice, менялось и значение этого инпута range,то есть этого react slider(его ползунки и значения их),в данном случае это для того,чтобы при удалении фильтра цены,менялись значения ползунков этого react slider(инпут range)
+
                                         // вместо этого сами деструктуризируем дополнительные параметры из props в коде ниже,иначе выдает ошибку в версии react 19,так как библиотека react-slider давно не обновлялась,а сам react обновился
                                         // renderThumb={(props,state) => <div {...props}>{state.valueNow}</div>}
 
@@ -118,7 +120,7 @@ const Catalog = () => {
                                     <div className="searchBlock__sortBlock">
                                         <p className="sortBlock__text">Sort By:</p>
                                         <div className="sortBlock__inner">
-                                            <div className="sortBlock__topBlock" onClick={()=>setActiveSortBlock((prev) => !prev)}>
+                                            <div className="sortBlock__topBlock" onClick={() => setActiveSortBlock((prev) => !prev)}>
                                                 {/* если sortBlockValue true,то есть если в sortBlockValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
                                                 <p className={sortBlockValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{sortBlockValue}</p>
                                                 <img src="/images/sectionCatalog/ArrowDown.png" alt="" className={activeSortBlock ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
@@ -132,7 +134,74 @@ const Catalog = () => {
                                     </div>
                                 </div>
                                 <div className="sectionCatalog__productsBlock-products">
-                                    products
+                                    <div className="productsBlock__filtersBlock">
+                                        <div className="productsBlock__filtersBlock-leftBlock">
+                                            <p className="filtersBlock__leftBlock-text">Active Filters:</p>
+
+                                            {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
+                                            {filterCategories !== '' &&
+                                                <div className="filtersBlock__leftBlock-item">
+
+                                                    {/* если filterCaregories равно Fruits & Vegetables, то показывать текст Fruits & Vegetables,делаем это для того,чтобы при измененении фильтра категорий работала анимация появления текста,иначе,если поставить просто значение текста как filterCategories,то анимация будет работать только при первом появлении одного фильтра категорий */}
+                                                    {filterCategories === 'Fruits & Vegetables' &&
+                                                        <p className="filtersBlock__item-text">Fruits & Vegetables</p>
+                                                    }
+
+                                                    {filterCategories === 'Beverages' &&
+                                                        <p className="filtersBlock__item-text">Beverages</p>
+                                                    }
+
+                                                    {filterCategories === 'Meats & Seafood' &&
+                                                        <p className="filtersBlock__item-text">Meats & Seafood</p>
+                                                    }
+
+                                                    {filterCategories === 'Breads & Bakery' &&
+                                                        <p className="filtersBlock__item-text">Breads & Bakery</p>
+                                                    }
+                                                    
+
+                                                    <button className="filtersBlock__item-btn" onClick={()=>setFilterCategories('')}>
+                                                        <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
+                                                    </button>
+                                                </div>
+                                            }
+
+                                            {/* если элемент по индексу 0 из массива filterPrice не равно 0 или элемент по индексу 1 из массива filterPrice не равен 50(то есть это не дефолтные значения,то есть пользователь изменил фильтр цены),то показываем фильтр цены,в данном случае делаем условие именно таким образом(после условия ставим знак вопроса ? (то есть если условие выполняется), а потом ниже в коде ставим двоеточие : (то есть в противоположном случае,если это условие не выполняется) и пустую строку '' (то есть не показываем ничего) ),иначе не работает правильно условие */}
+                                            {filterPrice[0] !== 0 || filterPrice[1] !== 50 ?
+                                                <div className="filtersBlock__leftBlock-item">
+
+                                                    <p className="filtersBlock__item-text">Price: {filterPrice[0]} - {filterPrice[1]}</p>
+                                                    
+                                                    {/* в onClick(при нажатии на кнопку) изменяем состояние filterPrice на массив со значениями 0 и 50(дефолтные значения минимального и максимального значения фильтра цены),то есть убираем фильтр цены */}
+                                                    <button className="filtersBlock__item-btn" onClick={()=>setFilterPrice([0,50])}>
+                                                        <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
+                                                    </button>
+                                                </div> : ''
+                                            }
+
+                                            {/* если sortBlockValue не равно пустой строке,то показываем текст сортировки(item с текстом сортировки) */}
+                                            {sortBlockValue !== '' &&
+                                                <div className="filtersBlock__leftBlock-item">
+
+                                                    <p className="filtersBlock__item-text">Sort By: {sortBlockValue}</p>
+                                                    
+                                                    {/* в onClick указываем значение sortBlockValue на пустую строку,то есть убираем фильтр сортировки товаров */}
+                                                    <button className="filtersBlock__item-btn" onClick={()=>setSortBlockValue('')}>
+                                                        <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
+                                                    </button>
+                                                </div> 
+                                            }
+
+
+                                        </div>
+
+                                        <div className="productsBlock__filtersBlock-amountBlock">
+                                            <p className="filtersBlock__amountBlock-amount">0</p>
+                                            <p className="filtersBlock__amountBlock-text">Results found.</p>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>

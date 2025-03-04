@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Miniver&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* импортируем шрифты из google fonts, копируем эту строку из google fonts,там выбираем get embed code и во вкладке @import копируем это,чтобы подключился нужный шрифт */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Miniver&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); /* импортируем шрифты из google fonts, копируем эту строку из google fonts,там выбираем get embed code и во вкладке @import копируем это,чтобы подключился нужный шрифт */
-
-*,*::after,*::before{
+*,
+*::after,
+*::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -12,15 +14,16 @@
   /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
 }
 
-body{
+body {
   font-size: 16px;
   font-weight: 400;
   font-family: 'Inter', sans-serif;
   color: #030712;
-  overflow-x: hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+  overflow-x: hidden;
+  /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
 }
 
-.container{
+.container {
 
   max-width: 1360px;
   padding: 0 10px;
@@ -28,46 +31,52 @@ body{
 
 }
 
-ul{
+ul {
 
-  list-style: none; /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
+  list-style: none;
+  /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
 
 }
 
-a{
-  color: inherit;  /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
-  text-decoration: none; /* убираем подчеркивание ссылок */
+a {
+  color: inherit;
+  /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
+  text-decoration: none;
+  /* убираем подчеркивание ссылок */
 }
 
 /* указываем такие стили для .wrapper(блока div,который оборачивает header,main и footer),чтобы прибить header и footer,то есть чтобы header был всегда вверху,а footer всегда внизу,вне зависимости от контента на странице */
-.wrapper{
+.wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* указываем,чтобы минимальная высота была 100vh(viewport height,то есть максимальной высоты экрана) */
+  min-height: 100vh;
+  /* указываем,чтобы минимальная высота была 100vh(viewport height,то есть максимальной высоты экрана) */
 }
 
 /* указываем такие стили для .main,чтобы прибить header и footer,то есть чтобы header был всегда вверху,а footer всегда внизу,вне зависимости от контента на странице */
-.main{
-  flex-grow: 1; /* указываем этот стиль,чтобы main растянулся и занял полную середину экрана */
+.main {
+  flex-grow: 1;
+  /* указываем этот стиль,чтобы main растянулся и занял полную середину экрана */
 }
 
-.sectionTop{
+.sectionTop {
   padding: 166px 0;
-  background-image: url('/public/images/sectionTop/elements01.jpg'); /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
+  background-image: url('/public/images/sectionTop/elements01.jpg');
+  /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
   background-position: right;
   background-repeat: no-repeat;
-  transform:translateX(-50%);
+  transform: translateX(-50%);
   opacity: 0;
-  transition:all 1s ease;
+  transition: all 1s ease;
 }
 
-.sectionTop__active{
-  transform:translateX(0);
+.sectionTop__active {
+  transform: translateX(0);
   opacity: 1;
 }
 
 
-.sectionTop__subtitle{
+.sectionTop__subtitle {
   border-radius: 6px;
   max-width: 138px;
   font-size: 12px;
@@ -75,10 +84,10 @@ a{
   color: #166534;
   padding: 6px 10px;
   margin-bottom: 10px;
-  background-image: linear-gradient(to right,rgba(22,163,74,50), rgba(34,197,94,0) 60%);
+  background-image: linear-gradient(to right, rgba(22, 163, 74, 50), rgba(34, 197, 94, 0) 60%);
 }
 
-.sectionTop__title{
+.sectionTop__title {
   font-size: 58px;
   font-weight: 700;
   color: #39245F;
@@ -87,7 +96,7 @@ a{
   margin-bottom: 10px;
 }
 
-.sectionTop__desc{
+.sectionTop__desc {
   font-size: 16px;
   font-weight: 400;
   color: #030712;
@@ -96,52 +105,52 @@ a{
   margin-bottom: 42px;
 }
 
-.sectionTop__link{
+.sectionTop__link {
   background-color: #634C9F;
   padding: 12px 12px 12px 18px;
   display: flex;
   align-items: center;
-  gap:8px;
+  gap: 8px;
   max-width: 136px;
   border-radius: 8px;
   position: relative;
 }
 
-.sectionTop__link::before{
+.sectionTop__link::before {
   content: "";
   width: 0;
   height: 50px;
   background-color: transparent;
   border-radius: 8px;
   opacity: 0;
-  transition:all 1s ease;
+  transition: all 1s ease;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.sectionTop__link:hover{
+.sectionTop__link:hover {
   cursor: pointer;
 }
 
-.sectionTop__link:hover.sectionTop__link::before{
+.sectionTop__link:hover.sectionTop__link::before {
   opacity: 1;
   animation: sectionTopLinkAnim 1s linear forwards;
 }
 
-.sectionTop__link:hover .sectionTop__link-arrowImg{
+.sectionTop__link:hover .sectionTop__link-arrowImg {
   animation: sectionTopLinkArrowAnim 1s ease 1s infinite;
 }
 
-.sectionTop__link-text{
+.sectionTop__link-text {
   font-size: 14px;
   font-weight: 700;
   color: #fff;
 }
 
 @keyframes sectionTopLinkAnim {
-  
-  0%{
+
+  0% {
     width: 0px;
     border-left: 2px solid #fff;
     border-top: 2px solid #fff;
@@ -149,7 +158,7 @@ a{
     border-right: none;
   }
 
-  50%{
+  50% {
     width: 69px;
     border-left: 2px solid #fff;
     border-top: 2px solid #fff;
@@ -157,7 +166,7 @@ a{
     border-right: none;
   }
 
-  100%{
+  100% {
     width: 137px;
     border-left: 2px solid #fff;
     border-top: 2px solid #fff;
@@ -169,183 +178,185 @@ a{
 
 @keyframes sectionTopLinkArrowAnim {
 
-  0%{
-    transform:translateX(0);
+  0% {
+    transform: translateX(0);
   }
 
-  50%{
-    transform:translateX(60%);
+  50% {
+    transform: translateX(60%);
   }
 
-  70%{
-    transform:translateX(-30%);
+  70% {
+    transform: translateX(-30%);
   }
 
-  90%{
-    transform:translateX(30%);
+  90% {
+    transform: translateX(30%);
   }
 
-  100%{
-    transform:translateX(0);
+  100% {
+    transform: translateX(0);
   }
 
 }
 
-.sectionCategoryItems{
+.sectionCategoryItems {
   padding: 40px 0;
   transform: translateX(50%);
-  transition:all 1s ease;
+  transition: all 1s ease;
   opacity: 0;
 }
 
-.sectionCategoryItems__active{
+.sectionCategoryItems__active {
   transform: translateX(0);
   opacity: 1;
 }
 
-.sectionCategoryItems__inner{
+.sectionCategoryItems__inner {
   display: flex;
   align-items: center;
   justify-content: space-around;
   gap: 40px;
 }
 
-.sectionCategoryItems__item{
+.sectionCategoryItems__item {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 30px;
   border-radius: 8px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionCategoryItems__item:hover{
+.sectionCategoryItems__item:hover {
   cursor: pointer;
-  background-color: rgba(229,231,235,1);
+  background-color: rgba(229, 231, 235, 1);
 }
 
-.sectionCategoryItems__item-text{
+.sectionCategoryItems__item-text {
   margin-top: 10px;
   font-size: 15px;
   font-weight: 700;
   color: #030712;
 }
 
-.sectionCategoryItems__item-img{
+.sectionCategoryItems__item-img {
   background-color: #E5E7EB;
   border-radius: 50%;
 }
 
 
-.sectionNewArrivals{
+.sectionNewArrivals {
   padding: 60px 0 20px;
   transform: translateX(-50%);
   transition: all 1s ease;
   opacity: 0;
 }
 
-.sectionNewArrivals__active{
+.sectionNewArrivals__active {
   transform: translateX(0);
   opacity: 1;
 }
 
-.sectionOuterGradient{
-  background-image: linear-gradient(rgba(236,235,238,1), rgba(255,255,255,0) 100%);
+.sectionOuterGradient {
+  background-image: linear-gradient(rgba(236, 235, 238, 1), rgba(255, 255, 255, 0) 100%);
   width: 100vw;
 }
 
-.sectionNewArrivals__top{
+.sectionNewArrivals__top {
   margin-bottom: 26px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.sectionNewArrivals__title{
+.sectionNewArrivals__title {
   font-size: 18px;
   font-weight: 700;
   color: #030712;
 }
 
-.sectionNewArrivals__top-link{
+.sectionNewArrivals__top-link {
   padding: 10px 13px;
   border: 1px solid #E5E7EB;
   border-radius: 20px;
   display: flex;
   align-items: center;
-  gap:6px;
-  transition:all .5s ease;
+  gap: 6px;
+  transition: all .5s ease;
   background-color: #fff;
 }
 
-.sectionNewArrivals__top-link:hover{
+.sectionNewArrivals__top-link:hover {
   cursor: pointer;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.sectionNewArrivals__top-link:hover .sectionNewArrivals__top-linkImg{
+.sectionNewArrivals__top-link:hover .sectionNewArrivals__top-linkImg {
   animation: sectionTopLinkArrowAnim 1s ease infinite;
 }
 
-.sectionNewArrivals__top-linkText{
+.sectionNewArrivals__top-linkText {
   font-size: 12px;
   font-weight: 700;
   color: #212529;
 }
 
-.sectionNewArrivals__items{
+.sectionNewArrivals__items {
   display: grid;
-  grid-template-columns: repeat(5,1fr);
+  grid-template-columns: repeat(5, 1fr);
   border: 1px solid #E5E7EB;
   border-radius: 8px;
   background-color: #fff;
 }
 
-.sectionNewArrivals__items-item{
+.sectionNewArrivals__items-item {
   position: relative;
   padding: 15px;
-  transition:all .5s ease;
+  transition: all .5s ease;
   border-right: 1px solid #E5E7EB;
 }
 
-.sectionNewArrivals__item-inner{
+.sectionNewArrivals__item-inner {
   display: flex;
   flex-direction: column;
   justify-content: end;
 }
 
-.sectionNewArrivals__items-itemFirst{
+.sectionNewArrivals__items-itemFirst {
   border-bottom-left-radius: 8px;
   border-top-left-radius: 8px;
 }
 
-.sectionNewArrivals__items-itemLast{
+.sectionNewArrivals__items-itemLast {
   border-bottom-right-radius: 8px;
   border-top-right-radius: 8px;
 }
 
-.sectionNewArrivals__items-itemNoHover{
-  background-color: #fff !important; /* указываем !important,чтобы указать,что этот стиль важный,и чтобы он переписал предыдущий такой стиль,даже если он уже указан,в данном случае указываем так,чтобы применился задний фон белый,делаем это,когда наводим мышкой на кнопку добавления товара в корзину,чтобы задний фон карточки товара стал белый */
+.sectionNewArrivals__items-itemNoHover {
+  background-color: #fff !important;
+  /* указываем !important,чтобы указать,что этот стиль важный,и чтобы он переписал предыдущий такой стиль,даже если он уже указан,в данном случае указываем так,чтобы применился задний фон белый,делаем это,когда наводим мышкой на кнопку добавления товара в корзину,чтобы задний фон карточки товара стал белый */
 }
 
-.sectionNewArrivals__item-img{
-  mix-blend-mode: multiply; /* указываем это картинке,чтобы у нее не было белого заднего фона,когда изменяем фон у всего item(карточки товара) */
+.sectionNewArrivals__item-img {
+  mix-blend-mode: multiply;
+  /* указываем это картинке,чтобы у нее не было белого заднего фона,когда изменяем фон у всего item(карточки товара) */
   align-self: center;
   margin-bottom: 20px;
   max-width: 177px;
   max-height: 175px;
   min-width: 165px;
-  transition:all .5s ease;
+  transition: all .5s ease;
   opacity: 1;
 }
 
-.sectionNewArrivals__item-img:hover{
+.sectionNewArrivals__item-img:hover {
   cursor: pointer;
   opacity: 0.7;
 }
 
 
-.sectionNewArrivals__item-saleBlock{
+.sectionNewArrivals__item-saleBlock {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -361,12 +372,12 @@ a{
   z-index: 2;
 }
 
-.sectionNewArrivals__item-saleBlockHot{
+.sectionNewArrivals__item-saleBlockHot {
   position: absolute;
   top: 50px;
   left: 10px;
   padding: 6px 9px;
-  background-image: linear-gradient(to right,rgba(255,249,89,1),rgba(255,254,229,1) 70%);
+  background-image: linear-gradient(to right, rgba(255, 249, 89, 1), rgba(255, 254, 229, 1) 70%);
   text-transform: uppercase;
   color: #0891B2;
   font-size: 12px;
@@ -375,56 +386,56 @@ a{
   z-index: 2;
 }
 
-.sectionNewArrivals__items-itemNoBorder{
+.sectionNewArrivals__items-itemNoBorder {
   border-right: none;
 }
 
-.sectionNewArrivals__item-text{
+.sectionNewArrivals__item-text {
   font-size: 14px;
   font-weight: 500;
   color: #030712;
   margin-bottom: 10px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionNewArrivals__item-text:hover{
+.sectionNewArrivals__item-text:hover {
   cursor: pointer;
-  color:#EA580C;
+  color: #EA580C;
 }
 
-.sectionNewArrivals__item-starsBlock{
+.sectionNewArrivals__item-starsBlock {
   display: flex;
   align-items: center;
-  gap:7px;
+  gap: 7px;
   margin-bottom: 14px;
 }
 
-.starsBlock__text{
+.starsBlock__text {
   font-size: 12px;
   font-weight: 400;
   color: #6B7280;
 }
 
-.sectionNewArrivals__item-priceBlock{
+.sectionNewArrivals__item-priceBlock {
   display: flex;
   align-items: center;
-  gap:7px;
+  gap: 7px;
 }
 
-.item__priceBlock-priceSale{
+.item__priceBlock-priceSale {
   font-size: 22px;
   font-weight: 700;
   color: #DC2626;
 }
 
-.item__priceBlock-priceUsual{
+.item__priceBlock-priceUsual {
   font-size: 16px;
   font-weight: 500;
   color: #111827;
   position: relative;
 }
 
-.item__priceBlock-priceUsual::after{
+.item__priceBlock-priceUsual::after {
   content: "";
   height: 1px;
   width: 100%;
@@ -434,7 +445,7 @@ a{
   left: 0;
 }
 
-.sectionNewArrivals__cartBlock-btn{
+.sectionNewArrivals__cartBlock-btn {
   padding: 9px 15px;
   background-color: #fff;
   border: 1px solid #634c9f;
@@ -444,110 +455,110 @@ a{
   justify-content: space-between;
   width: 100%;
   margin-top: 13px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
 
-.sectionNewArrivals__cartBlock-btn:hover{
+.sectionNewArrivals__cartBlock-btn:hover {
   background-color: rgba(177, 161, 216, 0.3);
-  border:1px solid #fff;
+  border: 1px solid #fff;
   cursor: pointer;
 }
 
-.sectionNewArrivals__cartBlock-btn:hover .cartBlock__btn-img{
+.sectionNewArrivals__cartBlock-btn:hover .cartBlock__btn-img {
   animation: cartBlockBtnImg 1s ease infinite;
 }
 
-@keyframes cartBlockBtnImg{
+@keyframes cartBlockBtnImg {
 
-  0%{
-    transform:translateX(0);
+  0% {
+    transform: translateX(0);
   }
 
-  50%{
-    transform:translateX(-60%);
+  50% {
+    transform: translateX(-60%);
   }
 
-  70%{
-    transform:translateX(30%);
+  70% {
+    transform: translateX(30%);
   }
 
-  90%{
-    transform:translateX(-30%);
+  90% {
+    transform: translateX(-30%);
   }
 
-  100%{
-    transform:translateX(0);
+  100% {
+    transform: translateX(0);
   }
 
 }
 
-.cartBlock__btn-text{
+.cartBlock__btn-text {
   font-size: 13px;
   font-weight: 500;
   color: #634C9F;
 }
 
 
-.sectionDontMiss{
+.sectionDontMiss {
   padding: 35px 0;
   opacity: 0;
   transform: translateX(50%);
   transition: all 1s ease;
 }
 
-.sectionDontMiss__active{
+.sectionDontMiss__active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionDontMiss__inner{
+.sectionDontMiss__inner {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 30px;
 }
 
-.sectionDontMiss__item{
+.sectionDontMiss__item {
   padding: 20px;
   border-radius: 6px;
 }
 
-.sectionDontMiss__itemProvides{
+.sectionDontMiss__itemProvides {
   background-image: url('/public/images/sectionDontMiss/banner-04.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-.sectionDontMiss__itemShopping{
+.sectionDontMiss__itemShopping {
   background-image: url('/public/images/sectionDontMiss/banner-05.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-.sectionDontMiss__itemGet{
+.sectionDontMiss__itemGet {
   background-image: url('/public/images/sectionDontMiss/banner-06.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-.sectionDontMiss__itemWhere{
+.sectionDontMiss__itemWhere {
   background-image: url('/public/images/sectionDontMiss/banner-07.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
 
-.sectionDontMiss__item-subtitle{
+.sectionDontMiss__item-subtitle {
   font-size: 12px;
   font-weight: 500;
   color: #EA580C;
   margin-bottom: 10px;
 }
 
-.sectionDontMiss__item-title{
+.sectionDontMiss__item-title {
   font-size: 20px;
   font-weight: 700;
   color: #111827;
@@ -555,172 +566,175 @@ a{
   letter-spacing: -0.8px;
 }
 
-.sectionDontMiss__item-desc{
+.sectionDontMiss__item-desc {
   font-size: 13px;
   font-weight: 400;
   color: #6B7280;
   margin-bottom: 20px;
 }
 
-.sectionDontMiss__item-link{
+.sectionDontMiss__item-link {
   max-width: 109px;
   margin-bottom: 200px;
 }
 
 
-.sectionBestSellers{
+.sectionBestSellers {
   padding: 25px 0;
   opacity: 0;
   transform: translateX(-50%);
   transition: all 1s ease;
 }
 
-.sectionBestSellers__active{
+.sectionBestSellers__active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionBestSellers__top{
+.sectionBestSellers__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
 
-.sectionBestSellers__top-leftBlock{
+.sectionBestSellers__top-leftBlock {
   display: flex;
   align-items: center;
-  gap:15px;
+  gap: 15px;
 }
 
-.sectionBestSellers__top-title{
+.sectionBestSellers__top-title {
   font-size: 18px;
   font-weight: 700;
   color: #030712;
   text-transform: uppercase;
 }
 
-.sectionBestSellers__top-text{
+.sectionBestSellers__top-text {
   font-size: 13px;
   font-weight: 400;
   color: #9CA3AF;
   letter-spacing: -0.32px;
 }
 
-.sectionBestSellers__itemsBlock{
+.sectionBestSellers__itemsBlock {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap:20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
   align-items: center;
 }
 
-.sectionBestSellers__itemsBlockSide{
-  border:1px solid #E5E7EB;
+.sectionBestSellers__itemsBlockSide {
+  border: 1px solid #E5E7EB;
   border-radius: 8px;
 }
 
-.sectionBestSellers__itemsBlockSideLeft{
+.sectionBestSellers__itemsBlockSideLeft {
   opacity: 0;
   transform: translateX(-50%);
-  transition:all 1s ease;
-  transition-delay: .5s; /* указываем задержку по времени перед анимацией */
+  transition: all 1s ease;
+  transition-delay: .5s;
+  /* указываем задержку по времени перед анимацией */
 }
 
-.sectionBestSellers__itemsBlockSideLeft-active{
+.sectionBestSellers__itemsBlockSideLeft-active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionBestSellers__itemsBlockSideRight{
+.sectionBestSellers__itemsBlockSideRight {
   opacity: 0;
   transform: translateX(50%);
-  transition:all 1s ease;
-  transition-delay: 1s; /* указываем задержку по времени перед анимацией */
+  transition: all 1s ease;
+  transition-delay: 1s;
+  /* указываем задержку по времени перед анимацией */
 }
 
-.sectionBestSellers__itemsBlockSideRight-active{
+.sectionBestSellers__itemsBlockSideRight-active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionBestSellers__itemsBlock-midBlockPassive{
+.sectionBestSellers__itemsBlock-midBlockPassive {
   opacity: 0;
   transform: translateY(-30%);
-  transition:all 1s ease;
-  transition-delay: 2s; /* указываем задержку по времени перед анимацией */
+  transition: all 1s ease;
+  transition-delay: 2s;
+  /* указываем задержку по времени перед анимацией */
 }
 
-.sectionBestSellers__itemsBlock-midBlock--active{
+.sectionBestSellers__itemsBlock-midBlock--active {
   opacity: 1;
   transform: translateY(0);
 }
 
 
-.sectionBestSellers__itemsBlockSide-item{
+.sectionBestSellers__itemsBlockSide-item {
   position: relative;
   border-right: none;
   border-bottom: 1px solid #E5E7EB;
   display: flex;
   flex-direction: row;
-  gap:25px;
+  gap: 25px;
   padding: 25px;
 }
 
-.sectionBestSellers__itemsBlockSide-itemTop{
+.sectionBestSellers__itemsBlockSide-itemTop {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
 
-.sectionBestSellers__itemsBlockSide-itemLast{
+.sectionBestSellers__itemsBlockSide-itemLast {
   border-bottom: none;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.sectionBestSellers__cartBlock-btn{
+.sectionBestSellers__cartBlock-btn {
   left: auto;
   right: 20px;
   bottom: 70px;
 }
 
-.sectionBestSellers__cartBlock-btn{
+.sectionBestSellers__cartBlock-btn {
   gap: 60px;
 }
 
-.sectionBestSellers__cartBlock-btnLast{
+.sectionBestSellers__cartBlock-btnLast {
   bottom: 60px;
 }
 
-.sectionBestSellers__midBlock-item{
+.sectionBestSellers__midBlock-item {
   display: flex;
   flex-direction: column;
   padding: 24px;
   border-radius: 8px;
-  border:4px solid #DC2626;
+  border: 4px solid #DC2626;
 }
 
-.sectionBestSellers__midItem-imgBlock{
+.sectionBestSellers__midItem-imgBlock {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.sectionBestSellers__midBlock-itemImg{
+.sectionBestSellers__midBlock-itemImg {
   max-width: none;
   max-height: none;
 }
 
-.sectionBestSellers__midItem-text{
+.sectionBestSellers__midItem-text {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 13px;
 }
 
-.sectionBestSellers__midItem-starsBlock{
+.sectionBestSellers__midItem-starsBlock {
   margin-bottom: 7px;
 }
 
-.sectoinBestSellers__midBlock-itemDesc{
+.sectoinBestSellers__midBlock-itemDesc {
   font-size: 13px;
   font-weight: 400;
   color: #4B5563;
@@ -730,7 +744,7 @@ a{
   border-bottom: 1px solid #E5E7EB;
 }
 
-.sectionBestSellers__midBlock-itemSubDesc{
+.sectionBestSellers__midBlock-itemSubDesc {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: -0.32px;
@@ -739,84 +753,86 @@ a{
   margin-top: 12px;
 }
 
-.sectionBestSellers__midBlock-itemGradient{
+.sectionBestSellers__midBlock-itemGradient {
   width: 100%;
   height: 6px;
-  background-image: linear-gradient( to right, rgba(255,210,0,1),rgba(220,38,38,1));
+  background-image: linear-gradient(to right, rgba(255, 210, 0, 1), rgba(220, 38, 38, 1));
   border-radius: 6px;
 }
 
-.sectionBestSellers__midItem-cartBtn{
+.sectionBestSellers__midItem-cartBtn {
   width: 100%;
   justify-content: space-between;
   margin-top: 25px;
 }
 
-.sectionPromo{
+.sectionPromo {
   padding: 30px 0 90px;
 }
 
-.sectionPromo__promoTop{
+.sectionPromo__promoTop {
   padding: 21px 31px;
-  background-image: url('/public/images/sectionPromo/promoImg.png'); /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
+  background-image: url('/public/images/sectionPromo/promoImg.png');
+  /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
   background-repeat: no-repeat;
   background-position: center;
   margin-bottom: 30px;
   border-radius: 6px;
   border: 1px solid #FFF7ED;
-  background-size: contain; /* указываем это свойство,чтобы виднелась граница блока,у которого картинка на заднем фоне,иначе не видно границы(border),даже когда ее указываешь */
+  background-size: contain;
+  /* указываем это свойство,чтобы виднелась граница блока,у которого картинка на заднем фоне,иначе не видно границы(border),даже когда ее указываешь */
 }
 
-.sectionPromo__promoTop-title{
+.sectionPromo__promoTop-title {
   font-size: 22px;
   font-weight: 700;
   color: #EA580C;
 }
 
-.sectionPromo__promoTop-desc{
+.sectionPromo__promoTop-desc {
   font-size: 14px;
   font-weight: 400;
   color: #6B7280;
   letter-spacing: -0.32px;
 }
 
-.sectionPromo__sales{
+.sectionPromo__sales {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
 
-.sectionPromo__sales-item{
+.sectionPromo__sales-item {
   border-radius: 6px;
   padding: 33px 20px;
 }
 
-.sectionPromo__sales-itemFirst{
+.sectionPromo__sales-itemFirst {
   background-image: url('/public/images/sectionPromo/banner-17.jpg');
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.sectionPromo__sales-itemSecond{
+.sectionPromo__sales-itemSecond {
   background-image: url('/public/images/sectionPromo/banner-18.jpg');
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.sectionPromo__sales-itemThird{
+.sectionPromo__sales-itemThird {
   background-image: url('/public/images/sectionPromo/banner-19.jpg');
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.sectionPromo__item-subtitle{
+.sectionPromo__item-subtitle {
   font-size: 12px;
   font-weight: 500;
   color: #EA580C;
   margin-bottom: 10px;
 }
 
-.sectionPromo__item-title{
+.sectionPromo__item-title {
   font-size: 22px;
   font-weight: 700;
   color: #111827;
@@ -824,19 +840,19 @@ a{
   letter-spacing: -0.88px;
 }
 
-.sectionPromo__item-titleFirst{
+.sectionPromo__item-titleFirst {
   max-width: 211px;
 }
 
-.sectionPromo__item-titleSecond{
+.sectionPromo__item-titleSecond {
   max-width: 235px;
 }
 
-.sectionPromo__item-titleThird{
+.sectionPromo__item-titleThird {
   max-width: 225px;
 }
 
-.sectionPromo__item-text{
+.sectionPromo__item-text {
   font-size: 13px;
   font-weight: 400;
   color: #6B7280;
@@ -844,36 +860,36 @@ a{
   letter-spacing: -0.32px;
 }
 
-.sectionPromo__item-link{
+.sectionPromo__item-link {
   margin-bottom: 0;
 }
 
-.sectionCatalog{
+.sectionCatalog {
   padding: 25px 0 60px;
 }
 
-.sectionCatalog__topBlock{
+.sectionCatalog__topBlock {
   display: flex;
   align-items: center;
-  gap:10px;
+  gap: 10px;
   margin-bottom: 30px;
 }
 
-.sectionCatalog__topBlock-title{
+.sectionCatalog__topBlock-title {
   font-size: 13px;
   font-weight: 400;
   letter-spacing: -0.32px;
   color: #9CA3AF;
 }
 
-.sectionCatalog__topBlock-subtitle{
+.sectionCatalog__topBlock-subtitle {
   font-size: 13px;
   font-weight: 400;
   letter-spacing: -0.32px;
   color: #030712;
 }
 
-.filterBar__categories-title{
+.filterBar__categories-title {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.28px;
@@ -881,55 +897,56 @@ a{
   margin-bottom: 20px;
 }
 
-.sectionCatalog__mainBlock{
+.sectionCatalog__mainBlock {
   display: grid;
   grid-template-columns: 1fr 4fr;
-  gap:30px;
+  gap: 30px;
 }
 
-.sectionCatalog__filterBar-categories{
+.sectionCatalog__filterBar-categories {
   padding-bottom: 20px;
   border-bottom: 1px solid #E5E7EB;
 }
 
-.filterBar__categories-label{
+.filterBar__categories-label {
   display: flex;
   align-items: center;
-  gap:10px;
+  gap: 10px;
   margin-bottom: 14px;
   cursor: pointer;
   max-width: 220px;
 }
 
-.categories__label-input{
+.categories__label-input {
   position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip:rect(0 0 0 0);  /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+  clip: rect(0 0 0 0);
+  /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
 }
 
-.categories__label-radioStyle{
+.categories__label-radioStyle {
   position: absolute;
   width: 20px;
   height: 20px;
-  border:1px solid #D1D5DB;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.categories__label-radioStyle--active{
+.categories__label-radioStyle--active {
   border: 1px solid #634C9F;
 }
 
-.label__radioStyle-before{
+.label__radioStyle-before {
   opacity: 0;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.label__radioStyle-before--active{
-  opacity: 1; 
+.label__radioStyle-before--active {
+  opacity: 1;
   display: block;
   width: 11px;
   height: 11px;
@@ -937,97 +954,98 @@ a{
   position: absolute;
   top: 50%;
   left: 50%;
-  transform:translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
 }
 
-.filterBar__categories-label:hover .categories__label-radioStyle{
+.filterBar__categories-label:hover .categories__label-radioStyle {
   border: 1px solid #634c9f;
 }
 
-.filterBar__categories-label:hover .categories__label-text{
-  color: rgba(99, 76, 159,0.8);
+.filterBar__categories-label:hover .categories__label-text {
+  color: rgba(99, 76, 159, 0.8);
 }
 
-.filterBar__categories-label:hover .categories__label-text--active{
-  color: rgba(99, 76, 159,1);
+.filterBar__categories-label:hover .categories__label-text--active {
+  color: rgba(99, 76, 159, 1);
 }
 
-.categories__label-text{
+.categories__label-text {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.32px;
   color: #030712;
   margin-left: 28px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.categories__label-text--active{
+.categories__label-text--active {
   color: #634C9F;
 }
 
-.categories__label-amount{
+.categories__label-amount {
   font-size: 14px;
   color: #808080;
   opacity: 1;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
 
-.filterBar__priceFilterBlock{
+.filterBar__priceFilterBlock {
   margin-top: 25px;
   padding-bottom: 20px;
   border-bottom: 1px solid #E5E7EB;
 }
 
-.priceFilterBlock__title{
+.priceFilterBlock__title {
   margin-bottom: 20px;
 }
 
-.priceFilterBlock__inputRangeSlider{
+.priceFilterBlock__inputRangeSlider {
   width: 100%;
   height: 3px;
   margin-bottom: 20px;
 }
 
 /* стили для всей полоски инпута range у ReactSlider */
-.priceFilterBlock__inputRangeSlider .inputRangeSlider__track{
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__track {
   height: 3px;
 }
 
-.priceFilterBlock__inputRangeSlider .inputRangeSlider__track:hover{
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__track:hover {
   cursor: pointer;
 }
 
 /* стили для полоски до первого ползунка */
-.inputRangeSlider__track.inputRangeSlider__track-0{
+.inputRangeSlider__track.inputRangeSlider__track-0 {
   background-color: #D1D5DB;
   border-radius: 10px;
 }
 
 /* стили для полоски между ползунками */
-.inputRangeSlider__track.inputRangeSlider__track-1{
+.inputRangeSlider__track.inputRangeSlider__track-1 {
   background-color: #111827;
 }
 
 /* стили для полоски после второго ползунка */
-.inputRangeSlider__track.inputRangeSlider__track-2{
+.inputRangeSlider__track.inputRangeSlider__track-2 {
   background-color: #D1D5DB;
   border-radius: 10px;
 }
 
 /* стили для 1 ползунка инпута(слайдера) */
-.priceFilterBlock__inputRangeSlider .inputRangeSlider__thumb{
+.priceFilterBlock__inputRangeSlider .inputRangeSlider__thumb {
   top: -5px;
   width: 14px;
   height: 14px;
   background-color: #111827;
   cursor: pointer;
   border-radius: 50%;
-  overflow: hidden; /* указываем это свойство,чтобы не были видны цифры внутри кнопки ползунка,которые по дефолту есть в ReactSlider */
+  overflow: hidden;
+  /* указываем это свойство,чтобы не были видны цифры внутри кнопки ползунка,которые по дефолту есть в ReactSlider */
 }
 
-.priceFilterBlock__text{
+.priceFilterBlock__text {
   font-size: 14px;
   font-weight: 400;
   color: #030712;
@@ -1035,13 +1053,13 @@ a{
 }
 
 
-.sectionCatalog__productsBlock-searchBlock{
+.sectionCatalog__productsBlock-searchBlock {
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: space-between;
 }
 
-.productsBlock__searchBlock-input{
+.productsBlock__searchBlock-input {
   padding: 14.5px 43px 14.5px 18px;
   border-radius: 8px;
   background-color: #F3F4F6;
@@ -1050,44 +1068,44 @@ a{
   min-width: 300px;
 }
 
-.productsBlock__searchBlock-input::placeholder{
+.productsBlock__searchBlock-input::placeholder {
   letter-spacing: -0.28px;
   font-size: 14px;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #6B7280;
 }
 
-.productsBlock__searchBlock-inputBlock{
+.productsBlock__searchBlock-inputBlock {
   position: relative;
 }
 
-.searchBlock__inputBlock-inputImg{
+.searchBlock__inputBlock-inputImg {
   position: absolute;
   top: 11px;
   right: 12px;
 }
 
-.searchBlock__sortBlock{
+.searchBlock__sortBlock {
   display: flex;
   align-items: center;
-  gap:15px;
+  gap: 15px;
 }
 
-.sortBlock__text{
+.sortBlock__text {
   font-size: 16px;
   font-weight: 400;
   color: #020617;
   letter-spacing: -0.24px;
 }
 
-.sortBlock__inner{
+.sortBlock__inner {
   position: relative;
 }
 
-.sortBlock__topBlock{
+.sortBlock__topBlock {
   display: flex;
   align-items: center;
-  gap:50px;
+  gap: 50px;
   justify-content: space-between;
   padding: 14px 18px;
   background-color: #F3F4F6;
@@ -1097,31 +1115,31 @@ a{
   min-height: 45px;
 }
 
-.sortBlock__topBlock-text{
+.sortBlock__topBlock-text {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.32px;
   color: #9CA3AF;
   opacity: 0;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sortBlock__topBlock-text--active{
+.sortBlock__topBlock-text--active {
   opacity: 1;
 }
 
 
 
-.sortBlock__topBlock-img{
-  transform:rotate(0deg);
-  transition:all .5s ease;
+.sortBlock__topBlock-img {
+  transform: rotate(0deg);
+  transition: all .5s ease;
 }
 
-.sortBlock__topBlock-img--active{
-  transform:rotate(180deg);
+.sortBlock__topBlock-img--active {
+  transform: rotate(180deg);
 }
 
-.sortBlock__optionsBlock{
+.sortBlock__optionsBlock {
   max-height: 0;
   position: absolute;
   top: 50px;
@@ -1130,31 +1148,109 @@ a{
   background-color: #fff;
   width: 100%;
   border-radius: 6px;
-  box-shadow: 1px 1px 5px rgba(0,0,0,0.15);
-  transition:all 1s ease;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+  transition: all 1s ease;
   z-index: -2;
-  overflow: hidden;  /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
+  overflow: hidden;
+  /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
 }
 
-.sortBlock__optionsBlock--active{
+.sortBlock__optionsBlock--active {
   max-height: 100px;
   opacity: 1;
   z-index: 5;
 }
 
-.sortBlock__optionsBlock-item{
+.sortBlock__optionsBlock-item {
   padding: 12px 0 10px 10px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sortBlock__optionsBlock-item:hover{
+.sortBlock__optionsBlock-item:hover {
   cursor: pointer;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.optionsBlock__item-text{
+.optionsBlock__item-text {
   font-size: 14px;
   font-weight: 400;
   color: #020617;
   letter-spacing: -0.32px;
+}
+
+.sectionCatalog__productsBlock-products {
+  margin-top: 20px;
+}
+
+.productsBlock__filtersBlock {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  border-top: 1px solid #F3F4F6;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.productsBlock__filtersBlock-leftBlock {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.filtersBlock__leftBlock-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  animation: appear 1s ease forwards;
+}
+
+.filtersBlock__leftBlock-text,
+.filtersBlock__amountBlock-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: #020617;
+  letter-spacing: -0.24px;
+}
+
+.filtersBlock__item-text {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: #555555;
+  animation: appear 1s ease forwards;
+}
+
+.filtersBlock__item-btn{
+  background-color: #fff;
+  border: none;
+  align-self: end;
+  transition: opacity .5s ease;
+}
+
+.filtersBlock__item-btn:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.productsBlock__filtersBlock-amountBlock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filtersBlock__amountBlock-amount{
+  font-weight: 600;
+  font-size: 14px;
+  color: #000;
+}
+
+@keyframes appear {
+  0%{
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 1;
+  }
 }
