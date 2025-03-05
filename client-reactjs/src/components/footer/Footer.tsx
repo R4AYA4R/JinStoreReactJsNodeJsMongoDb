@@ -82,7 +82,7 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className={cl.footer__bottomBlock}>
-                        <p className={cl.bottomBlock__text}>Copyright 2024 © Jinstore WooCommerce WordPress Theme. All right reserved. Powered by BlackRise Themes.</p>
+                        <p className={cl.bottomBlock__text}>Copyright 2024 © Jinstore WooCommerce. All rights reserved. Powered by BlackRise Themes.</p>
                     </div>
                 </div>
             </div>

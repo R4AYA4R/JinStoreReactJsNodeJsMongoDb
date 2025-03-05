@@ -900,7 +900,7 @@ a {
 .sectionCatalog__mainBlock {
   display: grid;
   grid-template-columns: 1fr 4fr;
-  gap: 30px;
+  gap: 45px;
 }
 
 .sectionCatalog__filterBar-categories {
@@ -1253,4 +1253,26 @@ a {
   100%{
     opacity: 1;
   }
+}
+
+
+.sectionCatalog__productsBlock-productsItems{
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap:20px;
+}
+
+.sectionCatalog__productsItems-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:0;
+  border:1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.sectionCatalog__productsItem-itemImg{
+  margin-bottom: 5px;
 }

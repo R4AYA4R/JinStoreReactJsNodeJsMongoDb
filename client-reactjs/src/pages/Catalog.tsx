@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import ReactSlider from 'react-slider'; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется,перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
+import ProductItemCatalog from "../components/ProductItemCatalog";
 
 const Catalog = () => {
 
@@ -158,9 +159,9 @@ const Catalog = () => {
                                                     {filterCategories === 'Breads & Bakery' &&
                                                         <p className="filtersBlock__item-text">Breads & Bakery</p>
                                                     }
-                                                    
 
-                                                    <button className="filtersBlock__item-btn" onClick={()=>setFilterCategories('')}>
+
+                                                    <button className="filtersBlock__item-btn" onClick={() => setFilterCategories('')}>
                                                         <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
                                                     </button>
                                                 </div>
@@ -171,9 +172,9 @@ const Catalog = () => {
                                                 <div className="filtersBlock__leftBlock-item">
 
                                                     <p className="filtersBlock__item-text">Price: {filterPrice[0]} - {filterPrice[1]}</p>
-                                                    
+
                                                     {/* в onClick(при нажатии на кнопку) изменяем состояние filterPrice на массив со значениями 0 и 50(дефолтные значения минимального и максимального значения фильтра цены),то есть убираем фильтр цены */}
-                                                    <button className="filtersBlock__item-btn" onClick={()=>setFilterPrice([0,50])}>
+                                                    <button className="filtersBlock__item-btn" onClick={() => setFilterPrice([0, 50])}>
                                                         <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
                                                     </button>
                                                 </div> : ''
@@ -184,12 +185,12 @@ const Catalog = () => {
                                                 <div className="filtersBlock__leftBlock-item">
 
                                                     <p className="filtersBlock__item-text">Sort By: {sortBlockValue}</p>
-                                                    
+
                                                     {/* в onClick указываем значение sortBlockValue на пустую строку,то есть убираем фильтр сортировки товаров */}
-                                                    <button className="filtersBlock__item-btn" onClick={()=>setSortBlockValue('')}>
+                                                    <button className="filtersBlock__item-btn" onClick={() => setSortBlockValue('')}>
                                                         <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
                                                     </button>
-                                                </div> 
+                                                </div>
                                             }
 
 
@@ -201,6 +202,11 @@ const Catalog = () => {
                                         </div>
                                     </div>
 
+                                    <div className="sectionCatalog__productsBlock-productsItems">
+
+                                        <ProductItemCatalog/>
+
+                                    </div>
 
                                 </div>
                             </div>
