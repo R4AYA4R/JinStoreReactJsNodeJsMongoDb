@@ -628,6 +628,7 @@ a {
 .sectionBestSellers__itemsBlockSide {
   border: 1px solid #E5E7EB;
   border-radius: 8px;
+  background-color: #FAFAFA; /* указываем задний фон этому item,иначе не убирается задний белый фон у картинок,даже с включенным mix-blend-mode:multiply */
 }
 
 .sectionBestSellers__itemsBlockSideLeft {
@@ -657,6 +658,7 @@ a {
 }
 
 .sectionBestSellers__itemsBlock-midBlockPassive {
+  background-color: #FAFAFA;
   opacity: 0;
   transform: translateY(-30%);
   transition: all 1s ease;

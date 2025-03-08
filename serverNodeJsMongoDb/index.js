@@ -13,6 +13,7 @@ import dotenv from 'dotenv';  // импортируем dotenv(в данном �
 import express from 'express'; // импортируем express(express типа для node js express,в данном случае импортируем это вручную,потому что автоматически не импортируется)
 import errorMiddleware from './middlewares/errorMiddleware.js';  // указываем здесь вручную расширение файла .js,иначе выдает ошибку,что не может найти файл
 import mongoose from 'mongoose';
+import productModel from './models/productModel.js';
 
 dotenv.config();
 
@@ -37,6 +38,28 @@ const start = async () => {
         await mongoose.connect(process.env.DB_URL); // подключаемся к базе данных,используя функцию connect(),в ее параметрах указываем ссылку для подключения к базе данных,которую взяли на сайте mongodb,в данном случае вынесли эту ссылку в конфигурационный файл .env,и берем его оттуда с помощью process.env,в этой ссылке для подключения к базе данных mongoDb нужно будет вставить(указать) пароль пользователя в эту строку вместо <db_password>,который указывали при создании кластера(cluster) на сайте mongoDb
 
         app.listen(PORT,() => console.log(`Server started on PORT = ${PORT}`)); // запускаем сервер,говоря ему прослушивать порт 5000(указываем первым параметром у listen() нашу переменную PORT) с помощью listen(),и вторым параметром указываем функцию,которая выполнится при успешном запуске сервера
+
+        // использовали это 1 раз,чтобы создать такие объекты в базе данных 1 раз,чтобы они просто там были,после этого этот код закомментировали
+        // await productModel.create({name:"Simply Orange Pulp Free Juice – 52 fl oz",category:"Beverages",price:4.13,priceDiscount:2.45,priceFilter:"Under $10",amount:1,rating:0,totalPrice:4.13,totalPriceDiscount:2.45,mainImage:"ItemImg (3).png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"California Pizza Kitchen Margherita, Crispy Thin",category:"Breads & Bakery",price:5.27,priceFilter:"Under $10",amount:1,rating:0,totalPrice:5.27,mainImage:"ItemImg (2).png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"Cantaloupe Melon Fresh Organic Cut",category:"Fruits & Vegetables",price:2.98,priceDiscount:1.35,priceFilter:"Under $10",amount:1,rating:0,totalPrice:2.98,totalPriceDiscount:1.35,mainImage:"ItemImg (6).png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"100 Percent Apple Juice – 64 fl oz Bottle",category:"Beverages",price:1.99,priceDiscount:0.50,priceFilter:"Under $10",amount:1,rating:0,totalPrice:1.99,totalPriceDiscount:0.50,mainImage:"ItemImg (5).png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"Great Value Rising Crust Frozen Pizza, Supreme",category:"Breads & Bakery",price:14.77,priceFilter:"Under $10",amount:1,rating:0,totalPrice:14.77,mainImage:"ItemImg (4).png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"USDA Choice Angus Beef T - Bone Steak – 0.70-1.50 lbs",category:"Meats & Seafood",price:14.35,priceDiscount:12.89,priceFilter:"Under $10",amount:1,rating:0,totalPrice:14.35,totalPriceDiscount:12.89,mainImage:"BeefImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"All Natural 85_15 Ground Beef – 1lb",category:"Meats & Seafood",price:8.75,priceFilter:"Under $10",amount:1,rating:0,totalPrice:8.75,mainImage:"GroundBeefImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"A&W Caffeine-Free, Low Sodium Root Beer Soda Pop, 2 Liter Bottles",category:"Beverages",price:11.20,priceDiscount:9.50,priceFilter:"Under $10",amount:1,rating:0,totalPrice:11.20,totalPriceDiscount:9.50,mainImage:"BeerImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"Absolut Grapefruit Paloma Sparkling Vodka Cocktail – 355ml",category:"Beverages",price:9.99,priceDiscount:6.99,priceFilter:"Under $10",amount:1,rating:0,totalPrice:9.99,totalPriceDiscount:6.99,mainImage:"VodkaImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // await productModel.create({name:"Real Plant-Powered Protein Shake – Double Chocolate",category:"Beverages",price:17.59,priceFilter:"Under $10",amount:1,rating:0,totalPrice:17.59,mainImage:"ChocolateImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
 
     }catch(e){
         console.log(e);
