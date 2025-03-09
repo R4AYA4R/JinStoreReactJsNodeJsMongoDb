@@ -305,7 +305,11 @@ a {
 .sectionNewArrivals__items {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  border: 1px solid #E5E7EB;
+
+  /* указываем этому блоку для всех items границы(border) сверху,снизу и слева,а самому item указываем границу справа,чтобы не было двойных границ */
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+  border-left: 1px solid #E5E7EB;
   border-radius: 8px;
   background-color: #fff;
 }
