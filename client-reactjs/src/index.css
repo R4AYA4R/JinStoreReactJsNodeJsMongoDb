@@ -428,6 +428,12 @@ a {
   color: #DC2626;
 }
 
+.item__priceBlock-priceUsualDefault{
+  font-size: 22px;
+  font-weight: 500;
+  color: #111827;
+}
+
 .item__priceBlock-priceUsual {
   font-size: 16px;
   font-weight: 500;
