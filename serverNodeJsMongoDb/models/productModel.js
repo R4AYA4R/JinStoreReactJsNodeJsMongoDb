@@ -10,6 +10,8 @@ const ProductSchema = new Schema({
 
     category:{type:String,required:true},
 
+    descText:{type:String,required:true},
+
     price:{type:Number,required:true}, // указываем этому полю тип Number(для любых чисел,обычных и с запятой типа float)
 
     priceDiscount:{type:Number}, // указываем поле для цены со скидкой,не указываем ему,что оно должно быть обязательным,так как не у всех товаров будет скидка и потом будем просто проверять,есть ли это поле у товара или нет

@@ -332,6 +332,12 @@ a {
   border-top-left-radius: 8px;
 }
 
+/* используем тут модификатор nth-child(),чтобы указать определенному item с таким классом по счету(в данном случае 3) радиус правой границы border-bottom-right-radius и тд */
+.sectionNewArrivals__items-itemFirst:nth-child(5){
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
 .sectionNewArrivals__items-itemLast {
   border-bottom-right-radius: 8px;
   border-top-right-radius: 8px;
@@ -636,10 +642,14 @@ a {
 }
 
 .sectionBestSellers__itemsBlockSide {
-  border: 1px solid #E5E7EB;
+  border-top: 1px solid #E5E7EB;
+  border-left: 1px solid #E5E7EB;
+  border-right: 1px solid #E5E7EB;
   border-radius: 8px;
   background-color: #FAFAFA; /* указываем задний фон этому item,иначе не убирается задний белый фон у картинок,даже с включенным mix-blend-mode:multiply */
 }
+
+
 
 .sectionBestSellers__itemsBlockSideLeft {
   opacity: 0;
@@ -690,6 +700,12 @@ a {
   flex-direction: row;
   gap: 25px;
   padding: 25px;
+}
+
+/* используем тут модификатор nth-child(),чтобы указать определенному item с таким классом по счету(в данном случае 3) радиус нижней границы border-bottom-right-radius и тд */
+.sectionBestSellers__itemsBlockSide-item:nth-child(3){
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .sectionBestSellers__itemsBlockSide-itemTop {

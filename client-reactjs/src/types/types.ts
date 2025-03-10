@@ -4,6 +4,7 @@ export interface IProduct{
     _id:string, // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием 
     name:string,
     category:string,
+    descText:string,
     price:number,
     priceDiscount:number, // указываем это поле для цены со скидкой
     priceFilter:string,
