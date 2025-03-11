@@ -44,7 +44,13 @@ const ProductItemSideBestSellers = ({ product }: IProductItemSideBestSellers) =>
                 <img src={`/images/sectionNewArrivals/${product.mainImage}`} alt="" className="sectionNewArrivals__item-img" onClick={() => router(`/catalog/${product._id}`)} />
             </div>
             <div className="sectionBestSellers__item-infoBlock">
-                <p className="sectionNewArrivals__item-text" onClick={() => router(`/catalog/${product._id}`)}>{product.name}</p>
+
+                {/* если product.name.length > 52,то есть длина названия по количеству символов больше 52(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 48 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
+                {product.name.length > 52 ?
+                    <p className="sectionNewArrivals__item-text sectionBestSellers__item-infoBlock-text" onClick={() => router(`/catalog/${product._id}`)}>{(product.name).substring(0, 48)}...</p>
+                    : <p className="sectionNewArrivals__item-text sectionBestSellers__item-infoBlock-text" onClick={() => router(`/catalog/${product._id}`)}>{product.name}</p>
+                }
+
                 <div className="sectionNewArrivals__item-starsBlock">
                     <div className="sectionNewArrivals__item-stars">
                         <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />

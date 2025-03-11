@@ -333,7 +333,7 @@ a {
 }
 
 /* используем тут модификатор nth-child(),чтобы указать определенному item с таким классом по счету(в данном случае 3) радиус правой границы border-bottom-right-radius и тд */
-.sectionNewArrivals__items-itemFirst:nth-child(5){
+.sectionNewArrivals__items-itemFirst:nth-child(5) {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
@@ -404,8 +404,15 @@ a {
   font-size: 14px;
   font-weight: 500;
   color: #030712;
-  margin-bottom: 10px;
   transition: all .5s ease;
+  margin-bottom: 10px;
+  max-height: 35px;
+  max-width: 202px;
+  overflow: hidden;
+}
+
+.sectionNewArrivals__item-textSpan {
+  align-self: end;
 }
 
 .sectionNewArrivals__item-text:hover {
@@ -438,7 +445,7 @@ a {
   color: #DC2626;
 }
 
-.item__priceBlock-priceUsualDefault{
+.item__priceBlock-priceUsualDefault {
   font-size: 22px;
   font-weight: 500;
   color: #111827;
@@ -646,7 +653,8 @@ a {
   border-left: 1px solid #E5E7EB;
   border-right: 1px solid #E5E7EB;
   border-radius: 8px;
-  background-color: #FAFAFA; /* указываем задний фон этому item,иначе не убирается задний белый фон у картинок,даже с включенным mix-blend-mode:multiply */
+  background-color: #FAFAFA;
+  /* указываем задний фон этому item,иначе не убирается задний белый фон у картинок,даже с включенным mix-blend-mode:multiply */
 }
 
 
@@ -703,7 +711,7 @@ a {
 }
 
 /* используем тут модификатор nth-child(),чтобы указать определенному item с таким классом по счету(в данном случае 3) радиус нижней границы border-bottom-right-radius и тд */
-.sectionBestSellers__itemsBlockSide-item:nth-child(3){
+.sectionBestSellers__itemsBlockSide-item:nth-child(3) {
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
 }
@@ -717,6 +725,10 @@ a {
   border-bottom: none;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
+}
+
+.sectionBestSellers__item-infoBlock-text{
+  max-height: 50px;
 }
 
 .sectionBestSellers__cartBlock-btn {
@@ -756,6 +768,7 @@ a {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 13px;
+  max-width: 379px;
 }
 
 .sectionBestSellers__midItem-starsBlock {
@@ -1249,14 +1262,14 @@ a {
   animation: appear 1s ease forwards;
 }
 
-.filtersBlock__item-btn{
+.filtersBlock__item-btn {
   background-color: #fff;
   border: none;
   align-self: end;
   transition: opacity .5s ease;
 }
 
-.filtersBlock__item-btn:hover{
+.filtersBlock__item-btn:hover {
   cursor: pointer;
   opacity: 0.5;
 }
@@ -1267,40 +1280,42 @@ a {
   gap: 5px;
 }
 
-.filtersBlock__amountBlock-amount{
+.filtersBlock__amountBlock-amount {
   font-weight: 600;
   font-size: 14px;
   color: #000;
 }
 
 @keyframes appear {
-  0%{
+  0% {
     opacity: 0;
   }
 
-  100%{
+  100% {
     opacity: 1;
   }
 }
 
 
-.sectionCatalog__productsBlock-productsItems{
+.sectionCatalog__productsBlock-productsItems {
   margin-top: 20px;
   display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap:20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
-.sectionCatalog__productsItems-item{
+.sectionCatalog__productsItems-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap:0;
-  border:1px solid #E5E7EB;
+  justify-content: space-between;
+  /* указываем в данном случае этот стиль,чтобы товары стали одинаковыми по размеру и растянулись ровно,даже если у них разная длинна названия и тд */
+  gap: 0;
+  border: 1px solid #E5E7EB;
   border-radius: 6px;
   padding: 20px;
 }
 
-.sectionCatalog__productsItem-itemImg{
+.sectionCatalog__productsItem-itemImg {
   margin-bottom: 5px;
 }

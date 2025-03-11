@@ -51,7 +51,12 @@ const ProductItemMidBlockBestSellers = ({ product }: IProductItemMidBlockBestSel
                 </div>
                 <p className="starsBlock__text">(0)</p>
             </div>
-            <p className="sectionNewArrivals__item-text sectionBestSellers__midItem-text" onClick={() => router(`/catalog/${product._id}`)}>{product.name}</p>
+
+            {/* если product.name.length > 52,то есть длина названия по количеству символов больше 52(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 48 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
+            {product.name.length > 57 ?
+                <p className="sectionNewArrivals__item-text sectionBestSellers__midItem-text" onClick={() => router(`/catalog/${product._id}`)}>{(product.name).substring(0, 57)}...</p>
+                : <p className="sectionNewArrivals__item-text sectionBestSellers__midItem-text" onClick={() => router(`/catalog/${product._id}`)}>{product.name}</p>
+            }
 
             {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
             {product.priceDiscount ?

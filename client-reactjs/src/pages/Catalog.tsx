@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 
 import ReactSlider from 'react-slider'; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется,перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import ProductItemCatalog from "../components/ProductItemCatalog";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { IProduct } from "../types/types";
 
 const Catalog = () => {
 
@@ -12,6 +15,20 @@ const Catalog = () => {
     const [activeSortBlock, setActiveSortBlock] = useState(false);
 
     const [sortBlockValue, setSortBlockValue] = useState('');
+
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
+    const { data } = useQuery({
+        queryKey: ['getAllProducts'],
+        queryFn: async () => {
+            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProductsCatalog'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
+
+            console.log(response.data);
+
+            return response; // возвращаем этот массив объектов товаров(он будет помещен в поле data у data,которую мы берем из этого useQuery)
+
+        }
+
+    })
 
 
     const sortItemHandlerRating = () => {
@@ -204,7 +221,11 @@ const Catalog = () => {
 
                                     <div className="sectionCatalog__productsBlock-productsItems">
 
-                                        <ProductItemCatalog/>
+                                        {data?.data.map(product =>
+
+                                            <ProductItemCatalog key={product._id} product={product}/>
+
+                                        )}
 
                                     </div>
 
