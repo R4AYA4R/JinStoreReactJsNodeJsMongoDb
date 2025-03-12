@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import ReactSlider from 'react-slider'; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется,перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import ProductItemCatalog from "../components/ProductItemCatalog";
@@ -7,6 +7,8 @@ import axios from "axios";
 import { IProduct } from "../types/types";
 
 const Catalog = () => {
+
+    const [searchValue,setSearchValue] = useState(''); // состояние для инпута поиска
 
     const [filterCategories, setFilterCategories] = useState('');
 
@@ -17,10 +19,15 @@ const Catalog = () => {
     const [sortBlockValue, setSortBlockValue] = useState('');
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
-    const { data } = useQuery({
+    const { data,refetch } = useQuery({
         queryKey: ['getAllProducts'],
         queryFn: async () => {
-            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProductsCatalog'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
+
+            // выносим url на получение товаров в отдельную переменную,чтобы ее потом изменять
+            let url = `http://localhost:5000/api/getProductsCatalog?name=${searchValue}`;
+
+            // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IResponseCatalog,у этого объекта будут поля products(объекты товаров из базы данных для отдельной страници пагинации) и allProducts(все объекты товаров из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов товаров и использовать для пагинации),вместо url будет подставлено значение,которое есть у нашей переменной url
+            const response = await axios.get<IProduct[]>(url);  // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
 
             console.log(response.data);
 
@@ -31,6 +38,14 @@ const Catalog = () => {
     })
 
 
+    // функция при изменении значения инпута поиска,указываем параметр e как тип ChangeEvent у в generic у него указываем HTMLInputElement
+    const searchValueHandler = (e:ChangeEvent<HTMLInputElement>) => {
+
+        setSearchValue(e.target.value);
+
+
+    }
+
     const sortItemHandlerRating = () => {
 
         setSortBlockValue('Rating'); // изменяем состояние sortBlockValue на значение Rating
@@ -38,6 +53,13 @@ const Catalog = () => {
         setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
 
     }
+
+    // указываем в массиве зависимостей этого useEffect data?.products(массив объектов блюд для отдельной страницы пагинации),чтобы делать повторный запрос на получения объектов товаров при изменении data?.products,в данном случае это для пагинации,если не указать data?.products,то пагинация при запуске страницы не будет работать
+    useEffect(()=>{
+
+        refetch();  // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
+
+    },[searchValue])
 
     return (
         <main className="main">
@@ -132,7 +154,7 @@ const Catalog = () => {
                             <div className="sectionCatalog__mainBlock-productsBlock">
                                 <div className="sectionCatalog__productsBlock-searchBlock">
                                     <div className="productsBlock__searchBlock-inputBlock">
-                                        <input type="text" className="productsBlock__searchBlock-input" placeholder="Search for products..." />
+                                        <input type="text" className="productsBlock__searchBlock-input" placeholder="Search for products..." value={searchValue} onChange={searchValueHandler}/>
                                         <img src="/images/sectionCatalog/SearchImg.png" alt="" className="searchBlock__inputBlock-inputImg" />
                                     </div>
                                     <div className="searchBlock__sortBlock">
