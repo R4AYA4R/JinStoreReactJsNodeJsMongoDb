@@ -727,7 +727,7 @@ a {
   border-bottom-left-radius: 8px;
 }
 
-.sectionBestSellers__item-infoBlock-text{
+.sectionBestSellers__item-infoBlock-text {
   max-height: 50px;
 }
 
@@ -1119,6 +1119,47 @@ a {
 .productsBlock__searchBlock-inputBlock {
   position: relative;
 }
+
+.innerForLoader {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.loader {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px dashed #3589c2;
+  animation: rotate 1s infinite ease;
+}
+
+@keyframes rotate {
+
+  0% {
+
+    transform: rotate(0deg) scale(1);
+
+  }
+
+  100% {
+
+    transform: rotate(360deg) scale(1.2);
+
+  }
+
+}
+
+.productsBlock__notFoundText{
+  margin: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #020617;
+  letter-spacing: -0.32px;
+}
+
 
 .searchBlock__inputBlock-inputImg {
   position: absolute;

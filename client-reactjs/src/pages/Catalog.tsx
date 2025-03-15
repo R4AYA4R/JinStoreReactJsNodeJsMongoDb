@@ -1,10 +1,11 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, RefObject, useEffect, useRef, useState } from "react";
 
 import ReactSlider from 'react-slider'; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется,перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import ProductItemCatalog from "../components/ProductItemCatalog";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IProduct, IResponseCatalog } from "../types/types";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const Catalog = () => {
 
@@ -18,9 +19,14 @@ const Catalog = () => {
 
     const [sortBlockValue, setSortBlockValue] = useState('');
 
+    // скопировали это из файла SectionNewArrivals,так как здесь тоже самое,чтобы дополнительно не писать
+    const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
     const { data, refetch, isFetching } = useQuery({
-        queryKey: ['getAllProducts'],
+        queryKey: ['getAllProductsCatalog'],
         queryFn: async () => {
 
             // выносим url на получение товаров в отдельную переменную,чтобы ее потом изменять
@@ -83,6 +89,24 @@ const Catalog = () => {
 
     }
 
+    // функция для кнопки удаления фильтра цены
+    const removeFilterPrice = () => {
+
+        if (data?.maxPriceAllProducts) {
+
+            setFilterPrice([0, data?.maxPriceAllProducts]); // изменяем состояние фильтра цены на дефолтные значение(0 и priceFilterMax(максимальное значение цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax))
+
+        }
+
+        // используем setTimeout,чтобы сделать повторный запрос на сервер через некоторое время,чтобы успело переобновиться состояние filterPrice,иначе состояние не успевает переобновиться и повторный запрос идет с предыдущими данными filterPrice,в данном случае ставим задержку(то есть через какое время выполниться повторный запрос) 200 миллисекунд(0.2 секунды)
+        setTimeout(() => {
+
+            refetch(); // делаем повторный запрос на сервер,чтобы переобновить данные товаров уже без фильтров цены,делаем так,потому что отдельно отслеживаем события кликов и ползунков у инпута React Slider,поэтому нужно отдельно переобновлять дополнительно данные в функциях изменения фильтра цены
+
+        }, 200);
+
+    }
+
     // при изменении data?.products изменяем значение priceFilterMax на data?.maxPriceAllProducts(максимальное значение цены товара,которое посчитали на бэкэнде)
     useEffect(() => {
 
@@ -119,23 +143,35 @@ const Catalog = () => {
 
         setFilterCategories('');
 
+        setFilterPrice([0, priceFilterMax]); // убираем фильтр цены,изменяем состояние filterPrice для фильтра цены,первым элементом массива указываем значение 0(дефолтное значение фильтра цены),вторым элементом указываем priceFilterMax(максимальное значение цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax)
+
+        // используем setTimeout,чтобы сделать повторный запрос на сервер через некоторое время,чтобы успело переобновиться состояние filterPrice,иначе состояние не успевает переобновиться и повторный запрос идет с предыдущими данными filterPrice,в данном случае ставим задержку(то есть через какое время выполниться повторный запрос) 100 миллисекунд(0.1 секунда)
+        setTimeout(() => {
+
+            refetch(); // делаем повторный запрос на сервер,чтобы переобновить данные товаров уже без фильтров цены,делаем так,потому что отдельно отслеживаем события кликов и ползунков у инпута React Slider,поэтому нужно отдельно переобновлять дополнительно данные в функциях изменения фильтра цены
+
+        }, 100);
+
     }, [searchValue])
 
+    // в данном случае этот код не используем,так как используем метод onAfterChange(когда отпустили ползунок инпута для изменения фильтра цены) у ReactSlider в котором просто делаем повторный запрос на сервер (refetch())
     // при изменении состояния filterPrice,то есть когда пользователь начал изменять значение фильтра цены(то есть начал крутить ползунки для изменения фильтра цены),то делаем запрос на сервер на получение объектов товаров уже с новым фильтром цены,отслеживаем это,чтобы делать запрос на сервер только после того,когда закончил грузиться предыдущий запрос на сервер(лучше еще отслеживать когда пользователь отпустил ползунок фильтра цены и только тогда делать запрос,но в данном случае используем React Slider и там не удобно это отслеживать,но и так нормально),если это не отслеживать,то будут лететь кучи запросов на сервер при изменении значения фильтра цены
-    useEffect(() => {
+    // useEffect(() => {
 
-        // если isFetching false,то есть запрос на сервер для получения объектов блюд сейчас не грузится(делаем эту проверку,чтобы не было много запросов и долго не грузились данные после того,как пользователь зашел на страницу товара и вернулся в каталог)
-        if (!isFetching) {
+    //     // если isFetching false,то есть запрос на сервер для получения объектов блюд сейчас не грузится(делаем эту проверку,чтобы не было много запросов и долго не грузились данные после того,как пользователь зашел на страницу товара и вернулся в каталог)
+    //     if (!isFetching) {
 
-            refetch();
+    //         refetch();
 
-        }
+    //     }
 
-    }, [filterPrice])
+    // }, [filterPrice])
+
 
     return (
         <main className="main">
-            <section className="sectionCatalog">
+            {/* скопировали id и тд из файла sectionNewArrivals,так как здесь такая же анимация и это страница каталога,поэтому здесь не будет такой секции как в sectionNewArrivals,поэтому id будут нормально работать,это просто,чтобы не писать больше дополнительного */}
+            <section className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active sectionCatalog" : "sectionNewArrivals sectionCatalog"}  ref={sectionNewArrivals} id="sectionNewArrivals">
                 <div className="container">
                     <div className="sectionCatalog__inner">
                         <div className="sectionCatalog__topBlock">
@@ -216,9 +252,23 @@ const Catalog = () => {
 
                                         onChange={(value, index) => setFilterPrice(value)} // при изменении изменяем значение состояния массива filterPrice(в параметрах функция callback принимает value(массив текущих значений этого инпута) и index(индекс кнопки элемента массива,то есть за какую кнопку сейчас дергали))
 
+                                        // onAfterChange срабатывает,когда отпустили ползунок у инпута React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда отпустили ползунок у инпута,чтобы переобновить данные товаров уже с новым фильтром цены
+                                        onAfterChange={() => {
+
+                                            refetch();
+
+                                        }}
+
+                                        // onSliderClick срабатывает,когда нажали на инпут React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда нажимаем на React Slider,чтобы переобновить данные товаров уже с новым фильтром цены(если не указать это,то при клике на инпут React Slider значение будет изменяться правильно,а при запросе на сервер будут неправильные значения)
+                                        onSliderClick={() => {
+
+                                            refetch();
+
+                                        }}
+
                                     />
 
-                                    {/* выводим минимальное текущее значение инпута range (наш ReactSlider) по индексу 0 из нашего массива filterPrice (filterPrice[0]) и выводим максимальное текущее значение по индексу 1 из нашего массива filterPrice (filterPrice[1]) */}
+                                    {/* выводим минимальное текущее значение инпута range (наш ReactSlider) по индексу 0 из нашего массива filterPrice (filterPrice[0]) и выводим максимальное текущее значение по индексу 1 из нашего массива filterPrice (filterPrice[1]),используем toFixed(0),чтобы после запятой у этого числа было 0 чисел,иначе могут показываться значения с несколькими числами после запятой */}
                                     <p className="priceFilterBlock__text">Price: ${filterPrice[0]} - ${filterPrice[1].toFixed(0)}</p>
 
                                 </div>
@@ -282,10 +332,10 @@ const Catalog = () => {
                                             {filterPrice[0] !== 0 || filterPrice[1] < priceFilterMax ?
                                                 <div className="filtersBlock__leftBlock-item">
 
-                                                    <p className="filtersBlock__item-text">Price: {filterPrice[0]} - {(filterPrice[1]).toFixed(0)}</p>
+                                                    <p className="filtersBlock__item-text">Price: {filterPrice[0]} - {filterPrice[1].toFixed(0)}</p>
 
                                                     {/* в onClick(при нажатии на кнопку) изменяем состояние filterPrice на массив со значениями 0 и 50(дефолтные значения минимального и максимального значения фильтра цены),то есть убираем фильтр цены */}
-                                                    <button className="filtersBlock__item-btn" onClick={() => setFilterPrice([0, priceFilterMax])}>
+                                                    <button className="filtersBlock__item-btn" onClick={removeFilterPrice}>
                                                         <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnIMg" />
                                                     </button>
                                                 </div> : ''
@@ -313,16 +363,30 @@ const Catalog = () => {
                                         </div>
                                     </div>
 
-                                    <div className="sectionCatalog__productsBlock-productsItems">
 
-                                        {/* проходимся по массиву объектов товаров products,указываем data?.products,так как от сервера в поле data приходит объект с полями products(объекты товаров из базы данных для отдельной страници пагинации) и allProducts(все объекты товаров из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
-                                        {data?.products.map(product =>
 
-                                            <ProductItemCatalog key={product._id} product={product} />
+                                    {/*  указываем если data?.allProducts.length true(то есть количество всех объектов товаров true,то есть они есть) и isFetching false(то есть загрузка запроса на сервер закончена,делаем эту проверку,чтобы когда грузится запрос на сервер показывать лоадер(загрузку) или текст типа Loading... ), то показываем объекты товаров,в другом случае если isFetching true,то показываем лоадер,или текст типа Loading..., и уже в другом случае,если эти условия не верны,то показываем текст,что не найдены объекты товаров,проходимся по массиву объектов товаров products,указываем data?.products,так как от сервера в поле data приходит объект с полями products(объекты товаров из базы данных для отдельной страници пагинации) и allProducts(все объекты товаров из базы данных без лимитов и состояния текущей страницы,то есть без пагинации,чтобы взять потом количество этих всех объектов блюд и использовать для пагинации) */}
 
-                                        )}
+                                    {!isFetching && data?.allProducts.length ?
 
-                                    </div>
+                                        <div className="sectionCatalog__productsBlock-productsItems">
+                                            {data?.products.map(product =>
+
+                                                <ProductItemCatalog key={product._id} product={product} />
+
+                                            )}
+                                        </div> : isFetching ?
+
+                                        <div className="innerForLoader">
+                                            <div className="loader"></div>
+                                        </div>
+
+                                        : <h4 className="productsBlock__notFoundText">Not found</h4>
+
+                                    }
+
+
+
 
                                 </div>
                             </div>
