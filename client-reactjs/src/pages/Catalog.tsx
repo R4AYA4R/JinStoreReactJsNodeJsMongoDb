@@ -19,6 +19,15 @@ const Catalog = () => {
 
     const [sortBlockValue, setSortBlockValue] = useState('');
 
+
+    const [filteredCategoryFruitsAndVegetables, setFilteredCategoryFruitsAndVegetables] = useState<IProduct[] | undefined>([]); // состояние для отфильтрованного массива по категориям,чтобы показывать количество товаров в определенной категории,указываем в generic тип IProduct[] | undefined,иначе выдает ошибку
+
+    const [filteredCategoryBeverages, setFilteredCategoryBeverages] = useState<IProduct[] | undefined>([]);
+
+    const [filteredCategoryMeatsAndSeafood, setFilteredCategoryMeatsAndSeafood] = useState<IProduct[] | undefined>([]);
+
+    const [filteredCategoryBreadsAndBakery, setFilteredCategoryBreadsAndBakery] = useState<IProduct[] | undefined>([]);
+
     // скопировали это из файла SectionNewArrivals,так как здесь тоже самое,чтобы дополнительно не писать
     const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
@@ -70,7 +79,9 @@ const Catalog = () => {
 
     })
 
+
     const [filterPrice, setFilterPrice] = useState([0, priceFilterMax]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго, ставим изначальное значение для второго ползунка инпута как priceFilterMax(максимальная цена товарв из всех,которую посчитали на бэкэнде),чтобы сразу показывалось,что это максимальное значение цены,не указываем здесь конкретно data?.maxPriceAllProducts,так как тогда выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
+
 
 
     // функция при изменении значения инпута поиска,указываем параметр e как тип ChangeEvent у в generic у него указываем HTMLInputElement
@@ -118,6 +129,20 @@ const Catalog = () => {
         }
 
         console.log(data?.maxPriceAllProducts)
+
+
+        // лучше фильтровать массивы просто запросами на сервер,добавляя туда параметры фильтров,если они есть,но сейчас уже сделали так
+
+        setFilteredCategoryFruitsAndVegetables(data?.allProducts.filter(p => p.category === 'Fruits & Vegetables')); // помещаем в состояние filteredCategoryFruitsAndVegetable массив allProducts(массив всех товаров без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Fruits & Vegetables',то есть получаем массив объектов товаров с категорией Fruits & Vegetables,чтобы отобразить количество товаров в этой категории)
+
+        setFilteredCategoryBeverages(data?.allProducts.filter(p => p.category === 'Beverages'));
+
+        setFilteredCategoryMeatsAndSeafood(data?.allProducts.filter(p => p.category === 'Meats & Seafood'));
+
+        setFilteredCategoryBreadsAndBakery(data?.allProducts.filter(p => p.category === 'Breads & Bakery'));
+
+
+
 
     }, [data?.products]);
 
@@ -167,11 +192,41 @@ const Catalog = () => {
 
     // }, [filterPrice])
 
+    // при рендеринге этого компонента и потом при изменении фильтра цены,будет отработан код в этом useEffect
+    useEffect(() => {
+
+        // если filterPrice[0] (минимальное значение фильтра цены товара) больше 0,то есть пользователь указал фильтр цены
+        if (filterPrice[0] > 0) {
+
+            setFilteredCategoryFruitsAndVegetables((prev) => prev?.filter(p => p.price > filterPrice[0])); // фильтруем текущий массив объектов товаров,оставляем только те,у которых поле price больше filterPrice[0] (минимальное значение фильтра цены товара) 
+
+            setFilteredCategoryBeverages((prev) => prev?.filter(p => p.price > filterPrice[0]));
+
+            setFilteredCategoryBreadsAndBakery((prev) => prev?.filter(p => p.price > filterPrice[0]));
+
+            setFilteredCategoryMeatsAndSeafood((prev) => prev?.filter(p => p.price > filterPrice[0]));
+
+        }
+
+        // если filterPrice[1] (максимальное значение фильтра цены товара) меньше priceFilterMax(максимальное значение цены товара,которое посчитали на бэкэнде и поместили в это состояние),то есть пользователь указал фильтр цены
+        if (filterPrice[1] < priceFilterMax) {
+
+            setFilteredCategoryFruitsAndVegetables((prev) => prev?.filter(p => p.price < filterPrice[1])); // фильтруем текущий массив объектов товаров,оставляем только те,у которых поле price меньше filterPrice[1] (максимальное значение фильтра цены товара) 
+
+            setFilteredCategoryBeverages((prev) => prev?.filter(p => p.price < filterPrice[1]));
+
+            setFilteredCategoryBreadsAndBakery((prev) => prev?.filter(p => p.price < filterPrice[1]));
+
+            setFilteredCategoryMeatsAndSeafood((prev) => prev?.filter(p => p.price < filterPrice[1]));
+
+        }
+
+    }, [filterPrice])
 
     return (
         <main className="main">
             {/* скопировали id и тд из файла sectionNewArrivals,так как здесь такая же анимация и это страница каталога,поэтому здесь не будет такой секции как в sectionNewArrivals,поэтому id будут нормально работать,это просто,чтобы не писать больше дополнительного */}
-            <section className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active sectionCatalog" : "sectionNewArrivals sectionCatalog"}  ref={sectionNewArrivals} id="sectionNewArrivals">
+            <section className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active sectionCatalog" : "sectionNewArrivals sectionCatalog"} ref={sectionNewArrivals} id="sectionNewArrivals">
                 <div className="container">
                     <div className="sectionCatalog__inner">
                         <div className="sectionCatalog__topBlock">
@@ -189,7 +244,9 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Fruits & Vegetables' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Fruits & Vegetables' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Fruits & Vegetables</p>
-                                        <p className="categories__label-amount">(0)</p>
+
+                                        {/* если filterCategories !== '',то есть какая либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Fruits & Vegetables',то есть категория Fruits & Vegetables),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryFruitsAndVegetables?.length})</p>
                                     </label>
                                     <label className="filterBar__categories-label" onClick={() => setFilterCategories('Beverages')}>
                                         <input type="radio" name="radio" className="categories__label-input" />
@@ -197,7 +254,8 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Beverages' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Beverages' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Beverages</p>
-                                        <p className="categories__label-amount">(0)</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryBeverages?.length})</p>
                                     </label>
                                     <label className="filterBar__categories-label" onClick={() => setFilterCategories('Meats & Seafood')}>
                                         <input type="radio" name="radio" className="categories__label-input" />
@@ -205,7 +263,8 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Meats & Seafood' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Meats & Seafood' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Meats & Seafood</p>
-                                        <p className="categories__label-amount">(0)</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryMeatsAndSeafood?.length})</p>
                                     </label>
                                     <label className="filterBar__categories-label" onClick={() => setFilterCategories('Breads & Bakery')}>
                                         <input type="radio" name="radio" className="categories__label-input" />
@@ -213,7 +272,8 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Breads & Bakery' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Breads & Bakery' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Breads & Bakery</p>
-                                        <p className="categories__label-amount">(0)</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryBreadsAndBakery?.length})</p>
                                     </label>
                                 </div>
                                 <div className="filterBar__priceFilterBlock">
@@ -358,7 +418,8 @@ const Catalog = () => {
                                         </div>
 
                                         <div className="productsBlock__filtersBlock-amountBlock">
-                                            <p className="filtersBlock__amountBlock-amount">0</p>
+                                            {/* указываем значение этому тексту как data?.allProducts.length,то есть длину массива allProducts(массив всех блюд без пагинации),который приходит от сервера */}
+                                            <p className="filtersBlock__amountBlock-amount">{data?.allProducts.length}</p>
                                             <p className="filtersBlock__amountBlock-text">Results found.</p>
                                         </div>
                                     </div>
@@ -377,11 +438,11 @@ const Catalog = () => {
                                             )}
                                         </div> : isFetching ?
 
-                                        <div className="innerForLoader">
-                                            <div className="loader"></div>
-                                        </div>
+                                            <div className="innerForLoader">
+                                                <div className="loader"></div>
+                                            </div>
 
-                                        : <h4 className="productsBlock__notFoundText">Not found</h4>
+                                            : <h4 className="productsBlock__notFoundText">Not found</h4>
 
                                     }
 

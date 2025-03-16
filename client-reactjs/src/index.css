@@ -1031,6 +1031,10 @@ a {
   transition: all .5s ease;
 }
 
+.categories__label-amountDisable{
+  opacity: 0;
+}
+
 
 .filterBar__priceFilterBlock {
   margin-top: 25px;
