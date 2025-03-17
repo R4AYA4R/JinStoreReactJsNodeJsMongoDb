@@ -446,6 +446,28 @@ const Catalog = () => {
 
                                     }
 
+                                    {/* если длина массива всех объектов товаров (allProducts) true(то есть товары есть) и isFetching false(то есть запрос на сервер сейчас не грузится,делаем проверку на isFetching,чтобы пагинация не показывалась,когда грузится запрос на сервер и показывается лоадер),то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
+                                    {!isFetching &&  data?.allProducts.length ?
+
+                                        <div className="productsBlock__pagination">
+
+                                            <button className="pagination__btnLeft">
+                                                <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnLeft-img" />
+                                            </button>
+
+                                            <button className="pagination__item">1</button>
+
+                                            <div className="pagination__dots">...</div>
+
+                                            <button className="pagination__item">5</button>
+
+                                            <button className="pagination__btnRight">
+                                                <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
+                                            </button>
+
+                                        </div> : ''
+
+                                    }
 
 
 
