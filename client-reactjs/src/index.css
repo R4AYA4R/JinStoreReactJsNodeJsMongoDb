@@ -1435,6 +1435,7 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .sectionProductItemPage__infoBlock-title{
@@ -1587,4 +1588,62 @@ a {
 
 .subInfoBlock__topBlock-textSpan{
   font-weight: 700;
+}
+
+/* стили для слайдера swiper,названия классов у него по дефолту одни и те же */
+.swiper{
+  max-width: 660px;
+  height: 400px;
+  position: relative;
+}
+
+/* стили для кнопки навигации следующего слайда,в данном случае убираем ее видимость,так как она не нужна в данном дизайне */
+.swiper .swiper-button-next{
+  display: none;
+}
+
+/* стили для кнопки навигации предыдущего слайда,в данном случае убираем ее видимость,так как она не нужна в данном дизайне */
+.swiper .swiper-button-prev{
+  display: none;
+}
+
+.swiper-slide{
+  display: flex !important; /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
+  align-items: center;  
+  justify-content: center;
+}
+
+.sectionProductItemPage__imgBlock-img{
+  max-width: 211px;
+}
+
+.sliderBlock__previewSlider-slide{
+  max-width: 73px;
+}
+
+.sectionProductItemPage__sliderBlock-previewSlider{
+  max-height: 85px;
+}
+
+.sliderBlock__previewSliderBlock{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionProductItemPage__sliderBlock__sliderPreview{
+  max-width: 75px; /* указываем максимальную ширину на 2px больше,чем для картинки,чтобы было место на границу этого слайда */
+}
+
+.sectionProductItemPage__sliderBlock__sliderPreview:hover{
+  cursor: pointer;
+}
+
+.sectionProductItemPage__imgBlock-imgSliderPreview{
+  max-width: 73px;
+}
+
+.swiper-slide-thumb-active{
+  border:1px solid #111827;
+  border-radius: 8px;
 }
