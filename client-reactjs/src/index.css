@@ -906,7 +906,7 @@ a {
 }
 
 .sectionCatalog {
-  padding: 25px 0 60px;
+  padding: 10px 0 60px;
 }
 
 .sectionCatalog__topBlock {
@@ -1423,6 +1423,11 @@ a {
   color:#fff;
 }
 
+
+.sectionProductItemPage{
+  padding: 0;
+  padding-top: 10px;
+}
 
 .sectionProductItemPage__itemBlock{
   display: grid;
