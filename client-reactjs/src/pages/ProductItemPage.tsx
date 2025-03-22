@@ -15,6 +15,7 @@ const ProductItemPage = () => {
 
     const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
+    const [tab, setTab] = useState('Desc'); // состояние для таба описания
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
 
@@ -31,7 +32,7 @@ const ProductItemPage = () => {
 
     })
 
- 
+
 
     return (
         <main className="main">
@@ -46,9 +47,40 @@ const ProductItemPage = () => {
                             <img src="/images/sectionCatalog/ArrowRight.png" alt="" className="sectionCatalog__topBlock-img" />
                             <p className="sectionCatalog__topBlock-subtitle">{data?.data.name}</p>
                         </div>
-                        
+
                         {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара) */}
                         <ProductItemPageItemBlock product={data?.data} />
+
+                        <div className="sectionProductItemPage__descBlock">
+                            <div className="sectionProductItemPage__descBlock-tabs">
+                                <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={()=>setTab('Desc')}>Description</button>
+                                <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={()=>setTab('Reviews')}>Reviews (0)</button>
+                            </div>
+
+                            <div className="sectionProductItemPage__descBlock-desc">
+
+                                {/* если tab равно 'Desc',то показываем блок с описанием */}
+                                {tab === 'Desc' &&
+                                
+                                    <div className="descBlock__desc-inner">
+                                        <p className="descBlock__desc-descText">{data?.data.descText}</p>
+                                        <p className="descBlock__desc-subText"> Sapien vitae odio accumsan gravida. Morbi vitae erat auctor, eleifend nunc a, lobortis neque. Praesent aliquam dignissim viverra. Maecenas lacus odio, feugiat eu nunc sit amet,maximus sagittis dolor. Vivamus nisi sapien, elementum sit amet eros sit amet, ultricies cursus ipsum. Sed consequat luctus ligula. Curabitur laoreet rhoncus blandit. Aenean vel diam utarcu pharetra dignissim ut sed leo. Vivamus faucibus, ipsum in vestibulum vulputate, lorem orci convallis quam, sit amet consequat nulla felis pharetra lacus. Duis semper erat mauris, sed egestas purus commodo vel.</p>
+                                    </div>
+
+                                }
+
+                                {tab === 'Reviews' &&
+
+                                    <div className="descBlock__reviews-inner">
+                                        Reviews
+                                    </div>
+
+                                }
+
+
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>

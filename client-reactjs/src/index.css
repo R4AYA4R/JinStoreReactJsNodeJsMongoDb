@@ -1646,9 +1646,66 @@ a {
 
 .sectionProductItemPage__imgBlock-imgSliderPreview{
   max-width: 73px;
+  max-height: 75px;
 }
 
 .swiper-slide-thumb-active{
   border:1px solid #111827;
   border-radius: 8px;
+}
+
+.sectionProductItemPage__descBlock{
+  margin-bottom: 60px;
+}
+
+.sectionProductItemPage__descBlock-tabs{
+  display: flex;
+  align-items: center;
+  gap:30px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 22px;
+}
+
+.descBlock__tabs-btn{
+  background-color: #fff;
+  font-family: 'Inter',sans-serif;
+  font-size: 16px;  
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  color: #030712;
+  border: none;
+  padding-bottom: 21px;
+  transition: opacity .5s ease;
+  max-height: 41px; /* указываем максимальную высоту для кнопки таба,чтобы при добавлении ей границы(border) снизу ее высота не менялась и она не прыгала */
+}
+
+.descBlock__tabs-btn:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.descBlock__tabs-btn--active{
+  border-bottom: 2px solid #166534;
+}
+
+/* указываем активной кнопке таба(основному классу кнопки и активному вместе) при наведении прозрачность(opacity) 1,чтобы для активной кнопки не работала анимация прозрачности(opacity),чтобы она не менялась при наведении */
+.descBlock__tabs-btn.descBlock__tabs-btn--active:hover{
+  opacity: 1;
+}
+
+.descBlock__desc-inner,
+.descBlock__reviews-inner{
+  animation: appear 1s ease forwards;
+}
+
+.descBlock__desc-descText,
+.descBlock__desc-subText{
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
+  line-height: 24px;
+}
+
+.descBlock__desc-subText{
+  margin-top: 20px;
 }
