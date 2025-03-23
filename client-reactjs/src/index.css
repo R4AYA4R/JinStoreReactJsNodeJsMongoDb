@@ -1031,7 +1031,7 @@ a {
   transition: all .5s ease;
 }
 
-.categories__label-amountDisable{
+.categories__label-amountDisable {
   opacity: 0;
 }
 
@@ -1156,7 +1156,7 @@ a {
 
 }
 
-.productsBlock__notFoundText{
+.productsBlock__notFoundText {
   margin: 10px;
   font-size: 16px;
   font-weight: 600;
@@ -1365,85 +1365,85 @@ a {
   margin-bottom: 5px;
 }
 
-.productsBlock__pagination{
-  margin:30px 0 60px;
+.productsBlock__pagination {
+  margin: 30px 0 60px;
   display: flex;
   justify-content: center;
   align-items: end;
-  gap:5px;
+  gap: 5px;
 }
 
 .pagination__btnLeft,
-.pagination__btnRight{
+.pagination__btnRight {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #fff;
-  border:1px solid #E5E7EB;
+  border: 1px solid #E5E7EB;
   border-radius: 6px;
   padding: 6px 12px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
 .pagination__btnLeft:hover,
-.pagination__btnRight:hover{
+.pagination__btnRight:hover {
   cursor: pointer;
-  background-color: rgba(99, 76, 159,0.3);
+  background-color: rgba(99, 76, 159, 0.3);
 }
 
-.pagination__btnLeft{
+.pagination__btnLeft {
   margin-right: 5px;
 }
 
-.pagination__btnRight{
+.pagination__btnRight {
   margin-left: 5px;
 }
 
-.pagination__item{
+.pagination__item {
   background-color: #F3F4F6;
   padding: 8px 12px;
-  border:none;
+  border: none;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.32px;
   color: #030712;
   max-height: 31px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.pagination__item--active{
+.pagination__item--active {
   background-color: #634C9F;
-  color:#fff;
+  color: #fff;
 }
 
-.pagination__item:hover{
+.pagination__item:hover {
   cursor: pointer;
-  background-color: rgba(99, 76, 159,0.5);
-  color:#fff;
+  background-color: rgba(99, 76, 159, 0.5);
+  color: #fff;
 }
 
 
-.sectionProductItemPage{
+.sectionProductItemPage {
   padding: 0;
   padding-top: 10px;
 }
 
-.sectionProductItemPage__itemBlock{
+.sectionProductItemPage__itemBlock {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap:40px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
   margin-bottom: 100px;
 }
 
-.sectionProductItemPage__itemBlock-imgBlock{
+.sectionProductItemPage__itemBlock-imgBlock {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
 }
 
-.sectionProductItemPage__infoBlock-title{
+.sectionProductItemPage__infoBlock-title {
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -0.76px;
@@ -1451,7 +1451,7 @@ a {
   margin-bottom: 15px;
 }
 
-.sectionProductItemPage__infoBlock-desc{
+.sectionProductItemPage__infoBlock-desc {
   margin-top: 16px;
   padding-top: 22px;
   border-top: 1px solid #E5E7EB;
@@ -1462,71 +1462,71 @@ a {
   margin-bottom: 27px;
 }
 
-.sectionProductItemPage__infoBlock-inputBlock{
+.sectionProductItemPage__infoBlock-inputBlock {
   margin-top: 21px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.infoBlock__inputBlock-leftInputBlock{
+.infoBlock__inputBlock-leftInputBlock {
   position: relative;
 }
 
-.infoBlock__inputBlock-input{
+.infoBlock__inputBlock-input {
   padding: 14.5px 38px;
   border-radius: 6px;
-  border:1px solid #D1D5DB;
+  border: 1px solid #D1D5DB;
   text-align: center;
   max-width: 114px;
-  outline:none;
-} 
+  outline: none;
+}
 
 /* убираем стрелки вверх и вниз для инпута с типом number по умолчанию */
 .infoBlock__inputBlock-input::-webkit-inner-spin-button,
-.infoBlock__inputBlock-input::-webkit-outer-spin-button{
+.infoBlock__inputBlock-input::-webkit-outer-spin-button {
   appearance: none;
 }
 
-.infoBlock__inputBlock-btn{
+.infoBlock__inputBlock-btn {
   background-color: #fff;
   border: none;
   position: absolute;
-  transition:all .5s ease;
+  transition: all .5s ease;
   cursor: pointer;
 }
 
-.infoBlock__inputBlock-btn:hover{
+.infoBlock__inputBlock-btn:hover {
   opacity: 0.5;
 }
 
-.infoBlock__inputBlock-btn--plus{
+.infoBlock__inputBlock-btn--plus {
   top: 17.5px;
   right: 12.5px;
 }
 
-.infoBlock__inputBlock-btn--minus{
+.infoBlock__inputBlock-btn--minus {
   top: 12.5px;
   left: 12.5px;
 }
 
-.infoBlock__inputBlock-cartBtn{
+.infoBlock__inputBlock-cartBtn {
   padding: 15px 33px;
   display: flex;
   align-items: center;
-  gap:6px;
+  gap: 6px;
   border-radius: 8px;
   background-color: #16a34a;
-  border:none;
-  transition:all .5s ease;
+  border: none;
+  transition: all .5s ease;
 }
 
-.infoBlock__inputBlock-cartBtn:hover{
+.infoBlock__inputBlock-cartBtn:hover {
   background-color: #0bca51;
   cursor: pointer;
 }
 
-.infoBlock__inputBlock-cartBtn:hover .inputBlock__cartBtn-img{
+.infoBlock__inputBlock-cartBtn:hover .inputBlock__cartBtn-img {
   animation: cartBtnImgAnim 1s ease infinite;
 }
 
@@ -1554,36 +1554,36 @@ a {
 
 }
 
-.inputBlock__cartBtn-text{
+.inputBlock__cartBtn-text {
   font-size: 14px;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.28px;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
-.sectionProductItemPage__infoBlock-subInfoBlock{
+.sectionProductItemPage__infoBlock-subInfoBlock {
   margin-top: 32px;
   border-radius: 6px;
-  border:1px solid #E5E7EB;
+  border: 1px solid #E5E7EB;
 }
 
-.infoBlock__subInfoBlock-topBlock{
+.infoBlock__subInfoBlock-topBlock {
   padding: 14px 21px;
   display: flex;
   align-items: start;
-  gap:30px;
+  gap: 30px;
 }
 
-.infoBlock__subInfoBlock-bottomBlock{
+.infoBlock__subInfoBlock-bottomBlock {
   border-top: 1px solid #E5E7EB;
 }
 
-.subInfoBlock__topBlock-img{
+.subInfoBlock__topBlock-img {
   margin-top: 5px;
 }
 
-.subInfoBlock__topBlock-text{
+.subInfoBlock__topBlock-text {
   font-size: 13px;
   font-weight: 400;
   letter-spacing: -0.32px;
@@ -1591,121 +1591,235 @@ a {
   line-height: 19.5px;
 }
 
-.subInfoBlock__topBlock-textSpan{
+.subInfoBlock__topBlock-textSpan {
   font-weight: 700;
 }
 
 /* стили для слайдера swiper,названия классов у него по дефолту одни и те же */
-.swiper{
+.swiper {
   max-width: 660px;
   height: 400px;
   position: relative;
 }
 
 /* стили для кнопки навигации следующего слайда,в данном случае убираем ее видимость,так как она не нужна в данном дизайне */
-.swiper .swiper-button-next{
+.swiper .swiper-button-next {
   display: none;
 }
 
 /* стили для кнопки навигации предыдущего слайда,в данном случае убираем ее видимость,так как она не нужна в данном дизайне */
-.swiper .swiper-button-prev{
+.swiper .swiper-button-prev {
   display: none;
 }
 
-.swiper-slide{
-  display: flex !important; /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
-  align-items: center;  
+.swiper-slide {
+  display: flex !important;
+  /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
+  align-items: center;
   justify-content: center;
 }
 
-.sectionProductItemPage__imgBlock-img{
+.sectionProductItemPage__imgBlock-img {
   max-width: 211px;
 }
 
-.sliderBlock__previewSlider-slide{
+.sliderBlock__previewSlider-slide {
   max-width: 73px;
 }
 
-.sectionProductItemPage__sliderBlock-previewSlider{
+.sectionProductItemPage__sliderBlock-previewSlider {
   max-height: 85px;
 }
 
-.sliderBlock__previewSliderBlock{
+.sliderBlock__previewSliderBlock {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.sectionProductItemPage__sliderBlock__sliderPreview{
-  max-width: 75px; /* указываем максимальную ширину на 2px больше,чем для картинки,чтобы было место на границу этого слайда */
+.sectionProductItemPage__sliderBlock__sliderPreview {
+  max-width: 75px;
+  /* указываем максимальную ширину на 2px больше,чем для картинки,чтобы было место на границу этого слайда */
 }
 
-.sectionProductItemPage__sliderBlock__sliderPreview:hover{
+.sectionProductItemPage__sliderBlock__sliderPreview:hover {
   cursor: pointer;
 }
 
-.sectionProductItemPage__imgBlock-imgSliderPreview{
+.sectionProductItemPage__imgBlock-imgSliderPreview {
   max-width: 73px;
   max-height: 75px;
 }
 
-.swiper-slide-thumb-active{
-  border:1px solid #111827;
+.swiper-slide-thumb-active {
+  border: 1px solid #111827;
   border-radius: 8px;
 }
 
-.sectionProductItemPage__descBlock{
+.sectionProductItemPage__descBlock {
   margin-bottom: 60px;
 }
 
-.sectionProductItemPage__descBlock-tabs{
+.sectionProductItemPage__descBlock-tabs {
   display: flex;
   align-items: center;
-  gap:30px;
+  gap: 30px;
   border-bottom: 1px solid #E5E7EB;
   margin-bottom: 22px;
 }
 
-.descBlock__tabs-btn{
+.descBlock__tabs-btn {
   background-color: #fff;
-  font-family: 'Inter',sans-serif;
-  font-size: 16px;  
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
   color: #030712;
   border: none;
   padding-bottom: 21px;
   transition: opacity .5s ease;
-  max-height: 41px; /* указываем максимальную высоту для кнопки таба,чтобы при добавлении ей границы(border) снизу ее высота не менялась и она не прыгала */
+  max-height: 41px;
+  /* указываем максимальную высоту для кнопки таба,чтобы при добавлении ей границы(border) снизу ее высота не менялась и она не прыгала */
 }
 
-.descBlock__tabs-btn:hover{
+.descBlock__tabs-btn:hover {
   cursor: pointer;
   opacity: 0.5;
 }
 
-.descBlock__tabs-btn--active{
+.descBlock__tabs-btn--active {
   border-bottom: 2px solid #166534;
 }
 
 /* указываем активной кнопке таба(основному классу кнопки и активному вместе) при наведении прозрачность(opacity) 1,чтобы для активной кнопки не работала анимация прозрачности(opacity),чтобы она не менялась при наведении */
-.descBlock__tabs-btn.descBlock__tabs-btn--active:hover{
+.descBlock__tabs-btn.descBlock__tabs-btn--active:hover {
   opacity: 1;
 }
 
 .descBlock__desc-inner,
-.descBlock__reviews-inner{
+.descBlock__reviews-inner {
   animation: appear 1s ease forwards;
 }
 
 .descBlock__desc-descText,
-.descBlock__desc-subText{
+.descBlock__desc-subText {
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
   line-height: 24px;
 }
 
-.descBlock__desc-subText{
+.descBlock__desc-subText {
   margin-top: 20px;
+}
+
+.descBlock__reviews-inner {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+}
+
+.reviews__leftBlock-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #020617;
+  letter-spacing: -0.32px;
+}
+
+.reviews__rightBlock-btnBlock {
+  display: flex;
+  justify-content: end;
+}
+
+.reviews__rightBlock-btnBlock--disabled {
+  display: none;
+}
+
+.reviews__btnBlock-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #16a34a;
+  border: none;
+  transition: all .5s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -0.28px;
+}
+
+.reviews__btnBlock-btn:hover {
+  cursor: pointer;
+  background-color: #0bca51;
+}
+
+.reviews__form {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 1s ease;
+}
+
+.reviews__form--active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reviews__form-topBlock {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 15px;
+}
+
+.reviews__form-topBlockInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form__topBlockInfo-text {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: #030712;
+}
+
+.reviews__form-starsBlock{
+  display: flex;
+  align-items: center;
+  gap:3px;
+  margin-top: 5px;
+}
+
+.reviews__starsImg{
+  min-width: 14px;
+}
+
+.form__starsBlock-btn {
+  background-color: #fff;
+  border: none;
+  transition: opacity .5s ease;
+}
+
+.form__starsBlock-btn:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.form__mainBlock-textarea{
+  padding: 15px 15px 20px 15px;
+  outline: none;
+  resize: none;  /* убираем возможность изменять размер textarea */
+  width: 100%;
+  border:1px solid #E5E7EB;
+  margin-bottom: 10px;
+  font-family: 'Inter',sans-serif;
+}
+
+.formErrorText{
+  margin-bottom: 10px;
+  color: #EE5858;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.32px;
 }
