@@ -1,5 +1,7 @@
 import productModel from "../models/productModel.js"; // указываем здесь вручную расширение файла .js,иначе выдает ошибку,что не может найти файл
 
+import commentModel from "../models/commentModel.js";
+
 class ProductController {
 
     // первым параметром эти функции принимают req(запрос),а вторым параметром res(ответ),третьим параметром передаем функцию next(следующий по цепочке middleware,в данном случае это наш errorMiddleware)

@@ -21,11 +21,11 @@ const ProductItemPage = () => {
 
     const [activeForm, setActiveForm] = useState(false);
 
-    const [activeStarsForm,setActiveStarsForm] = useState(0);
+    const [activeStarsForm, setActiveStarsForm] = useState(0);
 
-    const [textAreaValue,setTextAreaValue] = useState('');
+    const [textAreaValue, setTextAreaValue] = useState('');
 
-    const [errorForm,setErrorForm] = useState(''); // состояние для ошибки формы
+    const [errorForm, setErrorForm] = useState(''); // состояние для ошибки формы
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
 
@@ -50,7 +50,7 @@ const ProductItemPage = () => {
     }
 
     // функция для формы для создания комментария,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const submitFormHandler = (e:FormEvent<HTMLFormElement>) => {
+    const submitFormHandler = (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
@@ -106,6 +106,26 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews-inner">
                                         <div className="reviews__leftBlock">
 
+                                            {/* <div className="reviews__leftBlock-item">
+                                                <div className="reviews__item-topBlock">
+                                                    <div className="reviews__item-topBlockLeftInfo">
+                                                        <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
+                                                        <div className="reviews__item-topBlockLeftInfo--info">
+                                                            <p className="reviews__item-infoName">UserName</p>
+                                                            <div className="sectionNewArrivals__item-stars reviews__form-starsBlock reviews__item-starsBlock">
+                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p className="reviews__item-topBlockTime">20.10.2000</p>
+                                                </div>
+                                                <p className="reviews__item-text">Comment text</p>
+                                            </div> */}
+
                                             <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
 
                                         </div>
@@ -123,30 +143,30 @@ const ProductItemPage = () => {
                                                     </div>
                                                     <div className="sectionNewArrivals__item-stars reviews__form-starsBlock">
                                                         {/* указываем этой кнопке тип button(то есть обычная кнопка),так как это кнопка находится в форме и чтобы при нажатии на нее форма не отправлялась(то есть не срабатывало событие onSubmit у формы), по клику на эту кнопку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
-                                                        <button className="form__starsBlock-btn" type="button" onClick={()=>setActiveStarsForm(1)}>
+                                                        <button className="form__starsBlock-btn" type="button" onClick={() => setActiveStarsForm(1)}>
                                                             {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
                                                             <img src={activeStarsForm === 0 ? "/images/sectionProductItemPage/GreyStar.svg" : "/images/sectionProductItemPage/YellowStar.svg"} alt="" className="sectionNewArrivals__item-starsImg reviews__starsImg" />
                                                         </button>
-                                                        <button className="form__starsBlock-btn" type="button" onClick={()=>setActiveStarsForm(2)}>
+                                                        <button className="form__starsBlock-btn" type="button" onClick={() => setActiveStarsForm(2)}>
                                                             <img src={activeStarsForm >= 2 ? "/images/sectionProductItemPage/YellowStar.svg" : "/images/sectionProductItemPage/GreyStar.svg"} alt="" className="sectionNewArrivals__item-starsImg reviews__starsImg" />
                                                         </button>
-                                                        <button className="form__starsBlock-btn" type="button" onClick={()=>setActiveStarsForm(3)}>
+                                                        <button className="form__starsBlock-btn" type="button" onClick={() => setActiveStarsForm(3)}>
                                                             <img src={activeStarsForm >= 3 ? "/images/sectionProductItemPage/YellowStar.svg" : "/images/sectionProductItemPage/GreyStar.svg"} alt="" className="sectionNewArrivals__item-starsImg reviews__starsImg" />
                                                         </button>
-                                                        <button className="form__starsBlock-btn" type="button" onClick={()=>setActiveStarsForm(4)}>
+                                                        <button className="form__starsBlock-btn" type="button" onClick={() => setActiveStarsForm(4)}>
                                                             <img src={activeStarsForm >= 4 ? "/images/sectionProductItemPage/YellowStar.svg" : "/images/sectionProductItemPage/GreyStar.svg"} alt="" className="sectionNewArrivals__item-starsImg reviews__starsImg" />
                                                         </button>
-                                                        <button className="form__starsBlock-btn" type="button" onClick={()=>setActiveStarsForm(5)}>
+                                                        <button className="form__starsBlock-btn" type="button" onClick={() => setActiveStarsForm(5)}>
                                                             <img src={activeStarsForm >= 5 ? "/images/sectionProductItemPage/YellowStar.svg" : "/images/sectionProductItemPage/GreyStar.svg"} alt="" className="sectionNewArrivals__item-starsImg reviews__starsImg" />
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div className="reviews__form-mainBlock">
-                                                    <textarea placeholder="Enter your comment" className="form__mainBlock-textarea" value={textAreaValue} onChange={(e)=>setTextAreaValue(e.target.value)}></textarea>
+                                                    <textarea placeholder="Enter your comment" className="form__mainBlock-textarea" value={textAreaValue} onChange={(e) => setTextAreaValue(e.target.value)}></textarea>
 
                                                     {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
                                                     {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
-                                                    
+
 
                                                     {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
                                                     <button className="reviews__btnBlock-btn" type="submit">Save Review</button>
