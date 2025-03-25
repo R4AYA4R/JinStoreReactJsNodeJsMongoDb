@@ -914,6 +914,7 @@ a {
   align-items: center;
   gap: 10px;
   margin-bottom: 30px;
+  margin-top: 20px;
 }
 
 .sectionCatalog__topBlock-title {
@@ -1862,4 +1863,124 @@ a {
 
 .reviews__item-starsBlock{
   gap:2px;
+}
+
+.sectionUserPageTop{
+  padding-bottom: 20px;
+  padding-top: 0;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.sectionUserPageTop__topBlock{
+  margin-bottom: 0;
+}
+
+.sectionSignUp{
+  padding: 105px 0;
+}
+
+.sectionSignUp__inner{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionSignUp__signUpBlock{
+  min-width: 450px;
+}
+
+.signUpBlock__signInMainForm{
+  animation: appear 1s ease forwards;
+}
+
+.sectionSignUp__signUpBlock_tabs{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:25px;
+  margin-bottom: 30px;
+}
+
+.signUpBlock__tabs-btn{
+  background-color: #fff;
+  font-family: 'Inter',sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.32px;
+  color: #9CA3AF;
+  border:none;
+  transition:all .5s ease;
+}
+
+.signUpBlock__tabs-btn:hover{
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.signUpBlock__tabs-btn--active{
+  color: #111827;
+}
+
+.signUpBlock__tabs-btn--active:hover{
+  opacity: 1;
+}
+
+.signInMainForm__inputEmailBlock{
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.signInMainForm__inputEmailBlock-input{
+  padding: 12px 12px 12px 40px;
+  width: 100%;
+  border:1px solid #D1D5DB;
+  font-family: 'Inter',sans-serif;
+  border-radius: 8px;
+  outline:none;
+}
+
+.signInMainForm__inputPasswordBlock-input{
+  padding: 12px 36px 12px 40px;
+}
+
+.signInMainForm__inputEmailBlock-img{
+  position: absolute;
+  top: 9px;
+  left: 10px;
+}
+
+.inputEmailBlock__btn{
+  background-color: #fff;
+  border: none;
+  opacity: 1;
+  transition:opacity .5s ease;
+  position: absolute;
+  top: 11px;
+  right: 10px;
+  max-height: 21px;
+}
+
+.inputEmailBlock__btn:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+
+.signInMainForm__btn{
+  background-color: #634C9F;
+  padding: 16px;
+  width: 100%;
+  border-radius: 8px;
+  border:none;
+  font-family: 'Inter',sans-serif;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.28px;
+  transition:all .5s ease;
+}
+
+.signInMainForm__btn:hover{
+  cursor: pointer;
+  background-color: #7a5dc4;
 }

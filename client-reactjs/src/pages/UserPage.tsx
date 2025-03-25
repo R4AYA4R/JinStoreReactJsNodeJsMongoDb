@@ -1,9 +1,15 @@
+import SectionUserPageTop from "../components/SectionUserPageTop";
+import UserPageFormComponent from "../components/UserPageFormComponent";
 
 const UserPage = () => {
 
     return (
         <main className="main">
-            UserPage
+
+            <SectionUserPageTop/>
+
+            <UserPageFormComponent />
+
         </main>
     )
 
