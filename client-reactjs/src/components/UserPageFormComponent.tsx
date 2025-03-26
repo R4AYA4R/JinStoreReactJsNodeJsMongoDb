@@ -11,11 +11,11 @@ const UserPageFormComponent = () => {
 
     const [signInFormError, setSignInFormError] = useState('');
 
-    const [hideInputPassSignIn, setHideInputPassSignIn] = useState(false);
+    const [hideInputPassSignIn, setHideInputPassSignIn] = useState(true);
 
     const [signUpFormError, setSignUpFormError] = useState('');
 
-    const [hideInputPassSignUp, setHideInputPassSignUp] = useState(false);
+    const [hideInputPassSignUp, setHideInputPassSignUp] = useState(true);
 
 
     // функция для формы логина,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)

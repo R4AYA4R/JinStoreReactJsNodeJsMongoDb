@@ -15,6 +15,7 @@ import errorMiddleware from './middlewares/errorMiddleware.js';  // указыв
 import mongoose from 'mongoose';
 import productModel from './models/productModel.js';
 import router from './router/router.js';
+import roleModel from './models/roleModel.js';
 
 dotenv.config();
 
@@ -66,6 +67,11 @@ const start = async () => {
         // await productModel.create({name:"Absolut Grapefruit Paloma Sparkling Vodka Cocktail – 355ml",category:"Beverages",descText:"Aut impedit expedita rerum, dicta, quaerat doloribus id ipsum consequuntur asperiores omnis nihil minima labore atque facere quia dignissimos, tenetur perferendis numquam voluptatum earum. Eos, optio fugit",price:9.99,priceDiscount:6.99,priceFilter:"Under $10",amount:1,rating:0,totalPrice:9.99,totalPriceDiscount:6.99,mainImage:"VodkaImg.png",descImages:["BeerImg.png","BeerImg.png"]});
 
         // await productModel.create({name:"Real Plant-Powered Protein Shake – Double Chocolate",category:"Beverages",descText:"Aperiam sed eius soluta labore odit est suscipit porro aut nobis tenetur adipisci officia, aliquam aspernatur accusantium voluptatum magni veniam enim nisi cumque perspiciatis et",price:17.59,priceFilter:"Under $10",amount:1,rating:0,totalPrice:17.59,mainImage:"ChocolateImg.png",descImages:["BeerImg.png","BeerImg.png"]});
+
+        // создаем объект в базе данных у сущности(таблицы) roleModel(сущности роли) с полем value и значением "USER" для роли пользователя,также ниже создаем роль для админа,делаем это 1 раз и потом этот код закомментируем
+        // await roleModel.create({value:"USER"});
+
+        // await roleModel.create({value:"ADMIN"});
 
 
     }catch(e){
