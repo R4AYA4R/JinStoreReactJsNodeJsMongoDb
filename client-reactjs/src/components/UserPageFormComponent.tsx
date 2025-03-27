@@ -171,7 +171,7 @@ const UserPageFormComponent = () => {
                                     <img src="/images/sectionSignUp/Lock.png" alt="" className="signInMainForm__inputEmailBlock-img" />
 
                                     {/* если состояние hideInputPassSignIn true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
-                                    <input type={hideInputConfirmPassSignUp ? "password" : "text"} className="signInMainForm__inputEmailBlock-input signInMainForm__inputPasswordBlock-input" placeholder="Password" value={inputConfirmPasswordSignUp} onChange={(e) => setInputConfirmPasswordSignUp(e.target.value)} />
+                                    <input type={hideInputConfirmPassSignUp ? "password" : "text"} className="signInMainForm__inputEmailBlock-input signInMainForm__inputPasswordBlock-input" placeholder="Confirm Password" value={inputConfirmPasswordSignUp} onChange={(e) => setInputConfirmPasswordSignUp(e.target.value)} />
                                     <button className="inputEmailBlock__btn" type="button" onClick={() => setHideInputConfirmPassSignUp((prev) => !prev)}>
                                         <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="signInMainForm__inputEmailBlock-imgHide" />
                                     </button>
