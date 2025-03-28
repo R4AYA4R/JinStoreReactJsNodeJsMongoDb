@@ -23,7 +23,7 @@ export const userSlice = createSlice({
     reducers: {
 
         // в параметре функции можно указать состояние(state) и action payload(данные,которые будем передавать этому action при вызове его в другом файле),указываем тип action payload(второму параметру этого action) PayloadAction и указываем в generic какой тип данных будем передавать потом при вызове этого action,в данном случае в payload передаем объект response(ответ от сервера) с типом на основе нашего интерфейса AuthResponse,который пришел от сервера
-        registrationForUser: (state, action: PayloadAction<AuthResponse>) => {
+        authorizationForUser: (state, action: PayloadAction<AuthResponse>) => {
 
             localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу
 

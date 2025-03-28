@@ -15,6 +15,9 @@ const UserPageFormComponent = () => {
 
     const [hideInputPassSignIn, setHideInputPassSignIn] = useState(true);
 
+    const [inputEmailSignIn, setInputEmailSignIn] = useState('');
+
+    const [inputPasswordSignIn, setInputPasswordSignIn] = useState('');
 
 
 
@@ -33,7 +36,7 @@ const UserPageFormComponent = () => {
     const [inputConfirmPasswordSignUp, setInputConfirmPasswordSignUp] = useState('');
 
 
-    const { registrationForUser } = useActions(); // берем action registrationForUser и другие для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { authorizationForUser } = useActions(); // берем action registrationForUser и другие для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     // функция для регистрации
@@ -50,7 +53,7 @@ const UserPageFormComponent = () => {
 
             console.log(response);
 
-            registrationForUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+            authorizationForUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
 
         } catch (e:any) {
 
@@ -62,10 +65,46 @@ const UserPageFormComponent = () => {
 
     }
 
+    // функция для логина
+    const login = async (email: string, password: string) => {
+
+        // оборачиваем в try catch,чтобы отлавливать ошибки
+        try {
+
+            const response = await AuthService.login(email, password); // вызываем нашу функцию login() у AuthService,передаем туда email и password,если запрос прошел успешно,то в ответе от сервера будут находиться токены и поле user с объектом пользователя(с полями userName,email,id,role),их и помещаем в переменную response
+
+            console.log(response);
+
+            authorizationForUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+
+        } catch (e:any) {
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
+
+            setSignInFormError(e.response?.data?.message + '. Fill in all fields correctly'); // помещаем в состояние ошибки формы регистрации текст ошибки,которая пришла от сервера(в данном случае еще и допольнительный текст)
+
+        }
+
+    }
+
     // функция для формы логина,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
     const signInFormHandler = (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если инпут почты includes('.') false(то есть инпут почты не включает в себя .(точку)) или значение инпута почты,отфильтрованное без пробелов(с помощью trim() убираются пробелы по бокам строки,то есть какое-то значение строки в центре,а пробелы по бокам убираются,если они были) по количеству символов меньше 4,то показываем ошибку
+        if(!inputEmailSignIn.includes('.') || inputEmailSignIn.trim().length < 4){
+
+            setSignInFormError('Enter email correctly'); // показываем ошибку 
+
+        } else {
+
+            setSignInFormError(''); // указываем значение состоянию ошибки пустую строку,то есть убираем ошибку,если она была
+
+            login(inputEmailSignIn,inputPasswordSignIn); // вызываем нашу функцию авторизации и передаем туда состояния инпутов почты и пароля
+
+        }
+
 
     }
 
@@ -125,13 +164,13 @@ const UserPageFormComponent = () => {
                             <form className="signUpBlock__signInMainForm" onSubmit={signInFormHandler}>
                                 <div className="signInMainForm__inputEmailBlock">
                                     <img src="/images/sectionSignUp/EnvelopeSimple.png" alt="" className="signInMainForm__inputEmailBlock-img" />
-                                    <input type="text" placeholder="Email" className="signInMainForm__inputEmailBlock-input" />
+                                    <input type="text" placeholder="Email" className="signInMainForm__inputEmailBlock-input" value={inputEmailSignIn} onChange={(e)=>setInputEmailSignIn(e.target.value)}/>
                                 </div>
                                 <div className="signInMainForm__inputEmailBlock">
                                     <img src="/images/sectionSignUp/Lock.png" alt="" className="signInMainForm__inputEmailBlock-img" />
 
                                     {/* если состояние hideInputPassSignIn true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
-                                    <input type={hideInputPassSignIn ? "password" : "text"} className="signInMainForm__inputEmailBlock-input signInMainForm__inputPasswordBlock-input" placeholder="Password" />
+                                    <input type={hideInputPassSignIn ? "password" : "text"} className="signInMainForm__inputEmailBlock-input signInMainForm__inputPasswordBlock-input" placeholder="Password" value={inputPasswordSignIn} onChange={(e)=>setInputPasswordSignIn(e.target.value)}/>
                                     <button className="inputEmailBlock__btn" type="button" onClick={() => setHideInputPassSignIn((prev) => !prev)}>
                                         <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="signInMainForm__inputEmailBlock-imgHide" />
                                     </button>
