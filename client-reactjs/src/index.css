@@ -1823,6 +1823,7 @@ a {
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
+  max-width: 440px;
 }
 
 .reviews__leftBlock-item{
@@ -1983,4 +1984,85 @@ a {
 .signInMainForm__btn:hover{
   cursor: pointer;
   background-color: #7a5dc4;
+}
+
+.sectionUserPage{
+  margin:25px 0 60px;
+}
+
+.sectionUserPage__inner{
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap:40px;
+}
+
+.sectionUserPage__leftBar{
+  border:1px solid #E5E7EB;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sectionUserPage__menu-btn{
+  background-color: #fff;
+  border:none;
+  display: flex;
+  align-items: center;
+  gap:10px;
+  padding: 15px;
+  width: 100%;
+  border-bottom: 1px solid #E5E7EB;
+  font-family: 'Inter',sans-serif;
+  transition:all .5s ease;
+}
+
+.sectionUserPage__menu-btn:hover{
+  cursor: pointer;
+  background-color: rgba(99, 76, 159,0.8);
+}
+
+.sectionUserPage__menu-btn:hover .sectionUserPage__menu-btnText{
+  color: #fff;
+}
+
+.sectionUserPage__menu-btn--active{
+  background-color: rgb(99, 76, 159);
+}
+
+.sectionUserPage__menu-btn--active:hover{
+  background-color: rgb(99, 76, 159);
+}
+
+.sectionUserPage__menu-btn--active .sectionUserPage__menu-btnText{
+  color: #fff;
+}
+
+.sectionUserPage__menu-btnText{
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: #030712;
+  transition:all .5s ease;
+}
+
+.sectionUserPage__menu-btnLogout{
+  border-bottom: none;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.sectionUserPage__menu-btnDashboard{
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.sectionUserPage__mainBlock{
+  border:1px solid #E5E7EB;
+  border-radius: 6px;
+}
+
+.sectionUserPage__mainBlock-inner{
+  padding: 20px;
+  animation: appear 1s ease forwards;
 }

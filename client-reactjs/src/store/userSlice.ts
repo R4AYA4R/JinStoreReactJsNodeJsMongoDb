@@ -33,6 +33,16 @@ export const userSlice = createSlice({
 
         },
 
+        logoutUser: (state) => {
+
+            localStorage.removeItem('token'); // удаляем accessToken из localStorage по ключу token
+
+            state.isAuth = false; // изменяем поле isAuth этого класса на false,так как уже вышли из аккаунта
+
+            state.user = {} as IUser; // изменяем поле user этого класса на пустой объект и указываем,что он нашего типа IUser,так как уже вышли из аккаунта
+
+        },
+
         // указываем тип данных для action payload как PayloadAction и в generic потом указываем тип boolean(так как мы будем передавать потом в этот action параметр типа true или false)
         setLoadingUser:(state, action: PayloadAction<boolean>)=>{
 

@@ -5,13 +5,16 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import { API_URL } from "../http/http";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AuthService from "../service/AuthService";
 
 const UserPage = () => {
 
+    const [tab, setTab] = useState('Dashboard');
+
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, authorizationForUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, authorizationForUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     const checkAuth = async () => {
@@ -56,6 +59,31 @@ const UserPage = () => {
     }, [])
 
 
+    // функция для выхода из аккаунта
+    const logout = async () => {
+
+        // оборачиваем в try catch,чтобы отлавливать ошибки 
+        try{
+
+            await AuthService.logout(); // вызываем нашу функцию logout() у AuthService
+
+            logoutUser(); // вызываем нашу функцию(action) для изменения состояния пользователя для выхода из аккаунта и в данном случае не передаем туда ничего
+
+            setTab('Dashboard'); // изменяем состояние таба на dashboard то есть показываем секцию dashboard(в данном случае главный отдел пользователя),чтобы при выходе из аккаунта и входе обратно у пользователя был открыт главный отдел аккаунта,а не настройки или последний отдел,который пользователь открыл до выхода из аккаунта
+
+
+            // здесь потом будем очищать поля инпутов в форме для изменения данных пользователя
+
+
+        }catch(e:any){
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
+
+        }
+
+    }
+
+
     // если состояние загрузки true,то есть идет загрузка запроса на сервер для проверки,авторизован ли пользователь,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
     if (isLoading) {
 
@@ -89,7 +117,55 @@ const UserPage = () => {
 
     return (
         <main className="main">
-            userPage
+
+            <SectionUserPageTop />
+
+            <section className="sectionUserPage">
+                <div className="container">
+                    <div className="sectionUserPage__inner">
+                        <div className="sectionUserPage__leftBar">
+                            <ul className="sectionUserPage__leftBar-menu">
+                                <li className="sectionUserPage__menu-item">
+                                    <button className={tab === 'Dashboard' ? "sectionUserPage__menu-btn sectionUserPage__menu-btnDashboard sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn sectionUserPage__menu-btnDashboard"} onClick={() => setTab('Dashboard')}>
+                                        <img src="/images/sectionUserPage/dashboard 2.png" alt="" className="sectionUserPage__menu-btnImg" />
+                                        <p className="sectionUserPage__menu-btnText">Dashboard</p>
+                                    </button>
+                                </li>
+                                <li className="sectionUserPage__menu-item">
+                                    <button className={tab === 'Account Settings' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Account Settings')}>
+                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                        <p className="sectionUserPage__menu-btnText">Account Settings</p>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div className="sectionUserPage__menu-item">
+                                <button className="sectionUserPage__menu-btn sectionUserPage__menu-btnLogout" onClick={logout}>
+                                    <img src="/images/sectionUserPage/dashboard 2 (2).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                    <p className="sectionUserPage__menu-btnText">Logout</p>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="sectionUserPage__mainBlock">
+
+                            {tab === 'Dashboard' &&
+                                <div className="sectionUserPage__mainBlock-inner">
+                                    Dashboard, {user.userName}
+                                </div>
+                            }
+
+                            {tab === 'Account Settings' &&
+                                <div className="sectionUserPage__mainBlock-inner">
+                                    Account Settings, {user.userName}
+                                </div>
+                            }
+
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
     )
 
