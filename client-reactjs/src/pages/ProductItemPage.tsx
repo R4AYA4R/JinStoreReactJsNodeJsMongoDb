@@ -4,8 +4,10 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useQuery } from "@tanstack/react-query";
 import { IProduct } from "../types/types";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
 
 // формат картинок svg можно изменять до любого размера без потери качества и он меньше весит,чем png формат,лучше использовать svg картинки для всяких небольших картинок,когда задний фон картинки не имеет значения
 
@@ -16,6 +18,8 @@ const ProductItemPage = () => {
     const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+    const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
     const [tab, setTab] = useState('Desc'); // состояние для таба описания
 
@@ -28,6 +32,8 @@ const ProductItemPage = () => {
     const [errorForm, setErrorForm] = useState(''); // состояние для ошибки формы
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния user и тд,используя наш типизированный хук для useSelector
 
 
     const { data, refetch } = useQuery({
@@ -42,10 +48,19 @@ const ProductItemPage = () => {
 
     })
 
-    const addReviewsBtn = () => {
+    // указываем,что эта функция ничего не возвращает(то есть указываем ей тип возвращаемых данных как void),в данном случае это не обязательно делать,так как это и так понятно,но так как используем typescript и чтобы лучше попрактиковаться и больше его использовать,указываем это,также vs code автоматически подхватывает тип возвращаемых данных,если функция ничего не возвращает и в данном случае указывать это не обязательно
+    const addReviewsBtn = ():void => {
 
-        // здесь еще будем делать проверку,авторизован ли пользователь,и если нет,то перекидывать на страницу авторизации
-        setActiveForm(true);
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации 
+        if (user.userName) {
+
+            setActiveForm(true); // изменяем состояние активной формы,то есть показываем форму для создания комментария 
+
+        } else {
+
+            router('/userPage'); // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
+
+        }
 
     }
 
@@ -54,11 +69,38 @@ const ProductItemPage = () => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
+        // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10,то будем изменять состояние errorForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
+        if (textAreaValue.trim().length <= 10) {
 
+            setErrorForm('Review must be more than 10 characters');
+
+        } else if (activeStarsForm === 0) {
+
+            // если состояние рейтинга в форме равно 0,то есть пользователь не указал рейтинг,то показываем ошибку
+            setErrorForm('Enter rating');
+
+        } else {
+
+            // здесь будем делать запрос для создания комментария
+
+
+            setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
+
+            setActiveStarsForm(0); // убираем звезды формы(ставим их на дефолтное значение,изменяя состояние activeStarsForm на 0),которые мог пользователь ввести
+
+            setTextAreaValue(''); // очищаем значение в textarea(изменяя состояние textAreaValue на пустую строку),которое пользователь мог ввести
+
+            setErrorForm(''); // убираем ошибку формы,если она была
+
+        }
+
+
+    }
+
+    // функция для отмены(закрытия) формы создания комментария
+    const cancelFormHandler = () => {
 
         setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
-
-        setActiveStarsForm(0); // убираем звезды формы(ставим их на дефолтное значение,изменяя состояние activeStarsForm на 0),которые мог пользователь ввести
 
         setTextAreaValue(''); // очищаем значение в textarea(изменяя состояние textAreaValue на пустую строку),которое пользователь мог ввести
 
@@ -106,27 +148,9 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews-inner">
                                         <div className="reviews__leftBlock">
 
-                                            {/* <div className="reviews__leftBlock-item">
-                                                <div className="reviews__item-topBlock">
-                                                    <div className="reviews__item-topBlockLeftInfo">
-                                                        <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
-                                                        <div className="reviews__item-topBlockLeftInfo--info">
-                                                            <p className="reviews__item-infoName">UserName</p>
-                                                            <div className="sectionNewArrivals__item-stars reviews__form-starsBlock reviews__item-starsBlock">
-                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                                                <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <p className="reviews__item-topBlockTime">20.10.2000</p>
-                                                </div>
-                                                <p className="reviews__item-text">Comment text</p>
-                                            </div> */}
+                                            <ProductItemPageReviewItem user={user} />
 
-                                            <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
+                                            {/* <h4 className="reviews__leftBlock-text">No reviews yet.</h4> */}
 
                                         </div>
                                         <div className="reviews__rightBlock">
@@ -139,7 +163,7 @@ const ProductItemPage = () => {
                                                 <div className="reviews__form-topBlock">
                                                     <div className="reviews__form-topBlockInfo">
                                                         <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__topBlockInfo-img" />
-                                                        <p className="form__topBlockInfo-text">Username</p>
+                                                        <p className="form__topBlockInfo-text">{user.userName}</p>
                                                     </div>
                                                     <div className="sectionNewArrivals__item-stars reviews__form-starsBlock">
                                                         {/* указываем этой кнопке тип button(то есть обычная кнопка),так как это кнопка находится в форме и чтобы при нажатии на нее форма не отправлялась(то есть не срабатывало событие onSubmit у формы), по клику на эту кнопку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
@@ -167,9 +191,12 @@ const ProductItemPage = () => {
                                                     {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
                                                     {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
 
+                                                    <div className="form__mainBlock-bottomBlock">
+                                                        {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                                        <button className="reviews__btnBlock-btn" type="submit">Save Reply</button>
 
-                                                    {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
-                                                    <button className="reviews__btnBlock-btn" type="submit">Save Review</button>
+                                                        <button className="reviews__item-btnAnswer" type="button" onClick={cancelFormHandler}>Cancel</button>
+                                                    </div>
 
                                                 </div>
 

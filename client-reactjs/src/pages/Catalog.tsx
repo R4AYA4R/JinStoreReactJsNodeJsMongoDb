@@ -76,14 +76,22 @@ const Catalog = () => {
 
                     category: filterCategories, // указываем query параметр category со значением filterCategories(даже если filterCategories пустая строка,то оно также правильно обрабатывается и проверки дополнительные здесь не нужны,мы проверяем на бэкэнде,не равен ли этот query параметр category пустой строке)
 
-                    page:page, // указываем параметр page(параметр текущей страницы,для пагинации)
+                    page: page, // указываем параметр page(параметр текущей страницы,для пагинации)
 
-                    limit:limit // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
+                    limit: limit // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
                 }
             });  // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
 
             console.log(response.data);
+
+            setFilteredCategoryFruitsAndVegetables(response.data.allProducts.filter(p => p.category === 'Fruits & Vegetables')); // помещаем в состояние filteredCategoryFruitsAndVegetable массив allProducts(массив всех товаров без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Fruits & Vegetables',то есть получаем массив объектов товаров с категорией Fruits & Vegetables,чтобы отобразить количество товаров в этой категории)
+
+            setFilteredCategoryBeverages(response.data.allProducts.filter(p => p.category === 'Beverages'));
+
+            setFilteredCategoryMeatsAndSeafood(response.data.allProducts.filter(p => p.category === 'Meats & Seafood'));
+
+            setFilteredCategoryBreadsAndBakery(response.data.allProducts.filter(p => p.category === 'Breads & Bakery'));
 
             const totalCount = response.data.allProducts.length; // записываем общее количество объектов товаров с помощью .length,которые пришли от сервера в переменную totalCount(берем это у поля length у поля allProducts(массив всех объектов товаров без лимитов и состояния текущей страницы,то есть без пагинации) у поля data у response(общий объект ответа от сервера))
 
@@ -149,18 +157,15 @@ const Catalog = () => {
         console.log(data?.maxPriceAllProducts)
 
 
-        // лучше фильтровать массивы просто запросами на сервер,добавляя туда параметры фильтров,если они есть,но сейчас уже сделали так
+        // лучше фильтровать массивы просто запросами на сервер,добавляя туда параметры фильтров,если они есть,но сейчас уже сделали так,также сейчас фильтруем массив товаров уже в самой функции запроса на сервер для их получения,а не здесь,так как при переходе на другую страницу и обратно,числа сразу не показываются
 
-        setFilteredCategoryFruitsAndVegetables(data?.allProducts.filter(p => p.category === 'Fruits & Vegetables')); // помещаем в состояние filteredCategoryFruitsAndVegetable массив allProducts(массив всех товаров без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Fruits & Vegetables',то есть получаем массив объектов товаров с категорией Fruits & Vegetables,чтобы отобразить количество товаров в этой категории)
+        // setFilteredCategoryFruitsAndVegetables(data?.allProducts.filter(p => p.category === 'Fruits & Vegetables')); // помещаем в состояние filteredCategoryFruitsAndVegetable массив allProducts(массив всех товаров без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его по полю category со значением,в данном случае 'Fruits & Vegetables',то есть получаем массив объектов товаров с категорией Fruits & Vegetables,чтобы отобразить количество товаров в этой категории)
 
-        setFilteredCategoryBeverages(data?.allProducts.filter(p => p.category === 'Beverages'));
+        // setFilteredCategoryBeverages(data?.allProducts.filter(p => p.category === 'Beverages'));
 
-        setFilteredCategoryMeatsAndSeafood(data?.allProducts.filter(p => p.category === 'Meats & Seafood'));
+        // setFilteredCategoryMeatsAndSeafood(data?.allProducts.filter(p => p.category === 'Meats & Seafood'));
 
-        setFilteredCategoryBreadsAndBakery(data?.allProducts.filter(p => p.category === 'Breads & Bakery'));
-
-
-
+        // setFilteredCategoryBreadsAndBakery(data?.allProducts.filter(p => p.category === 'Breads & Bakery'));
 
     }, [data?.products]);
 
@@ -178,7 +183,7 @@ const Catalog = () => {
 
         refetch();  // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [searchValue, filterCategories,page])
+    }, [searchValue, filterCategories, page])
 
 
     // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и тд
@@ -242,24 +247,24 @@ const Catalog = () => {
     }, [filterPrice])
 
     // при изменении фильтров и состояния сортировки(selectValue в данном случае) изменяем состояние текущей страницы пагинации на первую
-    useEffect(()=>{
+    useEffect(() => {
 
         setPage(1);
 
-    },[filterPrice,filterCategories])
+    }, [filterPrice, filterCategories])
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
     const prevPage = () => {
         // если текущая страница больше или равна 2
-        if(page >= 2){
+        if (page >= 2) {
             setPage((prev) => prev - 1);  // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
         }
     }
 
     const nextPage = () => {
         // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
-        if(page <= totalPages - 1){
+        if (page <= totalPages - 1) {
             setPage((prev) => prev + 1);  // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
         }
     }
@@ -498,12 +503,12 @@ const Catalog = () => {
 
                                             {pagesArray.map(p =>
 
-                                                <button 
+                                                <button
                                                     className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
 
                                                     key={p}
 
-                                                    onClick={()=>setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+                                                    onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
 
                                                 >
                                                     {p}
@@ -513,11 +518,11 @@ const Catalog = () => {
 
                                             {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки */}
                                             {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
-                                            
+
                                             {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
                                             {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>
                                             }
-                                           
+
                                             <button className="pagination__btnRight" onClick={nextPage}>
                                                 <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
                                             </button>
