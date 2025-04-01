@@ -47,3 +47,12 @@ export interface AuthResponse {
     refreshToken:string,
     user:IUser // указываем,что поле user - это объект на основе нашего интерфеса IUser(с теми полями, которые описаны в IUser)
 }
+
+export interface IComment {
+    _id:number,  // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием по дефолту
+    name:string,
+    text:string,
+    rating:number,
+    createdTime:string,
+    productNameFor:string
+}

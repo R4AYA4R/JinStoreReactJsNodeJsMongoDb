@@ -1,11 +1,12 @@
 import { FormEvent, useState } from "react";
-import { IUser } from "../types/types";
+import { IComment, IUser } from "../types/types";
 
 interface IProductItemPageReviewItem {
-    user: IUser
+    user: IUser,
+    comment:IComment
 }
 
-const ProductItemPageReviewItem = ({ user }: IProductItemPageReviewItem) => {
+const ProductItemPageReviewItem = ({ user,comment }: IProductItemPageReviewItem) => {
 
     const [activeForm, setActiveForm] = useState(false);
 
@@ -55,19 +56,20 @@ const ProductItemPageReviewItem = ({ user }: IProductItemPageReviewItem) => {
                 <div className="reviews__item-topBlockLeftInfo">
                     <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
                     <div className="reviews__item-topBlockLeftInfo--info">
-                        <p className="reviews__item-infoName">UserName</p>
+                        <p className="reviews__item-infoName">{comment.name}</p>
                         <div className="sectionNewArrivals__item-stars reviews__form-starsBlock reviews__item-starsBlock">
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                            {/* если comment.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                            <img src={comment.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={comment.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={comment.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={comment.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={comment.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                         </div>
                     </div>
                 </div>
-                <p className="reviews__item-topBlockTime">20.10.2000</p>
+                <p className="reviews__item-topBlockTime">{comment.createdTime}</p>
             </div>
-            <p className="reviews__item-text">Comment text</p>
+            <p className="reviews__item-text">{comment.text}</p>
 
             {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для добавления ответа на комментарий */}
             {user.role === 'ADMIN' &&
