@@ -12,7 +12,7 @@ const HomePage = () => {
             <SectionTop />
             <SectionCategoryItems />
             <div className="sectionOuterGradient">
-                <SectionNewArrivals />
+                <SectionNewArrivals className=""/>
                 <SectionDontMiss />
                 <SectionBestSellers />
                 <SectionPromo />

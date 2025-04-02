@@ -4,21 +4,23 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { IComment, IProduct } from "../types/types";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
 import { API_URL } from "../http/http";
+import SectionNewArrivals from "../components/SectionNewArrivals";
 
 // формат картинок svg можно изменять до любого размера без потери качества и он меньше весит,чем png формат,лучше использовать svg картинки для всяких небольших картинок,когда задний фон картинки не имеет значения
 
 const ProductItemPage = () => {
 
+    const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
     // скопировали это из файла SectionNewArrivals,так как здесь тоже самое,чтобы дополнительно не писать
-    const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+    const sectionBestSellers = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
-    const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+    const onScreen = useIsOnScreen(sectionBestSellers as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
@@ -49,11 +51,19 @@ const ProductItemPage = () => {
 
     })
 
-    const { data:dataComments, refetch:refetchComments } = useQuery({
+    const { data: dataComments, refetch: refetchComments } = useQuery({
         queryKey: ['commentsForProduct'],
         queryFn: async () => {
 
-            const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct?productNameFor=${data?.data.name}`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,можно было указать этот query параметр productNameFor вторым параметром в этой функции get запроса у axios в объекте в поле params,но можно и так
+            const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct`, {
+
+                params: {
+
+                    productNameFor: data?.data.name
+
+                }
+
+            }); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
 
             return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
 
@@ -72,8 +82,27 @@ const ProductItemPage = () => {
         },
 
         // при успешной мутации переобновляем массив комментариев
-        onSuccess(){
+        onSuccess() {
             refetchComments();
+        }
+
+    })
+
+
+    const { mutate: mutateProductRating } = useMutation({
+        mutationKey: ['updateRatingProduct'],
+        mutationFn: async (product: IProduct) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IProduct),но здесь не обязательно указывать тип
+            await axios.put<IProduct>(`${API_URL}/updateProductRating`, product);
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        onSuccess() {
+
+            refetch();
+
         }
 
     })
@@ -115,14 +144,14 @@ const ProductItemPage = () => {
 
             let monthDate = (date.getMonth() + 1).toString(); // помещаем в переменную номера текущего месяца,указываем ей let,чтобы можно было изменять ей значение потом, getMonth() - считает месяцы с нуля(январь нулевой,февраль первый и тд),поэтому указываем date.getMonth() + 1(увеличиваем на 1 и получаем текущий месяц) и потом приводим получившееся значение к формату строки с помощью toString()
 
-            let dayDate =  (date.getDate()).toString(); // помещаем в переменную текущее число месяца,указываем ей let,чтобы можно было изменять ей значение потом, date.getDate() - показывает текущее число календаря и потом приводим получившееся значение к формату строки с помощью toString(),чтобы проверить на количество символов 
+            let dayDate = (date.getDate()).toString(); // помещаем в переменную текущее число месяца,указываем ей let,чтобы можно было изменять ей значение потом, date.getDate() - показывает текущее число календаря и потом приводим получившееся значение к формату строки с помощью toString(),чтобы проверить на количество символов 
 
             // если monthDate.length < 2(то есть monthDate по количеству символов меньше 2,то есть текущий месяц состоит из одного символа,то есть меньше 10,например,9 и тд),делаем эту проверку,чтобы добавить 0 перед месяцами меньше 10
-            if(monthDate.length < 2){
+            if (monthDate.length < 2) {
 
                 monthDate = '0' + monthDate; // изменяем значение monthDate на 0 + текущее значение monthDate,то есть добавляем ноль перед числом месяца,чтобы число месяца меньше 10,записывалось с 0 перед ним,типа 04 и тд
 
-            }else{
+            } else {
                 // в другом случае,если условие выше не сработало,то изменяем monthDate на monthDate,то есть оставляем этой переменной такое же значение как и изначальное
                 monthDate = monthDate;
 
@@ -130,11 +159,11 @@ const ProductItemPage = () => {
 
 
             // если dayDate.length < 2(то есть dayDate по количеству символов меньше 2,то есть текущее число месяца состоит из одного символа,то есть меньше 10,например,9 и тд),делаем эту проверку,чтобы добавить 0 перед месяцами меньше 10
-            if(dayDate.length < 2){
+            if (dayDate.length < 2) {
 
                 dayDate = '0' + dayDate; // изменяем значение dayDate на 0 + текущее значение dayDate,то есть добавляем ноль перед числом месяца,чтобы число месяца меньше 10,записывалось с 0 перед ним,типа 04 и тд
 
-            }else{
+            } else {
                 // в другом случае,если условие выше не сработало,то изменяем dayDate на dayDate,то есть оставляем этой переменной такое же значение как и изначальное
                 dayDate = dayDate;
 
@@ -144,7 +173,7 @@ const ProductItemPage = () => {
             const showTime = dayDate + '.' + monthDate + '.' + date.getFullYear();
 
 
-            mutate({name:user.userName,text:textAreaValue,rating:activeStarsForm,productNameFor:data?.data.name,createdTime:showTime} as IComment); // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productNameFor со значением как у name товара на этой странице,чтобы в базе данных связать этот товар с комментарием
+            mutate({ name: user.userName, text: textAreaValue, rating: activeStarsForm, productNameFor: data?.data.name, createdTime: showTime } as IComment); // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productNameFor со значением как у name товара на этой странице,чтобы в базе данных связать этот товар с комментарием
 
 
             setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
@@ -172,16 +201,51 @@ const ProductItemPage = () => {
     }
 
     // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
-    useEffect(()=>{
+    useEffect(() => {
 
         refetchComments();
 
-    },[data?.data])
+    }, [data?.data, dataComments?.data])
+
+    // при запуске(рендеринге) этого компонента(при загрузке этой страницы),а также при изменении массива комментариев,будем обновлять рейтинг товара
+    useEffect(() => {
+
+        const commentsRating = dataComments?.data.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
+
+        // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.data.length true(этот массив отфильтрованных комментариев для товара на этой странице есть),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
+        if (commentsRating && dataComments?.data.length) {
+
+            const commentsRatingMiddle = commentsRating / dataComments?.data.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
+
+            mutateProductRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct);  // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
+
+            // здесь еще нужно делать запрос на обновление рейтинга у товаров корзины
+
+
+        }
+
+    }, [dataComments?.data])
+
+
+    // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на Desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
+    useEffect(() => {
+
+        refetch();
+
+        setActiveStarsForm(0);
+
+        setActiveForm(false);
+
+        setTab('Desc');
+
+        setTextAreaValue('');
+
+    }, [pathname])
 
     return (
         <main className="main">
             {/* скопировали id и тд из файла sectionNewArrivals,так как здесь такая же анимация и это страница товара,поэтому здесь не будет такой секции как в sectionNewArrivals,поэтому id будут нормально работать,это просто,чтобы не писать больше дополнительного */}
-            <section className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active sectionProductItemPage" : "sectionNewArrivals sectionProductItemPage"} ref={sectionNewArrivals} id="sectionNewArrivals">
+            <section className={onScreen.sectionProductItemPage ? "sectionProductItemPage__active sectionProductItemPage" : "sectionProductItemPage"} ref={sectionBestSellers} id="sectionProductItemPage">
                 <div className="container">
                     <div className="sectionProductItemPage__inner">
                         <div className="sectionProductItemPage__top sectionCatalog__topBlock">
@@ -192,8 +256,8 @@ const ProductItemPage = () => {
                             <p className="sectionCatalog__topBlock-subtitle">{data?.data.name}</p>
                         </div>
 
-                        {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара) */}
-                        <ProductItemPageItemBlock product={data?.data} />
+                        {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов */}
+                        <ProductItemPageItemBlock product={data?.data} pathname={pathname}/>
 
                         <div className="sectionProductItemPage__descBlock">
                             <div className="sectionProductItemPage__descBlock-tabs">
@@ -218,14 +282,14 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews-inner">
                                         <div className="reviews__leftBlock">
 
-                                            {dataComments?.data.length ? 
-                                                dataComments.data.map(comment => 
+                                            {dataComments?.data.length ?
+                                                dataComments.data.map(comment =>
 
-                                                    <ProductItemPageReviewItem key={comment._id} user={user} comment={comment}/>   
+                                                    <ProductItemPageReviewItem key={comment._id} user={user} comment={comment} />
 
                                                 )
-                                                : 
-                                                <h4 className="reviews__leftBlock-text">No reviews yet.</h4> 
+                                                :
+                                                <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
                                             }
 
                                             {/* <h4 className="reviews__leftBlock-text">No reviews yet.</h4> */}
@@ -293,6 +357,8 @@ const ProductItemPage = () => {
                     </div>
                 </div>
             </section>
+
+            <SectionNewArrivals className="sectionNewArrivalsProductPage" /> {/* передаем параметр className этой секции со значением класса sectionNewArrivalsProductPage,чтобы для этой секции на этой странице были другие отступы(margin и padding) и анимация */}
         </main>
     )
 

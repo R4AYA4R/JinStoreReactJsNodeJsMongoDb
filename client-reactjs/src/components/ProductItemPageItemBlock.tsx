@@ -1,5 +1,5 @@
 
-import { Swiper, SwiperSlide } from "swiper/react"; // импортируем вручну таким образом сам Swiper(для слайдера) и SwiperSlide(для элементов в этом слайдере) из библиотеки swiper/react(перед этим мы установили библиотеку swiper(npm i swiper)),иначе автоматически неправильно импортирует и выдает ошибку
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react"; // импортируем вручну таким образом сам Swiper(для слайдера) и SwiperSlide(для элементов в этом слайдере) из библиотеки swiper/react(перед этим мы установили библиотеку swiper(npm i swiper)),иначе автоматически неправильно импортирует и выдает ошибку
 
 import { Autoplay, Navigation, Thumbs, Zoom } from "swiper/modules"; // импортируем модули для этого слайдера swiper,модули типа навигации(Navigation),пагинации(Pagination) и тд,нужно их импортировать,чтобы подключить и использовать в этом слайдере swiper,импортируем Thumbs для превью картинок слайдера,Autoplay для автоматической прокрутки слайдов
 
@@ -14,14 +14,16 @@ import { IProduct } from "../types/types";
 
 
 interface IProductItemPageItemBlock {
-    product: IProduct | undefined // указываем этому полю тип на основе нашего интерфейса IProduct или undefined(указываем это или undefined,так как выдает ошибку,что product может быть undefined)
+    product: IProduct | undefined, // указываем этому полю тип на основе нашего интерфейса IProduct или undefined(указываем это или undefined,так как выдает ошибку,что product может быть undefined)
+
+    pathname:string // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
 }
 
-const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
+const ProductItemPageItemBlock = ({ product,pathname }: IProductItemPageItemBlock) => {
 
     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null); // указываем тип в generic для этого состояния thumbsSwiper(превью картинок для слайдера swiper) как any,иначе выдает ошибку,что нельзя назначить тип Swiper состоянию
 
-    const [inputAmountValue,setInputAmountValue] = useState(1);
+    const [inputAmountValue, setInputAmountValue] = useState(1);
 
     const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
 
@@ -38,16 +40,23 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
 
     }, [product])
 
+    // при изменении pathname(то есть когда будет меняться url страницы,то есть когда будем переходить,например,на другую страницу товара,чтобы значение количества товара становилось на 0,то есть на дефолтное значение) изменяем поле inputAmountValue на 0
+    useEffect(()=>{
+
+        setInputAmountValue(0);
+
+    },[pathname])
+
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
-    const changeInputAmountValue = (e:ChangeEvent<HTMLInputElement>) => {
+    const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
 
         // если текущее значение инпута > 99,то изменяем состояние инпута цены на 99,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
-        if(+e.target.value > 99){
+        if (+e.target.value > 99) {
 
             setInputAmountValue(99);
 
-        }else if(+e.target.value <= 0){
+        } else if (+e.target.value <= 0) {
 
             // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
             setInputAmountValue(0);
@@ -63,7 +72,7 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
     const handlerMinusAmountBtn = () => {
 
         // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
-        if(inputAmountValue > 1){
+        if (inputAmountValue > 1) {
 
             setInputAmountValue((prev) => prev - 1);
 
@@ -78,7 +87,7 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
     const handlerPlusAmountBtn = () => {
 
         // если значение инпута количества товара меньше 99 и больше или равно 0,то изменяем это значение на + 1,в другом случае указываем ему значение 99,чтобы больше 99 не увеличивалось
-        if(inputAmountValue < 99 && inputAmountValue >= 0){
+        if (inputAmountValue < 99 && inputAmountValue >= 0) {
 
             setInputAmountValue((prev) => prev + 1);
 
@@ -172,7 +181,9 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
 
                             spaceBetween={10} // отступ в пикселях между слайдами
 
+
                         >
+
                             {/* указываем SwiperSlide(элемент слайдера) и в него помещаем картинку для этого слайдера,указываем картинке для первого слайда в src путь до картинки,в конце этого пути указываем product?.mainImage,то есть название картинки у объекта товара(product) для главной(первой) картинки для слайдера */}
                             <SwiperSlide className="sectionProductItemPage__sliderBlock__sliderPreview">
                                 <img src={`/images/sectionNewArrivals/${product?.mainImage}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSliderPreview" />
@@ -198,11 +209,21 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
                 <h1 className="sectionProductItemPage__infoBlock-title">{product?.name}</h1>
                 <div className="sectionNewArrivals__item-starsBlock">
                     <div className="sectionNewArrivals__item-stars">
-                        <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                        <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                        <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                        <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                        <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                        
+                        {/* если product true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа product может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
+                        {product &&
+
+                            <>
+                                {/* если product.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                                <img src={product.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={product.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={product.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            </>
+
+                        }
+
                     </div>
                     <p className="starsBlock__text">(0)</p>
                 </div>
@@ -226,7 +247,7 @@ const ProductItemPageItemBlock = ({ product }: IProductItemPageItemBlock) => {
                         <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
                         </button>
-                        <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue}/>
+                        <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
                         <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
                         </button>

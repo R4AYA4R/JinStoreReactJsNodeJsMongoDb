@@ -17,6 +17,8 @@ router.post('/createComment',commentController.createComment); // создаем
 
 router.get('/getCommentsForProduct',commentController.getCommentsForProduct); // создаем get запрос на получение комментариев для определенного товара
 
+router.put('/updateProductRating',productController.updateProductRating); // создаем put запрос для обновления рейтинга товара 
+
 
 router.post('/registration',
     body('email').isEmail(),

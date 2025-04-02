@@ -1,4 +1,4 @@
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,23 @@ import axios from "axios";
 import { IProduct } from "../types/types";
 import ProductItemArrivals from "./ProductItemArrivals";
 
-const SectionNewArrivals = () => {
+interface ISectionNewArrivals{
+    className:string
+}
+
+const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
+
+    const [sectionNewArrivalsClass,setSectionNewArrivalsClass] = useState(className); // состояние для класса этой секции sectionNewArrivals,по дефолту делаем ей значение как пропс(параметр) className
+
+    // при запуске(рендеринге) этого компонента будет отработан код в этом useEffect,так как он с пустым массивом зависимостей
+    useEffect(()=>{
+
+        // если пропс(параметр) className равен пустой строке(то есть это секция будет на странице HomePage,там не будет такой анимации и отступов как на странице ProductItemPage),то изменяем состояние sectionNewArrivalsClass на значение дефолтного класса для этой секции sectionNewArrivals
+        if(className === ''){
+            setSectionNewArrivalsClass("sectionNewArrivals");
+        }
+
+    },[])
 
     const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
@@ -27,7 +43,7 @@ const SectionNewArrivals = () => {
     })
 
     return (
-        <section ref={sectionNewArrivals} id="sectionNewArrivals" className={onScreen.sectionNewArrivalsIntersecting ? "sectionNewArrivals sectionNewArrivals__active" : "sectionNewArrivals"}>
+        <section ref={sectionNewArrivals} id="sectionNewArrivals" className={onScreen.sectionNewArrivalsIntersecting ? `${sectionNewArrivalsClass} sectionNewArrivals__active` : sectionNewArrivalsClass}>
             <div className="container">
                 <div className="sectionNewArrivals__inner">
                     <div className="sectionNewArrivals__top">

@@ -13,6 +13,7 @@ export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
         sectionLeftBlockItemsIntersecting:false,
         sectionRightBlockItemsIntersecting:false,
         sectionMidBlockItemsIntersecting:false,
+        sectionProductItemPage:false,
     })
 
     // создаем функцию для intersectionObserver,принимает в параметре все элементы,за которыми следит(entries),и сам observer,указываем тип параметру entries как IntersectionObserverEntry и указываем ему,что это массив,указываем параметру observer тип как IntersectionObserver,так как это и есть сам IntersectionObserver
@@ -84,6 +85,14 @@ export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
                 if(entry.target.id === 'midBlockItems'){
                     
                     setIsIntersectingNow((prev) => ({...prev,sectionMidBlockItemsIntersecting:true})); // изменяем состояние текущего наблюдения,возвращая новый объект,куда разворачиваем все предыдущие состония как они и были,только меняем одно состояние для конкретного html элемента(в данном случае sectionTopIntersecting) на true, чтобы не обарачивать все в квадратные скобки и потом не писать return,просто можно обернуть объект в круглые скобки(это тоже самое)
+
+                    observer.unobserve(entry.target); // убираем отслеживание текущего элемента,чтобы больше observer не следил за этим элементом
+
+                }
+
+                if(entry.target.id === 'sectionProductItemPage'){
+                    
+                    setIsIntersectingNow((prev) => ({...prev,sectionProductItemPage:true})); // изменяем состояние текущего наблюдения,возвращая новый объект,куда разворачиваем все предыдущие состония как они и были,только меняем одно состояние для конкретного html элемента(в данном случае sectionTopIntersecting) на true, чтобы не обарачивать все в квадратные скобки и потом не писать return,просто можно обернуть объект в круглые скобки(это тоже самое)
 
                     observer.unobserve(entry.target); // убираем отслеживание текущего элемента,чтобы больше observer не следил за этим элементом
 
