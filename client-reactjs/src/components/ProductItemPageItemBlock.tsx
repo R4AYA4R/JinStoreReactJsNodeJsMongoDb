@@ -10,16 +10,18 @@ import 'swiper/css/thumbs'; // импортируем стили для моду
 
 import 'swiper/css/zoom';
 import { ChangeEvent, useEffect, useState } from "react";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 
 
 interface IProductItemPageItemBlock {
     product: IProduct | undefined, // указываем этому полю тип на основе нашего интерфейса IProduct или undefined(указываем это или undefined,так как выдает ошибку,что product может быть undefined)
 
-    pathname:string // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
+    pathname:string, // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
+
+    comments:IComment[] | undefined // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
 }
 
-const ProductItemPageItemBlock = ({ product,pathname }: IProductItemPageItemBlock) => {
+const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPageItemBlock) => {
 
     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null); // указываем тип в generic для этого состояния thumbsSwiper(превью картинок для слайдера swiper) как any,иначе выдает ошибку,что нельзя назначить тип Swiper состоянию
 
@@ -225,7 +227,7 @@ const ProductItemPageItemBlock = ({ product,pathname }: IProductItemPageItemBloc
                         }
 
                     </div>
-                    <p className="starsBlock__text">(0)</p>
+                    <p className="starsBlock__text">({comments?.length})</p>
                 </div>
                 <p className="sectionProductItemPage__infoBlock-desc">{product?.descText}</p>
 

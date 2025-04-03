@@ -2,7 +2,7 @@
 import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IComment, IProduct } from "../types/types";
+import { IComment, ICommentResponse, IProduct } from "../types/types";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
@@ -10,10 +10,17 @@ import { useTypedSelector } from "../hooks/useTypedSelector";
 import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
 import { API_URL } from "../http/http";
 import SectionNewArrivals from "../components/SectionNewArrivals";
+import { getPagesArray } from "../utils/getPagesArray";
 
 // формат картинок svg можно изменять до любого размера без потери качества и он меньше весит,чем png формат,лучше использовать svg картинки для всяких небольших картинок,когда задний фон картинки не имеет значения
 
 const ProductItemPage = () => {
+
+    const [page, setPage] = useState(1); // указываем состояние текущей страницы
+
+    const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
+
+    const [limit, setLimit] = useState(3); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
 
     const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
@@ -51,21 +58,44 @@ const ProductItemPage = () => {
 
     })
 
+    // скопировали этот запрос на сервер из файла sectionNewArrivals,и указали такой же queryKey как и там,чтобы при изменении рейтинга у товара переобновлять массив товаров в секции sectionNewArrivals
+    const { data:dataProductArrivals,refetch:refetchProductArrivals } = useQuery({
+        queryKey:['getAllProducts'], // указываем здесь такое же название,как и в файле SectionDeals для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другом компоненте(в данном случае в SectionDeals),а не после обновления страницы
+        queryFn:async () => {
+            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts?limit=5&skip=0'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
+
+            console.log(response.data);
+
+            return response; // возвращаем этот массив объектов товаров(он будет помещен в поле data у data,которую мы берем из этого useQuery)
+
+        }
+
+    })
+
+    // указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев в секции sectionNewArrivals
     const { data: dataComments, refetch: refetchComments } = useQuery({
         queryKey: ['commentsForProduct'],
         queryFn: async () => {
 
-            const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct`, {
+            const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`, {
 
                 params: {
 
-                    productNameFor: data?.data.name
+                    productNameFor: data?.data.name,
+
+                    limit:limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
+
+                    page:page  // указываем параметр page(параметр текущей страницы,для пагинации)
 
                 }
 
             }); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
 
-            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+            const totalCount = response.data.allCommentsForName.length; // записываем общее количество объектов комментариев,отфильтрованных для отдельного товара по имени с помощью .length,которые пришли от сервера в переменную totalCount(берем это у поля length у поля allCommentsForName(массив всех объектов комментариев без лимитов и состояния текущей страницы,то есть без пагинации) у поля data у response(общий объект ответа от сервера))
+
+            setTotalPages(Math.ceil(totalCount / limit));  // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allComments, allCommentsForName и comments
 
         }
 
@@ -200,22 +230,24 @@ const ProductItemPage = () => {
 
     }
 
-    // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
+    // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара и массив товаров для секции sectionNewArrivals,чтобы при обновлении рейтинга товара,шел повторный запрос для обновления массива товаров для секции sectionNewArrivals
     useEffect(() => {
 
         refetchComments();
 
-    }, [data?.data, dataComments?.data])
+        refetchProductArrivals();
+
+    }, [data?.data, dataComments?.allCommentsForName])
 
     // при запуске(рендеринге) этого компонента(при загрузке этой страницы),а также при изменении массива комментариев,будем обновлять рейтинг товара
     useEffect(() => {
 
-        const commentsRating = dataComments?.data.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
+        const commentsRating = dataComments?.allCommentsForName.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
 
         // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.data.length true(этот массив отфильтрованных комментариев для товара на этой странице есть),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
-        if (commentsRating && dataComments?.data.length) {
+        if (commentsRating && dataComments?.allCommentsForName.length) {
 
-            const commentsRatingMiddle = commentsRating / dataComments?.data.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
+            const commentsRatingMiddle = commentsRating / dataComments?.allCommentsForName.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
 
             mutateProductRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct);  // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
 
@@ -224,7 +256,8 @@ const ProductItemPage = () => {
 
         }
 
-    }, [dataComments?.data])
+
+    }, [dataComments?.allCommentsForName])
 
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на Desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
@@ -240,7 +273,36 @@ const ProductItemPage = () => {
 
         setTextAreaValue('');
 
+        setPage(1);
+
+        refetchComments(); // также переобновляем массив комментариев
+
     }, [pathname])
+
+
+
+    // при обновлении страницы переобновляем(делаем повторный запрос на сервер) массив комментариев
+    useEffect(()=>{
+
+        refetchComments();
+
+    },[page])
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+        // если текущая страница больше или равна 2
+        if (page >= 2) {
+            setPage((prev) => prev - 1);  // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+        }
+    }
+
+    const nextPage = () => {
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+            setPage((prev) => prev + 1);  // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+        }
+    }
 
     return (
         <main className="main">
@@ -257,12 +319,12 @@ const ProductItemPage = () => {
                         </div>
 
                         {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов */}
-                        <ProductItemPageItemBlock product={data?.data} pathname={pathname}/>
+                        <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForName} />
 
                         <div className="sectionProductItemPage__descBlock">
                             <div className="sectionProductItemPage__descBlock-tabs">
                                 <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
-                                <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Reviews')}>Reviews ({dataComments?.data.length})</button>
+                                <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Reviews')}>Reviews ({dataComments?.allCommentsForName.length})</button>
                             </div>
 
                             <div className="sectionProductItemPage__descBlock-desc">
@@ -282,17 +344,55 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews-inner">
                                         <div className="reviews__leftBlock">
 
-                                            {dataComments?.data.length ?
-                                                dataComments.data.map(comment =>
+                                            {dataComments?.allCommentsForName.length ?
+                                                <>
 
-                                                    <ProductItemPageReviewItem key={comment._id} user={user} comment={comment} />
+                                                    <div className="reviews__leftBlock-comments">
+                                                        {dataComments.comments.map(comment =>
 
-                                                )
+                                                            <ProductItemPageReviewItem key={comment._id} user={user} comment={comment} />
+
+                                                        )}
+                                                    </div>
+
+                                                    <div className="productsBlock__pagination">
+
+                                                        <button className="pagination__btnLeft" onClick={prevPage}>
+                                                            <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnLeft-img" />
+                                                        </button>
+
+                                                        {pagesArray.map(p =>
+
+                                                            <button
+                                                                className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
+
+                                                                key={p}
+
+                                                                onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+
+                                                            >
+                                                                {p}
+                                                            </button>
+
+                                                        )}
+
+                                                        {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки  */}
+                                                        {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>} 
+
+                                                        {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
+                                                        {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>
+                                                        }
+
+                                                        <button className="pagination__btnRight" onClick={nextPage}>
+                                                            <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
+                                                        </button>
+
+                                                    </div>
+
+                                                </>
                                                 :
                                                 <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
                                             }
-
-                                            {/* <h4 className="reviews__leftBlock-text">No reviews yet.</h4> */}
 
                                         </div>
                                         <div className="reviews__rightBlock">

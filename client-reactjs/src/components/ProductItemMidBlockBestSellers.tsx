@@ -1,12 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { IProduct } from "../types/types";
+import { data, useNavigate } from "react-router-dom";
+import { IComment, IProduct } from "../types/types";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
 
 interface IProductItemMidBlockBestSellers {
-    product: IProduct
+    product: IProduct,
+    comments: IComment[] | undefined
 }
 
-const ProductItemMidBlockBestSellers = ({ product }: IProductItemMidBlockBestSellers) => {
+const ProductItemMidBlockBestSellers = ({ product,comments }: IProductItemMidBlockBestSellers) => {
+
+    const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
@@ -18,6 +25,14 @@ const ProductItemMidBlockBestSellers = ({ product }: IProductItemMidBlockBestSel
         setValueDiscount(((product.price - product.priceDiscount) / product.price) * 100); // изменяем значение valueDiscount,считаем тут сколько процентов скидка от предыдущей цены, отнимаем цену со скидкой(product.priceDiscount) от изначальной цены(product.price), делим результат на изначальную цену и умножаем весь полученный результат на 100
 
     }, [product])
+
+    // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentForProduct будет пустой массив комментариев 
+    useEffect(() => {
+
+        setCommentsForProduct(comments?.filter(c => c.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    }, [comments])
+
 
     return (
         <div className="sectionBestSellers__midBlock-item sectionNewArrivals__items-item">
@@ -50,7 +65,7 @@ const ProductItemMidBlockBestSellers = ({ product }: IProductItemMidBlockBestSel
                     <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                     <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                 </div>
-                <p className="starsBlock__text">(0)</p>
+                <p className="starsBlock__text">({commentsForProduct?.length})</p>
             </div>
 
             {/* если product.name.length > 52,то есть длина названия по количеству символов больше 52(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 48 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}

@@ -2,10 +2,11 @@ import { RefObject, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { IProduct } from "../types/types";
+import { ICommentResponse, IProduct } from "../types/types";
 import axios from "axios";
 import ProductItemSideBestSellers from "./ProductItemSideBestSellers";
 import ProductItemMidBlockBestSellers from "./ProductItemMidBlockBestSellers";
+import { API_URL } from "../http/http";
 
 const SectionBestSellers = () => {
 
@@ -55,6 +56,18 @@ const SectionBestSellers = () => {
 
     })
 
+    const { data: dataComments, refetch: refetchComments } = useQuery({
+        queryKey: ['commentsForProductArrivals'],
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
+
+            return response.data; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+
+        }
+
+    })
+
 
     const leftBlockItemsRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную leftBlockItemsRef,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
 
@@ -86,7 +99,7 @@ const SectionBestSellers = () => {
                         <div className={onScreenLeftBlock.sectionLeftBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft sectionBestSellers__itemsBlockSideLeft-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft"} ref={leftBlockItemsRef} id="leftBlockItems">
 
                             {dataLeftSideBlock?.data.map(product =>
-                                <ProductItemSideBestSellers key={product._id} product={product} />
+                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
                             )}
 
                         </div>
@@ -94,7 +107,7 @@ const SectionBestSellers = () => {
                         <div className={onScreenMidBlock.sectionMidBlockItemsIntersecting ? "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive sectionBestSellers__itemsBlock-midBlock--active" : "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive"} ref={midBlockItemRef} id="midBlockItems">
 
                             {dataMidBlock?.data.map(product =>
-                                <ProductItemMidBlockBestSellers key={product._id} product={product}/>
+                                <ProductItemMidBlockBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
                             )}
 
                         </div>
@@ -102,7 +115,7 @@ const SectionBestSellers = () => {
                         <div className={onScreenRightBlock.sectionRightBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight sectionBestSellers__itemsBlockSideRight-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight"} ref={rightBlockItemsRef} id="rightBlockItems">
 
                             {dataRightSideBlock?.data.map(product =>
-                                <ProductItemSideBestSellers key={product._id} product={product} />
+                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
                             )}
 
                         </div>

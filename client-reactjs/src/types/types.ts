@@ -56,3 +56,10 @@ export interface IComment {
     createdTime:string,
     productNameFor:string
 }
+
+// создаем и экспортируем наш интерфейс для ответа от сервера для получения комментариев для товара
+export interface ICommentResponse{
+    allComments:IComment[], // указываем поле для всех комментариев,еще не отфильтрованных для отдельного товара
+    allCommentsForName:IComment[], // указываем поле для всех комментариев,уже отфильтрованных для отдельного товара
+    comments:IComment[] // указываем поле для всех комментариев для одной страницы пагинации
+}

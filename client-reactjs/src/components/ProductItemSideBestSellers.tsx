@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { API_URL } from "../http/http";
+import axios from "axios";
 
 interface IProductItemSideBestSellers {
-    product: IProduct
+    product: IProduct,
+    comments: IComment[] | undefined
 }
 
 
-const ProductItemSideBestSellers = ({ product }: IProductItemSideBestSellers) => {
+const ProductItemSideBestSellers = ({ product,comments }: IProductItemSideBestSellers) => {
+
+    const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
@@ -19,6 +25,13 @@ const ProductItemSideBestSellers = ({ product }: IProductItemSideBestSellers) =>
         setValueDiscount(((product.price - product.priceDiscount) / product.price) * 100); // изменяем значение valueDiscount,считаем тут сколько процентов скидка от предыдущей цены, отнимаем цену со скидкой(product.priceDiscount) от изначальной цены(product.price), делим результат на изначальную цену и умножаем весь полученный результат на 100
 
     }, [product])
+
+    // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentForProduct будет пустой массив комментариев 
+    useEffect(() => {
+
+        setCommentsForProduct(comments?.filter(c => c.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    }, [comments])
 
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
@@ -60,7 +73,7 @@ const ProductItemSideBestSellers = ({ product }: IProductItemSideBestSellers) =>
                         <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                         <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                     </div>
-                    <p className="starsBlock__text">(0)</p>
+                    <p className="starsBlock__text">({commentsForProduct?.length})</p>
                 </div>
 
                 {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}

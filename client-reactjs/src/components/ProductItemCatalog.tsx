@@ -1,12 +1,39 @@
 import { useNavigate } from "react-router-dom";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
 
 interface IProductItemCatalog {
-    product: IProduct;
+    product: IProduct,
+    comments:IComment[] | undefined
 }
 
-const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
+const ProductItemCatalog = ({ product,comments }: IProductItemCatalog) => {
+
+    const [commentsForProduct,setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+
+    // это уже не используем,так как фильтруем весь массив comments уже в этом компоненте,не делая дополнительный запрос на сервер
+    // const { data: dataComments, refetch: refetchComments } = useQuery({
+    //     queryKey: [`commentsForProductCatalog${product.name}`],  // обязательно указываем здесь в queryKey индивидуальное название для каждого товара,например,как product.name(оно уникально для каждого товара),чтобы для каждого товара отдельно шел запрос на сервер для получения комментариев,иначе будет только один запрос для одного товара и все,так как queryKey будет одинаковый и react query будет думать,что это одни и те же данные,и он будет их хешировать и показывать всем товарам как для одного,либо лучше сделать запрос для получения всех комментариев в родительском компоненте этих компонентов для товара,и просто передавать в эти дочерние компоненты товара массив комментариев и его фильтровать в компоненте товара, для каждого имени товара отдельный массив и его длину показывать
+    //     queryFn: async () => {
+
+    //         const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct`, {
+
+    //             params: {
+
+    //                 productNameFor: product.name
+
+    //             }
+
+    //         }); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
+
+    //         return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+
+    //     }
+
+    // })
 
     const router = useNavigate();  // useNavigate может перемещатьтся на другую страницу вместо ссылок
 
@@ -24,6 +51,13 @@ const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
 
 
     }, [product])
+
+    // при рендеринге(запуске) этого компонента будет отработан код в этом useEffect,так как он с пустым массивом зависимостей
+    useEffect(()=>{
+
+        setCommentsForProduct(comments?.filter(p => p.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    },[])
 
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionCatalog__productsItems-item">
@@ -64,7 +98,7 @@ const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
                         <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                         <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                     </div>
-                    <p className="starsBlock__text">(0)</p>
+                    <p className="starsBlock__text">({commentsForProduct?.length})</p>
                 </div>
 
                 {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}

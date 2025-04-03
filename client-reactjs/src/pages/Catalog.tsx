@@ -4,9 +4,10 @@ import ReactSlider from 'react-slider'; // импортируем ReactSlider и
 import ProductItemCatalog from "../components/ProductItemCatalog";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IProduct, IResponseCatalog } from "../types/types";
+import { ICommentResponse, IProduct, IResponseCatalog } from "../types/types";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { getPagesArray } from "../utils/getPagesArray";
+import { API_URL } from "../http/http";
 
 const Catalog = () => {
 
@@ -100,6 +101,19 @@ const Catalog = () => {
             console.log(totalPages);
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля products и allProducts
+
+        }
+
+    })
+
+    // указываем такой же queryKey как и в sectionNewArrivals и в ProductItemPage для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев в секции sectionNewArrivals и в ProductItemPage
+    const { data: dataComments, refetch: refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'],
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
+
+            return response.data; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
 
         }
 
@@ -479,7 +493,7 @@ const Catalog = () => {
                                         <div className="sectionCatalog__productsBlock-productsItems">
                                             {data?.products.map(product =>
 
-                                                <ProductItemCatalog key={product._id} product={product} />
+                                                <ProductItemCatalog key={product._id} product={product} comments={dataComments?.allComments}/>
 
                                             )}
                                         </div> : isFetching ?

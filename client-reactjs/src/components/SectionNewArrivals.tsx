@@ -3,8 +3,9 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IProduct } from "../types/types";
+import { ICommentResponse, IProduct } from "../types/types";
 import ProductItemArrivals from "./ProductItemArrivals";
+import { API_URL } from "../http/http";
 
 interface ISectionNewArrivals{
     className:string
@@ -42,6 +43,20 @@ const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
 
     })
 
+    // указываем такой же queryKey как и в ProductItemPage для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев в секции sectionNewArrivals
+    const { data: dataComments, refetch: refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'],
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
+
+            return response.data; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+
+        }
+
+    })
+
+
     return (
         <section ref={sectionNewArrivals} id="sectionNewArrivals" className={onScreen.sectionNewArrivalsIntersecting ? `${sectionNewArrivalsClass} sectionNewArrivals__active` : sectionNewArrivalsClass}>
             <div className="container">
@@ -58,7 +73,7 @@ const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
                         
                         {/* указываем в key у product поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием  */}
                         {data?.data.map(product => 
-                            <ProductItemArrivals key={product._id} product={product}/>
+                            <ProductItemArrivals key={product._id} product={product} comments={dataComments?.allComments}/>
                         )}
 
                     </div>
