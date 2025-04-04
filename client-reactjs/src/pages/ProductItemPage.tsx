@@ -59,9 +59,9 @@ const ProductItemPage = () => {
     })
 
     // скопировали этот запрос на сервер из файла sectionNewArrivals,и указали такой же queryKey как и там,чтобы при изменении рейтинга у товара переобновлять массив товаров в секции sectionNewArrivals
-    const { data:dataProductArrivals,refetch:refetchProductArrivals } = useQuery({
-        queryKey:['getAllProducts'], // указываем здесь такое же название,как и в файле SectionDeals для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другом компоненте(в данном случае в SectionDeals),а не после обновления страницы
-        queryFn:async () => {
+    const { data: dataProductArrivals, refetch: refetchProductArrivals, isFetching: isFetchingProduct } = useQuery({
+        queryKey: ['getAllProducts'], // указываем здесь такое же название,как и в файле SectionDeals для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другом компоненте(в данном случае в SectionDeals),а не после обновления страницы
+        queryFn: async () => {
             const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts?limit=5&skip=0'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
 
             console.log(response.data);
@@ -72,9 +72,9 @@ const ProductItemPage = () => {
 
     })
 
-    // указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев в секции sectionNewArrivals
-    const { data: dataComments, refetch: refetchComments } = useQuery({
-        queryKey: ['commentsForProduct'],
+    // не указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев отдельно для этой страницы productItemPage
+    const { data: dataComments, refetch: refetchComments, isFetching } = useQuery({
+        queryKey: ['commentsForProductItemPage'],
         queryFn: async () => {
 
             const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`, {
@@ -83,9 +83,9 @@ const ProductItemPage = () => {
 
                     productNameFor: data?.data.name,
 
-                    limit:limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
+                    limit: limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
-                    page:page  // указываем параметр page(параметр текущей страницы,для пагинации)
+                    page: page  // указываем параметр page(параметр текущей страницы,для пагинации)
 
                 }
 
@@ -96,6 +96,20 @@ const ProductItemPage = () => {
             setTotalPages(Math.ceil(totalCount / limit));  // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allComments, allCommentsForName и comments
+
+        }
+
+    })
+
+
+    // делаем отдельный запрос для получения массива комментариев в секции sectionNewArrivals,чтобы потом при изменении рейтинга товара переобновлять этот массив комментариев
+    const { data: dataCommentsArrivals, refetch: refetchCommentsArrivals } = useQuery({
+        queryKey: ['commentsForProduct'],
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
+
+            return response.data; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
 
         }
 
@@ -128,11 +142,14 @@ const ProductItemPage = () => {
 
         },
 
-        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара,данные массива товаров в секции sectionNewArrivals и данные массива комментариев для sectionNewArrivals
         onSuccess() {
 
             refetch();
 
+            refetchProductArrivals();
+
+            refetchCommentsArrivals();
         }
 
     })
@@ -256,7 +273,6 @@ const ProductItemPage = () => {
 
         }
 
-
     }, [dataComments?.allCommentsForName])
 
 
@@ -282,11 +298,12 @@ const ProductItemPage = () => {
 
 
     // при обновлении страницы переобновляем(делаем повторный запрос на сервер) массив комментариев
-    useEffect(()=>{
+    useEffect(() => {
 
         refetchComments();
 
-    },[page])
+    }, [page])
+
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -355,6 +372,7 @@ const ProductItemPage = () => {
                                                         )}
                                                     </div>
 
+
                                                     <div className="productsBlock__pagination">
 
                                                         <button className="pagination__btnLeft" onClick={prevPage}>
@@ -377,7 +395,7 @@ const ProductItemPage = () => {
                                                         )}
 
                                                         {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки  */}
-                                                        {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>} 
+                                                        {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
 
                                                         {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
                                                         {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>

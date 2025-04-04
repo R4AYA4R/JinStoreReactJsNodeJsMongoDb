@@ -17,9 +17,9 @@ const Catalog = () => {
 
     const [priceFilterMax, setPriceFilterMax] = useState(0); // состояние для максимальной цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax,указываем дефолтное значение 0,иначе не работает,так как выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
-    const [activeSortBlock, setActiveSortBlock] = useState(false);
+    const [activeSortBlock, setActiveSortBlock] = useState(false); 
 
-    const [sortBlockValue, setSortBlockValue] = useState('');
+    const [sortBlockValue, setSortBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
 
     const [page, setPage] = useState(1); // указываем состояние текущей страницы
 
@@ -68,6 +68,13 @@ const Catalog = () => {
             if (data?.maxPriceAllProducts && filterPrice[1] && filterPrice[1] < data?.maxPriceAllProducts) {
 
                 url += `&maxPrice=${filterPrice[1]}`;
+
+            }
+
+            // если sortBlockValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sortBy в которые передаем значение состояния sortBlockValue,в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js)
+            if(sortBlockValue !== ''){
+
+                url += `&sortBy=${sortBlockValue.toLowerCase()}`;
 
             }
 
@@ -197,7 +204,7 @@ const Catalog = () => {
 
         refetch();  // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [searchValue, filterCategories, page])
+    }, [searchValue, filterCategories, page, sortBlockValue])
 
 
     // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и тд
@@ -265,7 +272,7 @@ const Catalog = () => {
 
         setPage(1);
 
-    }, [filterPrice, filterCategories])
+    }, [filterPrice, filterCategories, sortBlockValue])
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
