@@ -1,10 +1,13 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { userSlice } from "./userSlice";
+import { catalogSlice } from "./catalogSlide";
 
 // если несколько редьюсеров на сайте,то можно их объединить с помощью combineReducers и передать потом в store, в данном случае slice(редьюсер) для totalPages делаем просто для практики в redux toolkit,это можно было и не делать через redux toolkit, в данном случае не делаем slice(редьюсер) для totalPages
 const reducers = combineReducers({
 
     userSlice: userSlice.reducer,  // указываем слайс(редьюсер) для авторизации пользователя,указываем через точку редьюсер из нашего слайса,так как не эспортировали его отдельно,но и так можно
+
+    catalogSlice: catalogSlice.reducer // указываем слайс(редьюсер) для категории каталога,указываем через точку редьюсер из нашего слайса,так как не эспортировали его отдельно,но и так можно
 
 })
 

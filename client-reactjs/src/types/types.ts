@@ -39,6 +39,10 @@ export interface IUserInitialState{
     isLoading:boolean
 }
 
+export interface ICatalogInitialState{
+    catalogCategory:string
+}
+
 // создаем и экспортируем наш интерфейс для AuthResponse
 export interface AuthResponse {
 

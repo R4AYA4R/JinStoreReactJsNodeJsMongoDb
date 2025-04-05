@@ -8,6 +8,8 @@ import { ICommentResponse, IProduct, IResponseCatalog } from "../types/types";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { getPagesArray } from "../utils/getPagesArray";
 import { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
 
 const Catalog = () => {
 
@@ -17,7 +19,7 @@ const Catalog = () => {
 
     const [priceFilterMax, setPriceFilterMax] = useState(0); // состояние для максимальной цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax,указываем дефолтное значение 0,иначе не работает,так как выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
-    const [activeSortBlock, setActiveSortBlock] = useState(false); 
+    const [activeSortBlock, setActiveSortBlock] = useState(false);
 
     const [sortBlockValue, setSortBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
 
@@ -72,7 +74,7 @@ const Catalog = () => {
             }
 
             // если sortBlockValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sortBy в которые передаем значение состояния sortBlockValue,в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js)
-            if(sortBlockValue !== ''){
+            if (sortBlockValue !== '') {
 
                 url += `&sortBy=${sortBlockValue.toLowerCase()}`;
 
@@ -125,6 +127,8 @@ const Catalog = () => {
         }
 
     })
+
+    const { catalogCategory } = useTypedSelector(state => state.catalogSlice); // указываем наш слайс(редьюсер) под названием catalogSlice и деструктуризируем у него поле состояния catalogCategory,используя наш типизированный хук для useSelector
 
 
     const [filterPrice, setFilterPrice] = useState([0, priceFilterMax]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго, ставим изначальное значение для второго ползунка инпута как priceFilterMax(максимальная цена товарв из всех,которую посчитали на бэкэнде),чтобы сразу показывалось,что это максимальное значение цены,не указываем здесь конкретно data?.maxPriceAllProducts,так как тогда выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
@@ -223,6 +227,27 @@ const Catalog = () => {
 
     }, [searchValue])
 
+
+    // при рендеринге(запуске) этого компонента и при изменении catalogCategory отработает код в этом useEffect
+    useEffect(() => {
+
+        // если catalogCategory не равно пустой строке,то изменяем filterCategories на catalogCategory и делаем повторный запрос для получения товаров каталога,делаем эту проверку,чтобы не шел лишний повторный запрос на сервер для получения товаров каталога,если состояние catalogCategory равно пустой строке,то есть пользователь не выбрал категорию товаров на странице Home.tsx,а просто перешел на страницу каталога
+        if (catalogCategory !== '') {
+
+            setFilterCategories(catalogCategory);
+
+            // используем setTimeout,чтобы успело переобновиться состояние filterCategories и правильно отобразились товары уже с новым фильтром категорий,если не сделать setTimeout,то не будут сразу правильно фильтроваться товары по категориям,а только после изменения страницы пагинации,указываем задержку в setTimeout как 100 миллисекунд(0.1 секунда)
+            setTimeout(() => {
+
+                refetch();
+
+            }, 100)
+
+        }
+
+
+    }, [catalogCategory])
+
     // в данном случае этот код не используем,так как используем метод onAfterChange(когда отпустили ползунок инпута для изменения фильтра цены) у ReactSlider в котором просто делаем повторный запрос на сервер (refetch())
     // при изменении состояния filterPrice,то есть когда пользователь начал изменять значение фильтра цены(то есть начал крутить ползунки для изменения фильтра цены),то делаем запрос на сервер на получение объектов товаров уже с новым фильтром цены,отслеживаем это,чтобы делать запрос на сервер только после того,когда закончил грузиться предыдущий запрос на сервер(лучше еще отслеживать когда пользователь отпустил ползунок фильтра цены и только тогда делать запрос,но в данном случае используем React Slider и там не удобно это отслеживать,но и так нормально),если это не отслеживать,то будут лететь кучи запросов на сервер при изменении значения фильтра цены
     // useEffect(() => {
@@ -273,6 +298,7 @@ const Catalog = () => {
         setPage(1);
 
     }, [filterPrice, filterCategories, sortBlockValue])
+
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -500,7 +526,7 @@ const Catalog = () => {
                                         <div className="sectionCatalog__productsBlock-productsItems">
                                             {data?.products.map(product =>
 
-                                                <ProductItemCatalog key={product._id} product={product} comments={dataComments?.allComments}/>
+                                                <ProductItemCatalog key={product._id} product={product} comments={dataComments?.allComments} />
 
                                             )}
                                         </div> : isFetching ?
