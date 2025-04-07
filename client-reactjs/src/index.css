@@ -2324,3 +2324,85 @@ a {
   cursor: pointer;
   background-color: #7a5dc4;
 }
+
+
+.sectionCart__table-item{
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
+  align-items: center;
+  gap:20px;
+  border-top: 1px solid #E5E7EB;
+  padding: 20px 0;
+}
+
+.sectionCart__item-leftBlock{
+  display: flex;
+  align-items: center;
+  gap:16px;
+}
+
+.sectionCart__item-img{
+  max-width: 140px;
+  max-height: 120px;
+  transition:opacity .5s ease;
+}
+
+.sectionCart__item-img:hover{
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.sectionCart__item-saleBlock{
+  padding: 3px 6px;
+  left: 4px;
+}
+
+.sectionCart__item-saleBlockHot{
+  padding: 3px 6px;
+  top: 40px;
+  left: 4px;
+}
+
+.sectionCart__item-leftBlockInfoName{
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.28px;
+  transition:all .5s ease;
+}
+
+.sectionCart__item-leftBlockInfoName:hover{
+  color: #FF9F0D;
+  cursor: pointer;
+}
+
+.sectionCart__item-priceSale{
+  font-size: 18px;
+}
+
+.sectionCart__item-totalPrice{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sectionCart__item-removeBtn{
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  opacity: 1;
+  transition:opacity .5s ease;
+}
+
+.sectionCart__item-removeBtn:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.sectionCart__item-inputBlock{
+  margin-top: 0;
+}
+
+.sectionCart__item-starsBlock{
+  margin-bottom: 0;
+}

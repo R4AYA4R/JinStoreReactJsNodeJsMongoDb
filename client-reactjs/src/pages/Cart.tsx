@@ -1,3 +1,4 @@
+import ProductItemCart from "../components/ProductItemCart";
 import SectionCartTop from "../components/SectionCartTop";
 
 const Cart = () => {
@@ -17,7 +18,7 @@ const Cart = () => {
                             </div>
                             <div className="sectionCart__table-mainBlock">
                                 
-                                Products
+                                <ProductItemCart/>
                                 
                                 <div className="sectionCart__table-bottomBlock">
                                     <button className="sectionCart__table-bottomBlockClearBtn">Clear Cart</button>
