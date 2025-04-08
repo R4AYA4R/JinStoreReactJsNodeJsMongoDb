@@ -2355,11 +2355,12 @@ a {
 .sectionCart__item-saleBlock{
   padding: 3px 6px;
   left: 4px;
+  top: 5px;
 }
 
 .sectionCart__item-saleBlockHot{
   padding: 3px 6px;
-  top: 40px;
+  top: 35px;
   left: 4px;
 }
 

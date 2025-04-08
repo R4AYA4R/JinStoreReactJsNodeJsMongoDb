@@ -62,7 +62,6 @@ const ProductItemCart = () => {
             <div className="sectionCart__item-leftBlock">
                 <div className="sectionProductItemPage__itemBlock-imgBlock">
 
-                    {/* здесь еще надо будет сделать слайдер */}
 
                     <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">10%</div> 
                     <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>

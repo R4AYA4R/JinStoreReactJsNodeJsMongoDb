@@ -20,6 +20,9 @@ router.get('/getCommentsForProduct',commentController.getCommentsForProduct); //
 router.put('/updateProductRating',productController.updateProductRating); // создаем put запрос для обновления рейтинга товара 
 
 
+router.post('/createProductCart',productController.createProductCart); // создаем post запрос для создания товара в корзине
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),

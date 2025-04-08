@@ -10,24 +10,48 @@ import 'swiper/css/thumbs'; // импортируем стили для моду
 
 import 'swiper/css/zoom';
 import { ChangeEvent, useEffect, useState } from "react";
-import { IComment, IProduct } from "../types/types";
+import { IComment, IProduct, IProductCart } from "../types/types";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useNavigate } from "react-router-dom";
 
 
 interface IProductItemPageItemBlock {
     product: IProduct | undefined, // указываем этому полю тип на основе нашего интерфейса IProduct или undefined(указываем это или undefined,так как выдает ошибку,что product может быть undefined)
 
-    pathname:string, // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
+    pathname: string, // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
 
-    comments:IComment[] | undefined // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
+    comments: IComment[] | undefined // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
 }
 
-const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPageItemBlock) => {
+const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemPageItemBlock) => {
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const router = useNavigate();  // useNavigate может перемещатьтся на другую страницу вместо ссылок
 
     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null); // указываем тип в generic для этого состояния thumbsSwiper(превью картинок для слайдера swiper) как any,иначе выдает ошибку,что нельзя назначить тип Swiper состоянию
 
     const [inputAmountValue, setInputAmountValue] = useState(1);
 
     const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
+
+    const { mutate: mutateAddProductCart } = useMutation({
+        mutationKey: ['add productCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип
+            await axios.post<IProductCart>(`${API_URL}/createProductCart`, productCart);
+
+        },
+
+        // при успешной мутации нужно будет переобновлять массив товаров корзины
+
+
+    })
+
 
     // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
     useEffect(() => {
@@ -43,11 +67,11 @@ const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPag
     }, [product])
 
     // при изменении pathname(то есть когда будет меняться url страницы,то есть когда будем переходить,например,на другую страницу товара,чтобы значение количества товара становилось на 0,то есть на дефолтное значение) изменяем поле inputAmountValue на 0
-    useEffect(()=>{
+    useEffect(() => {
 
-        setInputAmountValue(0);
+        setInputAmountValue(1);
 
-    },[pathname])
+    }, [pathname])
 
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
@@ -96,6 +120,27 @@ const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPag
         } else {
 
             setInputAmountValue(99);
+
+        }
+
+    }
+
+    const addProductToCart = () => {
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
+        if (user.userName) {
+
+            // если product true,то есть product есть(делаем эту проверку,так как выдает ошибку,что product может быть undefined)
+            if (product) {
+
+                mutateAddProductCart({ name: product?.name, category: product?.category, amount: inputAmountValue, mainImage: product?.mainImage, descImages: product?.descImages, price: product?.price, priceDiscount: product?.priceDiscount, priceFilter: product?.priceFilter, rating: product?.rating, totalPrice: product?.totalPrice, totalPriceDiscount: product?.totalPriceDiscount, usualProductId: product?._id, forUser: user.id } as IProductCart); // передаем в mutateAddProductCart объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product(объект блюда в данном случае),в котором полe name,делаем поле name со значением,как и у этого товара name(product.name) и остальные поля также,кроме поля amount,его мы изменяем и указываем как значения inputAmountValue(инпут с количеством),указываем тип этого объекта как созданный нами тип as IProductCart(в данном случае делаем так,потому что показывает ошибку,что totalPriceProduct может быть undefined),при создании на сервере не указываем конкретное значение id,чтобы он сам автоматически генерировался на сервере и потом можно было удалить этот объект, добавляем поле forUser со значением user.id(то есть со значением id пользователя,чтобы потом показывать товары в корзине для каждого конкретного пользователя,у которого id будет равен полю forUser у этого товара),указываем usualProductId со значением product._id,чтобы потом в корзине можно было перейти на страницу товара в магазине по этому usualProductId,а сам id корзины товара не указываем,чтобы он автоматически правильно генерировался,так как делаем показ товаров по-разному для конкретных пользователей(то есть как и должно быть),иначе ошибка
+
+            }
+
+
+        } else {
+
+            router('/userPage');  // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
 
         }
 
@@ -211,7 +256,7 @@ const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPag
                 <h1 className="sectionProductItemPage__infoBlock-title">{product?.name}</h1>
                 <div className="sectionNewArrivals__item-starsBlock">
                     <div className="sectionNewArrivals__item-stars">
-                        
+
                         {/* если product true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа product может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
                         {product &&
 
@@ -254,7 +299,7 @@ const ProductItemPageItemBlock = ({ product,pathname,comments }: IProductItemPag
                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
                         </button>
                     </div>
-                    <button className="infoBlock__inputBlock-cartBtn">
+                    <button className="infoBlock__inputBlock-cartBtn" onClick={addProductToCart}>
                         <img src="/images/sectionProductItemPage/CartBtnImg.png" alt="" className="inputBlock__cartBtn-img" />
                         <p className="inputBlock__cartBtn-text">Add to cart</p>
                     </button>
