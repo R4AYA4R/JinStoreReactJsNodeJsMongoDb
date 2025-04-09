@@ -2,7 +2,7 @@
 import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IComment, ICommentResponse, IProduct } from "../types/types";
+import { IComment, ICommentResponse, IProduct, IProductCart } from "../types/types";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
@@ -150,6 +150,7 @@ const ProductItemPage = () => {
             refetchProductArrivals();
 
             refetchCommentsArrivals();
+
         }
 
     })

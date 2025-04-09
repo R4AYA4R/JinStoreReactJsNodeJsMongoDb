@@ -11,7 +11,7 @@ import 'swiper/css/thumbs'; // импортируем стили для моду
 import 'swiper/css/zoom';
 import { ChangeEvent, useEffect, useState } from "react";
 import { IComment, IProduct, IProductCart } from "../types/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -38,6 +38,20 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
     const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
 
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx
+    const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
+        queryKey: ['getAllProductsCart'],
+        queryFn: async () => {
+
+            const response = await axios.get<IProductCart[]>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+
+            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет объект товара) и тд
+
+        }
+
+    })
+
+
     const { mutate: mutateAddProductCart } = useMutation({
         mutationKey: ['add productCart'],
         mutationFn: async (productCart: IProductCart) => {
@@ -47,8 +61,12 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
         },
 
-        // при успешной мутации нужно будет переобновлять массив товаров корзины
+        // при успешной мутации,то есть в данном случае при успешном добавлении товара в корзину обновляем dataProductsCart(массив объектов товаров корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
+        onSuccess(){
 
+            refetchProductsCart();
+
+        }
 
     })
 
@@ -72,6 +90,9 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
         setInputAmountValue(1);
 
     }, [pathname])
+
+
+    const isExistsCart = dataProductsCart?.data.some(p => p.name === product?.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart(в массиве объектов товаровкорзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
 
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
@@ -290,19 +311,31 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                 }
 
                 <div className="sectionProductItemPage__infoBlock-inputBlock">
-                    <div className="infoBlock__inputBlock-leftInputBlock">
-                        <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
-                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
-                        </button>
-                        <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                        <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
-                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
-                        </button>
-                    </div>
-                    <button className="infoBlock__inputBlock-cartBtn" onClick={addProductToCart}>
-                        <img src="/images/sectionProductItemPage/CartBtnImg.png" alt="" className="inputBlock__cartBtn-img" />
-                        <p className="inputBlock__cartBtn-text">Add to cart</p>
-                    </button>
+
+                    {/* если isExistsCart true(то есть этот товарна этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае если tabChangePrice false(то есть таб с инпутом для изменения цены товара для админа равен false,то есть не показан),то показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                    {user.userName && isExistsCart ?
+
+                        <h3 className="textAlreadyInCart">Already in Cart</h3>
+                        :
+                        <>
+                            <div className="infoBlock__inputBlock-leftInputBlock">
+                                <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                                    <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                </button>
+                                <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                                <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                    <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                </button>
+                            </div>
+                            <button className="infoBlock__inputBlock-cartBtn" onClick={addProductToCart}>
+                                <img src="/images/sectionProductItemPage/CartBtnImg.png" alt="" className="inputBlock__cartBtn-img" />
+                                <p className="inputBlock__cartBtn-text">Add to cart</p>
+                            </button>
+                        </>
+
+                    }
+
+
                 </div>
                 <div className="sectionProductItemPage__infoBlock-subInfoBlock">
                     <div className="infoBlock__subInfoBlock-topBlock">

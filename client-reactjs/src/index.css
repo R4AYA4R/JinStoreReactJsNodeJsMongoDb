@@ -2407,3 +2407,18 @@ a {
 .sectionCart__item-starsBlock{
   margin-bottom: 0;
 }
+
+.textEmptyCart{
+  border-top:1px solid #E5E7EB;
+  padding-top: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.28px;
+}
+
+.textAlreadyInCart{
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.28px;
+  color: #808080;
+}

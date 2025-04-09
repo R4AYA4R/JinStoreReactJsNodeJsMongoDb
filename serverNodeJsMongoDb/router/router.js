@@ -22,6 +22,8 @@ router.put('/updateProductRating',productController.updateProductRating); // с�
 
 router.post('/createProductCart',productController.createProductCart); // создаем post запрос для создания товара в корзине
 
+router.get('/getAllProductsCart',productController.getAllProductsCart); // создаем get запрос на получение товаров корзины для определенного авторизованного пользователя
+
 
 router.post('/registration',
     body('email').isEmail(),

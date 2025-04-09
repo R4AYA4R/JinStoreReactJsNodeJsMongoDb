@@ -1,9 +1,55 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { IComment, IProductCart } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
-const ProductItemCart = () => {
+interface IProductItemCart {
+    productCart: IProductCart,
+    comments:IComment[] | undefined
+}
 
-    const [inputAmountValue, setInputAmountValue] = useState(1);
+const ProductItemCart = ({ productCart,comments }: IProductItemCart) => {
 
+    const [inputAmountValue, setInputAmountValue] = useState(productCart.amount); // делаем дефолтное значение у inputAmountValue как productCart.amount,чтобы сразу показывалось число товаров,которое пользователь выбрал на странице товара
+
+    const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
+
+    const [subtotalPriceProduct,setSubtotalPriceProduct] = useState(0);
+
+    const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+
+    const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
+
+
+    // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
+    useEffect(() => {
+
+        setValueDiscount(((productCart.price - productCart.priceDiscount) / productCart.price) * 100); // изменяем значение valueDiscount,считаем тут сколько процентов скидка от предыдущей цены, отнимаем цену со скидкой(product.priceDiscount) от изначальной цены(product.price), делим результат на изначальную цену и умножаем весь полученный результат на 100
+
+    }, [productCart])
+
+    // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentForProduct будет пустой массив комментариев 
+    useEffect(() => {
+
+        setCommentsForProduct(comments?.filter(c => c.productNameFor === productCart.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    }, [comments])
+
+    useEffect(()=>{
+
+        // если productCart.priceDiscount true,то есть есть цена со скидкой у товара,то изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.priceDiscount(цену со скидкой),в другом случае изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.price(обычную цену товара)
+        if(productCart.priceDiscount){
+
+            setSubtotalPriceProduct(inputAmountValue * productCart.priceDiscount); // умножаем inputAmountValue(выбранное количество товаров) на productCart.price(цену товара)
+
+        } else {
+
+            setSubtotalPriceProduct(inputAmountValue * productCart.price); // умножаем inputAmountValue(выбранное количество товаров) на productCart.price(цену товара)
+
+        }
+
+        
+
+    },[inputAmountValue])
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,30 +109,58 @@ const ProductItemCart = () => {
                 <div className="sectionProductItemPage__itemBlock-imgBlock">
 
 
-                    <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">10%</div> 
-                    <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>
+                    {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
+                    {productCart.priceDiscount ?
 
-                    <img src="/images/sectionNewArrivals/BeerImg.png" alt="" className="sectionCart__item-img" />
+                        <>
+                            <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
+
+                            {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
+                            {valueDiscount > 30 &&
+                                <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>
+                            }
+
+                        </>
+                        : ''
+                    }
+
+
+                    {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта productCart(пропс(параметр) этого компонента),потом когда сделаем раздачу статики на бэкэнде,то будем указывать путь до папки на бэкэнде, в onClick указываем наш router() (то есть хук useNavigate) и в нем указываем url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,то есть на страницу товара,указываем usualProductId у productCart,так как это id обычного товара каталога,чтобы перейти на его страницу */}
+                    <img src={`/images/sectionNewArrivals/${productCart.mainImage}`} alt="" className="sectionCart__item-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
                 </div>
                 <div className="sectionCart__item-leftBlockInfo">
-                    <p className="sectionCart__item-leftBlockInfoName">Name</p>
+                    <p className="sectionCart__item-leftBlockInfoName" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</p>
                     <div className="sectionNewArrivals__item-starsBlock sectionCart__item-starsBlock">
                         <div className="sectionNewArrivals__item-stars">
-                            {/* если product.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                            {/* если productCart.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                            <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                         </div>
-                        <p className="starsBlock__text">(0)</p>
+                        <p className="starsBlock__text">({commentsForProduct?.length})</p>
                     </div>
                 </div>
             </div>
-            <div className="sectionNewArrivals__item-priceBlock">
+
+            {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+            {productCart.priceDiscount ?
+
+                <div className="sectionNewArrivals__item-priceBlock">
+                    <p className="item__priceBlock-priceSale sectionCart__item-priceSale">${productCart.priceDiscount}</p>
+                    <p className="item__priceBlock-priceUsual">${productCart.price}</p>
+                </div>
+                :
+                <div className="sectionNewArrivals__item-priceBlock">
+                    <p className="item__priceBlock-priceUsualDefault">${productCart.price}</p>
+                </div>
+            }
+            {/* <div className="sectionNewArrivals__item-priceBlock">
                 <p className="item__priceBlock-priceSale sectionCart__item-priceSale">$8.00</p>
                 <p className="item__priceBlock-priceUsual">$10.00</p>
-            </div>
+            </div> */}
+
             <div className="sectionProductItemPage__infoBlock-inputBlock sectionCart__item-inputBlock">
                 <div className="infoBlock__inputBlock-leftInputBlock">
                     <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
@@ -98,7 +172,9 @@ const ProductItemCart = () => {
                     </button>
                 </div>
             </div>
-            <p className="sectionCart__item-totalPrice">$10.00</p>
+
+            {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
+            <p className="sectionCart__item-totalPrice">${subtotalPriceProduct.toFixed(2)}</p>
             <button className="sectionCart__item-removeBtn">
                 <img src="/images/sectionCart/X.png" alt="" className="sectionCart__item-removeBtnImg" />
             </button>
