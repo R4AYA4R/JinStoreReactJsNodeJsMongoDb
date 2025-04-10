@@ -2342,8 +2342,7 @@ a {
 }
 
 .sectionCart__item-img{
-  max-width: 140px;
-  max-height: 120px;
+  max-width: 120px;
   transition:opacity .5s ease;
 }
 
@@ -2369,6 +2368,7 @@ a {
   font-weight: 400;
   letter-spacing: -0.28px;
   transition:all .5s ease;
+  margin-bottom: 5px;
 }
 
 .sectionCart__item-leftBlockInfoName:hover{

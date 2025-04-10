@@ -3,7 +3,7 @@ import ProductItemCart from "../components/ProductItemCart";
 import SectionCartTop from "../components/SectionCartTop";
 import axios from "axios";
 import { AuthResponse, ICommentResponse, IProductCart } from "../types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
@@ -14,6 +14,7 @@ const Cart = () => {
 
     const { setLoadingUser, authorizationForUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
+    const [subtotalCheckPrice, setSubtotalCheckPrice] = useState<number>(); // состояние для цены суммы чека всей корзины
 
     // берем из useQuery поле isFetching,оно обозначает,что сейчас идет загрузка запроса на сервер,используем его для того,чтобы показать лоадер(загрузку) при загрузке запроса на сервер
     const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
@@ -43,6 +44,8 @@ const Cart = () => {
 
     })
 
+
+    const dataTotalPrice = dataProductsCart?.data.reduce((prev, curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров
 
     const checkAuth = async () => {
 
@@ -94,6 +97,12 @@ const Cart = () => {
 
     }, [user])
 
+    useEffect(()=>{
+
+        setSubtotalCheckPrice(dataTotalPrice);
+
+    },[dataProductsCart?.data])
+
     return (
         <main className="main">
             <SectionCartTop />
@@ -138,17 +147,20 @@ const Cart = () => {
                             <div className="bill__topBlock">
                                 <div className="bill__topBlock-item">
                                     <p className="bill__topBlock-itemText">Cart Subtotal</p>
-                                    <p className="bill__topBlock-itemSubText">$15.00</p>
+                                    <p className="bill__topBlock-itemSubText">${subtotalCheckPrice?.toFixed(2)}</p>
                                 </div>
                                 <div className="bill__topBlock-item">
                                     <p className="bill__topBlock-itemTextGrey">Shipping Charge</p>
-                                    <p className="bill__topBlock-itemSubTextGrey">$10.00</p>
+                                    <p className="bill__topBlock-itemSubTextGrey">$15.00</p>
                                 </div>
                             </div>
                             <div className="bill__bottomBlock">
                                 <div className="bill__bottomBlock-item">
                                     <p className="bill__bottomBlock-itemText">Total</p>
-                                    <p className="bill__bottomBlock-itemSubText">$25.00</p>
+
+
+                                    {/* если subtotalCheckPrice true(то есть в этом состоянии есть значение,в данном случае делаем эту проверку,потому что выдает ошибку,что subtotalCheckPrice может быть undefined),то указываем значение этому тексту как subtotalCheckPrice + 15(в данном случае 15 это типа цена доставки,мы ее прибавляем к общей цене всех товаров корзины) */}
+                                    <p className="bill__bottomBlock-itemSubText">${(subtotalCheckPrice && subtotalCheckPrice + 15)?.toFixed(2)}</p>
                                 </div>
                                 <button className="bill__bottomBlock-btn">
                                     <p className="bill__bottomBlock-btnText">Proceed to Checkout</p>
