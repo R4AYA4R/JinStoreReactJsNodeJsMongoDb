@@ -1,23 +1,64 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IComment, IProductCart } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
 
 interface IProductItemCart {
     productCart: IProductCart,
-    comments:IComment[] | undefined
+    comments: IComment[] | undefined,
+    refetchProductsCart: () => void // указываем полю refetchMealsCart что это стрелочная функция и что она возвращает тип данных void
 }
 
-const ProductItemCart = ({ productCart,comments }: IProductItemCart) => {
+const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProductItemCart) => {
+
+    const { updateProductsCart } = useTypedSelector(state => state.cartSlice); // указываем наш слайс(редьюсер) под названием cartSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const { setUpdateProductsCart } = useActions(); // берем actions для изменения состояния слайса(редьюсера) cartSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     const [inputAmountValue, setInputAmountValue] = useState(productCart.amount); // делаем дефолтное значение у inputAmountValue как productCart.amount,чтобы сразу показывалось число товаров,которое пользователь выбрал на странице товара
 
     const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
 
-    const [subtotalPriceProduct,setSubtotalPriceProduct] = useState(0);
+    const [subtotalPriceProduct, setSubtotalPriceProduct] = useState(0);
 
     const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
+
+    const { mutate: mutateUpdateProductCart } = useMutation({
+        mutationKey: ['updateProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер для изменения данных товара корзины,в данном случае указываем put запрос для изменения данных на сервере,и указываем тип данных,которые нужно изменить на сервере(то есть просто какие данные нужно передать на сервер в теле запроса),в данном случае это тип данных IProductCart),но здесь не обязательно указывать тип,передаем просто объект productCart как тело запроса
+            await axios.put<IProductCart>(`${API_URL}/updateProductCart`, productCart);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
+
+    // при рендеринге(запуске) этого компонента и при изменении поля updateProductsCart у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре в корзине
+    useEffect(() => {
+
+        if (updateProductsCart && productCart.amount !== inputAmountValue) {
+
+            mutateUpdateProductCart({ ...productCart, amount: inputAmountValue, totalPrice: subtotalPriceProduct }); // делаем запрос на обновление данных товара корзины,разворачиваем весь объект productCart,то есть вместо productCart будут подставлены все поля из объекта productCart,в поля amount и totalPrice указываем значения состояний количества товара (inputAmountValue) и цены товара(subtotalPriceProduct) на этой странице
+
+            setUpdateProductsCart(false); // изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на false,чтобы указать,что данные товара обновились и потом можно было опять нажимать на кнопку обновления всех товаров корзины
+
+        }
+
+    }, [updateProductsCart])
 
 
     // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
@@ -34,10 +75,10 @@ const ProductItemCart = ({ productCart,comments }: IProductItemCart) => {
 
     }, [comments])
 
-    useEffect(()=>{
+    useEffect(() => {
 
         // если productCart.priceDiscount true,то есть есть цена со скидкой у товара,то изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.priceDiscount(цену со скидкой),в другом случае изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.price(обычную цену товара)
-        if(productCart.priceDiscount){
+        if (productCart.priceDiscount) {
 
             setSubtotalPriceProduct(inputAmountValue * productCart.priceDiscount); // умножаем inputAmountValue(выбранное количество товаров) на productCart.price(цену товара)
 
@@ -47,9 +88,9 @@ const ProductItemCart = ({ productCart,comments }: IProductItemCart) => {
 
         }
 
-        
 
-    },[inputAmountValue])
+
+    }, [inputAmountValue])
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {

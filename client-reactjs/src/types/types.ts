@@ -52,6 +52,10 @@ export interface ICatalogInitialState{
     catalogCategory:string
 }
 
+export interface ICartInitialState{
+    updateProductsCart:boolean
+}
+
 // создаем и экспортируем наш интерфейс для AuthResponse
 export interface AuthResponse {
 

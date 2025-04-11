@@ -12,7 +12,7 @@ const Cart = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, authorizationForUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, authorizationForUser, setUpdateProductsCart } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     const [subtotalCheckPrice, setSubtotalCheckPrice] = useState<number>(); // состояние для цены суммы чека всей корзины
 
@@ -123,14 +123,15 @@ const Cart = () => {
                                     <>
                                         {dataProductsCart.data.map(productCart =>
 
-                                            <ProductItemCart key={productCart._id} productCart={productCart} comments={dataComments?.allComments} />
+                                            <ProductItemCart key={productCart._id} productCart={productCart} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart}/>
 
                                         )}
 
                                         <div className="sectionCart__table-bottomBlock">
                                             <button className="sectionCart__table-bottomBlockClearBtn">Clear Cart</button>
 
-                                            <button className="sectionCart__table-bottomBlockUpdateBtn">Update Cart</button>
+                                            {/* изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateProductsCart и делаем там запрос на сервер на обновление данных о товаре в корзине */}
+                                            <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={()=>setUpdateProductsCart(true)}>Update Cart</button>
                                         </div>
                                     </>
                                     : isFetching || isLoading ?

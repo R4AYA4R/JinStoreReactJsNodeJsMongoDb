@@ -2,13 +2,16 @@ import { useDispatch } from "react-redux";
 import { userSlice } from "../store/userSlice";
 import { useMemo } from "react";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { catalogSlice } from "../store/catalogSlide";
+import { catalogSlice } from "../store/catalogSlice";
+import { cartSlice } from "../store/cartSlice";
 
 const rootActions = {
 
     ...userSlice.actions, // разворачиваем все actions(функции,через которые будем менять состояние в redux toolkit) из нашего слайса userSlice в этот объект
 
-    ...catalogSlice.actions // разворачиваем все actions(функции,через которые будем менять состояние в redux toolkit) из нашего слайса catalogSlice в этот объект
+    ...catalogSlice.actions, // разворачиваем все actions(функции,через которые будем менять состояние в redux toolkit) из нашего слайса catalogSlice в этот объект
+    
+    ...cartSlice.actions // разворачиваем все actions(функции,через которые будем менять состояние в redux toolkit) из нашего слайса cartSlice в этот объект
 
 }
 
