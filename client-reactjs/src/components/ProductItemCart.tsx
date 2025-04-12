@@ -47,6 +47,24 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
     })
 
+    const { mutate: mutateDeleteProductCart } = useMutation({
+        mutationKey: ['deleteProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер для удаление товара корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара в базе данных,то есть в данном случае тип IProductCart),но здесь не обязательно указывать тип
+            await axios.delete<IProductCart>(`${API_URL}/deleteProductCart/${productCart._id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
+
     // при рендеринге(запуске) этого компонента и при изменении поля updateProductsCart у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре в корзине
     useEffect(() => {
 
@@ -216,7 +234,9 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
             {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
             <p className="sectionCart__item-totalPrice">${subtotalPriceProduct.toFixed(2)}</p>
-            <button className="sectionCart__item-removeBtn">
+
+            {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+            <button className="sectionCart__item-removeBtn" onClick={()=>mutateDeleteProductCart(productCart)}>
                 <img src="/images/sectionCart/X.png" alt="" className="sectionCart__item-removeBtnImg" />
             </button>
         </div>

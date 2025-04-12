@@ -247,8 +247,8 @@ class ProductController {
             const productCartFounded = await cartProductModel.findById(productCart._id); // находим объект товара в базе данных по id,который взяли у объекта тела запроса productCart(это будет объект с обновленными данными товара корзины,если пользователь изменил эти данные товара корзины на фронтенде,если пользователь эти данные товара не изменил,то это будет объект товара такой же,как и был)
 
             // если productCartFounded.amount не равно productCart.amount(то есть если количество найденного товара корзины в базе данных(productCartFounded) не равно количеству товара корзины productCart(который мы передали с фронтенда),то тогда изменяем данные товара корзины,в другом случае возвращаем текст типа с ошибкой на клиент(фронтенд))
-            if(productCartFounded.amount !== productCart.amount){
-                
+            if (productCartFounded.amount !== productCart.amount) {
+
                 productCartFounded.amount = productCart.amount; // изменяем поле amount у productCartFounded(у этого объекта товара корзины,который мы нашли в базе данных) на значение поля amount у productCart(объекта товара,который мы передали с фронтенда)
 
                 productCartFounded.totalPrice = productCart.totalPrice; // изменяем поле totalPrice у productCartFounded(у этого объекта товара корзины,который мы нашли в базе данных) на значение поля totalPrice у productCart(объекта товара,который мы передали с фронтенда)
@@ -263,6 +263,25 @@ class ProductController {
 
             }
 
+
+        } catch (e) {
+
+            next(e); // вызываем функцию next()(параметр этой функции getProducts) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции getProducts,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
+
+    async deleteProductCart(req, res, next) {
+
+        // оборачиваем в try catch для обработки ошибок
+        try {
+
+            const { productId } = req.params; // берем productId из параметров запроса(мы указали этот динамический параметр productId в url к эндпоинту,поэтому можем его взять из req.params)
+
+            const deleteProductCart = await cartProductModel.findByIdAndDelete(productId);  // находим объект товара у которого id равен параметру productId(который мы взяли из url(строки) запроса) и удаляем его с помощью функции findByIdAndDelete(),если здесь использовать функцию deleteOne() и удалять объект товара по id,то не будет работать,потому что по id так не найдет,поэтому в данном случае используем функцию findByIdAndDelete()
+
+            return res.json(deleteProductCart); // возвращаем на клиент удаленный объект товара
 
         } catch (e) {
 

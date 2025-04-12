@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import ProductItemCart from "../components/ProductItemCart";
 import SectionCartTop from "../components/SectionCartTop";
 import axios from "axios";
@@ -44,6 +44,23 @@ const Cart = () => {
 
     })
 
+    const { mutate: mutateDeleteProductCart } = useMutation({
+        mutationKey: ['deleteProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер для удаление товара корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара в базе данных,то есть в данном случае тип IProductCart),но здесь не обязательно указывать тип
+            await axios.delete<IProductCart>(`${API_URL}/deleteProductCart/${productCart._id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
 
     const dataTotalPrice = dataProductsCart?.data.reduce((prev, curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров
 
@@ -103,6 +120,18 @@ const Cart = () => {
 
     },[dataProductsCart?.data])
 
+    // функция для удаления всех товаров корзины
+    const deleteAllProductsCart = () => {
+
+        // проходимся по каждому элементу массива товаров корзины и вызываем мутацию mutateDeleteProductCart и передаем туда productCart(сам productCart, каждый объект товара на каждой итерации,и потом в функции запроса на сервер mutateDeleteProductCart будем брать у этого productCart только id для удаления из корзины)
+        dataProductsCart?.data.forEach(productCart => {
+            
+            mutateDeleteProductCart(productCart);
+
+        })
+
+    }
+
     return (
         <main className="main">
             <SectionCartTop />
@@ -128,7 +157,7 @@ const Cart = () => {
                                         )}
 
                                         <div className="sectionCart__table-bottomBlock">
-                                            <button className="sectionCart__table-bottomBlockClearBtn">Clear Cart</button>
+                                            <button className="sectionCart__table-bottomBlockClearBtn" onClick={deleteAllProductsCart}>Clear Cart</button>
 
                                             {/* изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateProductsCart и делаем там запрос на сервер на обновление данных о товаре в корзине */}
                                             <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={()=>setUpdateProductsCart(true)}>Update Cart</button>
