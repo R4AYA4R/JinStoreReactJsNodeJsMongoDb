@@ -212,7 +212,7 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
                 </div>
                 :
                 <div className="sectionNewArrivals__item-priceBlock">
-                    <p className="item__priceBlock-priceUsualDefault">${productCart.price}</p>
+                    <p className="item__priceBlock-priceUsualDefaultCart">${productCart.price}</p>
                 </div>
             }
             {/* <div className="sectionNewArrivals__item-priceBlock">

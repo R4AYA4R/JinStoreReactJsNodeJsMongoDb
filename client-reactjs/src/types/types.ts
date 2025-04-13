@@ -80,3 +80,8 @@ export interface ICommentResponse{
     allCommentsForName:IComment[], // указываем поле для всех комментариев,уже отфильтрованных для отдельного товара
     comments:IComment[] // указываем поле для всех комментариев для одной страницы пагинации
 }
+
+export interface IProductsCartResponse{
+    allProductsCart:IProductCart[], // указываем поле для всех товаров корзины,уже отфильтрованных для отдельного авторизованного пользователя
+    productsCart:IProductCart[] // указываем поле для всех товаров корзины для одной страницы пагинации
+}

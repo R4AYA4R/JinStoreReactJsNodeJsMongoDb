@@ -10,7 +10,7 @@ import 'swiper/css/thumbs'; // импортируем стили для моду
 
 import 'swiper/css/zoom';
 import { ChangeEvent, useEffect, useState } from "react";
-import { IComment, IProduct, IProductCart } from "../types/types";
+import { IComment, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../http/http";
@@ -43,9 +43,9 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
         queryKey: ['getAllProductsCart'],
         queryFn: async () => {
 
-            const response = await axios.get<IProductCart[]>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
 
-            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет объект товара) и тд
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
         }
 
@@ -92,7 +92,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
     }, [pathname])
 
 
-    const isExistsCart = dataProductsCart?.data.some(p => p.name === product?.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart(в массиве объектов товаровкорзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
+    const isExistsCart = dataProductsCart?.allProductsCart.some(p => p.name === product?.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart(в массиве объектов товаровкорзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
 
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>

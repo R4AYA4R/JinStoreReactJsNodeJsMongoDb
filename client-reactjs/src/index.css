@@ -2422,3 +2422,12 @@ a {
   letter-spacing: -0.28px;
   color: #808080;
 }
+
+.sectionCart__table-productsBlock{
+  min-height: 484px;
+}
+
+.item__priceBlock-priceUsualDefaultCart{
+  font-size: 16px;
+  font-weight: 500;
+}

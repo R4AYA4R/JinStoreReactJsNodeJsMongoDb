@@ -2,11 +2,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import ProductItemCart from "../components/ProductItemCart";
 import SectionCartTop from "../components/SectionCartTop";
 import axios from "axios";
-import { AuthResponse, ICommentResponse, IProductCart } from "../types/types";
+import { AuthResponse, ICommentResponse, IProductCart, IProductsCartResponse } from "../types/types";
 import { useEffect, useState } from "react";
 import { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
+import { getPagesArray } from "../utils/getPagesArray";
 
 const Cart = () => {
 
@@ -16,15 +17,31 @@ const Cart = () => {
 
     const [subtotalCheckPrice, setSubtotalCheckPrice] = useState<number>(); // состояние для цены суммы чека всей корзины
 
+    const [page, setPage] = useState(1); // указываем состояние текущей страницы
+
+    const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
+
+    const [limit, setLimit] = useState(3); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+
     // берем из useQuery поле isFetching,оно обозначает,что сейчас идет загрузка запроса на сервер,используем его для того,чтобы показать лоадер(загрузку) при загрузке запроса на сервер
     const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
         queryKey: ['getAllProductsCart'],
         queryFn: async () => {
 
-            const response = await axios.get<IProductCart[]>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`, {
+                params: {
 
-            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет объект товара) и тд
+                    limit: limit,  // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params
 
+                    page: page // указываем параметр page(параметр текущей страницы,для пагинации)
+                }
+            }); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductsCartResponse,от сервера придут 2 массива товаров корзины,один общий для всех товаров корзины для отдельного авторизованного пользователя(allProductsCart),а второй для товаров корзины на одной странице пагинации(productsCart)),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
+
+            const totalCount = response.data.allProductsCart.length; // записываем общее количество объектов комментариев,отфильтрованных для отдельного товара по имени с помощью .length,которые пришли от сервера в переменную totalCount(берем это у поля length у поля allCommentsForName(массив всех объектов комментариев без лимитов и состояния текущей страницы,то есть без пагинации) у поля data у response(общий объект ответа от сервера))
+
+            setTotalPages(Math.ceil(totalCount / limit));  // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
 
         }
@@ -62,7 +79,7 @@ const Cart = () => {
 
     })
 
-    const dataTotalPrice = dataProductsCart?.data.reduce((prev, curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров
+    const dataTotalPrice = dataProductsCart?.allProductsCart.reduce((prev, curr) => prev + curr.totalPrice, 0);  // проходимся по массиву объектов товаров корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров
 
     const checkAuth = async () => {
 
@@ -114,22 +131,46 @@ const Cart = () => {
 
     }, [user])
 
-    useEffect(()=>{
+    useEffect(() => {
 
         setSubtotalCheckPrice(dataTotalPrice);
 
-    },[dataProductsCart?.data])
+    }, [dataProductsCart?.allProductsCart])
 
     // функция для удаления всех товаров корзины
     const deleteAllProductsCart = () => {
 
         // проходимся по каждому элементу массива товаров корзины и вызываем мутацию mutateDeleteProductCart и передаем туда productCart(сам productCart, каждый объект товара на каждой итерации,и потом в функции запроса на сервер mutateDeleteProductCart будем брать у этого productCart только id для удаления из корзины)
-        dataProductsCart?.data.forEach(productCart => {
-            
+        dataProductsCart?.allProductsCart.forEach(productCart => {
+
             mutateDeleteProductCart(productCart);
 
         })
 
+    }
+
+
+    // при изменении страницы пагинации переобновляем(делаем повторный запрос на сервер) массив товаров корзины
+    useEffect(() => {
+
+        refetchProductsCart();
+
+    }, [page])
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+        // если текущая страница больше или равна 2
+        if (page >= 2) {
+            setPage((prev) => prev - 1);  // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+        }
+    }
+
+    const nextPage = () => {
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+            setPage((prev) => prev + 1);  // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+        }
     }
 
     return (
@@ -147,20 +188,60 @@ const Cart = () => {
                             </div>
                             <div className="sectionCart__table-mainBlock">
 
-                                {user.userName && dataProductsCart?.data.length ?
+                                {user.userName && dataProductsCart?.allProductsCart.length ?
 
                                     <>
-                                        {dataProductsCart.data.map(productCart =>
 
-                                            <ProductItemCart key={productCart._id} productCart={productCart} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart}/>
+                                        <div className="sectionCart__table-productsBlock">
 
-                                        )}
+                                            {/* проходимся по массиву productsCart(массив товаров корзины,отфильтрованный для отдельного пользователя для одной страницы пагинации) */}
+                                            {dataProductsCart.productsCart.map(productCart =>
+
+                                                <ProductItemCart key={productCart._id} productCart={productCart} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart} />
+
+                                            )}
+
+                                        </div>
+
+                                        <div className="productsBlock__pagination">
+
+                                            <button className="pagination__btnLeft" onClick={prevPage}>
+                                                <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnLeft-img" />
+                                            </button>
+
+                                            {pagesArray.map(p =>
+
+                                                <button
+                                                    className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
+
+                                                    key={p}
+
+                                                    onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+
+                                                >
+                                                    {p}
+                                                </button>
+
+                                            )}
+
+                                            {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки  */}
+                                            {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+
+                                            {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
+                                            {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>
+                                            }
+
+                                            <button className="pagination__btnRight" onClick={nextPage}>
+                                                <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
+                                            </button>
+
+                                        </div>
 
                                         <div className="sectionCart__table-bottomBlock">
                                             <button className="sectionCart__table-bottomBlockClearBtn" onClick={deleteAllProductsCart}>Clear Cart</button>
 
                                             {/* изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateProductsCart и делаем там запрос на сервер на обновление данных о товаре в корзине */}
-                                            <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={()=>setUpdateProductsCart(true)}>Update Cart</button>
+                                            <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={() => setUpdateProductsCart(true)}>Update Cart</button>
                                         </div>
                                     </>
                                     : isFetching || isLoading ?

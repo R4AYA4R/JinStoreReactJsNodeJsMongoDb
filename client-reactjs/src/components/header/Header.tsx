@@ -4,7 +4,7 @@
 import { NavLink } from 'react-router-dom';
 import cl from './Header.module.css'; // импортируем cl(классы,можем по-любому назвать это) из нашего файла Header.module.css,чтобы потом указывать классы через точку типа cl.header(header в данном случае название класса в файле Header.module.css и так указываем остальные классы)
 import { useQuery } from '@tanstack/react-query';
-import { AuthResponse, IProductCart } from '../../types/types';
+import { AuthResponse, IProductCart, IProductsCartResponse } from '../../types/types';
 import axios from 'axios';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { useEffect } from 'react';
@@ -22,10 +22,9 @@ const Header = () => {
         queryKey: ['getAllProductsCart'],
         queryFn: async () => {
 
-            const response = await axios.get<IProductCart[]>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
 
-            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет объект товара) и тд
-
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
 
         }
@@ -114,7 +113,7 @@ const Header = () => {
                             {/* указываем 2 модульных класса таким образом в виде строки с такими ковычками ``,и между ними указываем пробел */}
                             <NavLink to="/cart" className={`${cl.header__menuLink} ${cl.header__menuLinkCart}`}>
                                 <img src="/images/header/Cart.png" alt="" className={cl.menuLink__img} />
-                                <span className={cl.menuLink__span}>{dataProductsCart?.data.length}</span>
+                                <span className={cl.menuLink__span}>{dataProductsCart?.allProductsCart.length}</span>
                             </NavLink>
                         </li>
                     </ul>
