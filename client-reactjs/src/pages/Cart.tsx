@@ -3,13 +3,18 @@ import ProductItemCart from "../components/ProductItemCart";
 import SectionCartTop from "../components/SectionCartTop";
 import axios from "axios";
 import { AuthResponse, ICommentResponse, IProductCart, IProductsCartResponse } from "../types/types";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
 import { getPagesArray } from "../utils/getPagesArray";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const Cart = () => {
+
+    const sectionNewArrivals = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionNewArrivals as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
@@ -176,7 +181,7 @@ const Cart = () => {
     return (
         <main className="main">
             <SectionCartTop />
-            <section className="sectionCart">
+            <section className={onScreen.sectionNewArrivalsIntersecting ? 'sectionNewArrivals sectionNewArrivals__active sectionCart' : 'sectionNewArrivals sectionCart'} ref={sectionNewArrivals} id="sectionNewArrivals" >
                 <div className="container">
                     <div className="sectionCart__inner">
                         <div className="sectionCart__table">

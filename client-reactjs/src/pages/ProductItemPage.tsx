@@ -2,7 +2,7 @@
 import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IComment, ICommentResponse, IProduct, IProductCart } from "../types/types";
+import { IComment, ICommentResponse, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
@@ -46,8 +46,8 @@ const ProductItemPage = () => {
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния user и тд,используя наш типизированный хук для useSelector
 
 
-    const { data, refetch } = useQuery({
-        queryKey: ['getProductById'],
+    const { data, refetch, isFetching: isFetchingProductById } = useQuery({
+        queryKey: [`getProductById${params.id}`], // делаем отдельный queryKey для каждого товара с помощью params.id,чтобы правильно отображалась пагинация комментариев при переходе на разные страницы товаров
         queryFn: async () => {
 
             const response = await axios.get<IProduct>(`http://localhost:5000/api/getProductsCatalog/${params.id}`); // делаем запрос на сервер по конкретному id(в данном случае указываем params.id, то есть id,который взяли из url),который достали из url,указываем тип данных,которые вернет сервер(в данном случае наш IProduct для объекта товара)
@@ -58,22 +58,8 @@ const ProductItemPage = () => {
 
     })
 
-    // скопировали этот запрос на сервер из файла sectionNewArrivals,и указали такой же queryKey как и там,чтобы при изменении рейтинга у товара переобновлять массив товаров в секции sectionNewArrivals
-    const { data: dataProductArrivals, refetch: refetchProductArrivals, isFetching: isFetchingProduct } = useQuery({
-        queryKey: ['getAllProducts'], // указываем здесь такое же название,как и в файле SectionDeals для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другом компоненте(в данном случае в SectionDeals),а не после обновления страницы
-        queryFn: async () => {
-            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts?limit=5&skip=0'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
-
-            console.log(response.data);
-
-            return response; // возвращаем этот массив объектов товаров(он будет помещен в поле data у data,которую мы берем из этого useQuery)
-
-        }
-
-    })
-
     // не указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев отдельно для этой страницы productItemPage
-    const { data: dataComments, refetch: refetchComments, isFetching } = useQuery({
+    const { data: dataComments, refetch: refetchComments, isFetching,isLoading } = useQuery({
         queryKey: ['commentsForProductItemPage'],
         queryFn: async () => {
 
@@ -101,6 +87,20 @@ const ProductItemPage = () => {
 
     })
 
+    // скопировали этот запрос на сервер из файла sectionNewArrivals,и указали такой же queryKey как и там,чтобы при изменении рейтинга у товара переобновлять массив товаров в секции sectionNewArrivals
+    const { data: dataProductArrivals, refetch: refetchProductArrivals, isFetching: isFetchingProduct } = useQuery({
+        queryKey: ['getAllProducts'], // указываем здесь такое же название,как и в файле SectionDeals для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другом компоненте(в данном случае в SectionDeals),а не после обновления страницы
+        queryFn: async () => {
+            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts?limit=5&skip=0'); // делаем запрос на сервер для получения всех блюд,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера), указываем query параметры в url limit(максимальное количество объектов,которые придут из базы данных mongodb) и skip(сколько объектов пропустить,прежде чем начать брать их из базы данных mongodb)
+
+            console.log(response.data);
+
+            return response; // возвращаем этот массив объектов товаров(он будет помещен в поле data у data,которую мы берем из этого useQuery)
+
+        }
+
+    })
+
 
     // делаем отдельный запрос для получения массива комментариев в секции sectionNewArrivals,чтобы потом при изменении рейтинга товара переобновлять этот массив комментариев
     const { data: dataCommentsArrivals, refetch: refetchCommentsArrivals } = useQuery({
@@ -110,6 +110,19 @@ const ProductItemPage = () => {
             const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productNameFor со значением name у товара на этой странице,конкретно указываем этот параметр в объекте в params у этой функции запроса,а не через знак вопроса просто в url,иначе,если в названии товара есть знаки амперсанта(&),то не будут найдены эти комментарии по такому названию,так как эти знаки амперсанта не правильно конкатенируются если их указать просто в url через знак вопроса 
 
             return response.data; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+
+        }
+
+    })
+
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx
+    const { data: dataProductsCart, refetch: refetchProductsCart } = useQuery({
+        queryKey: ['getAllProductsCart'],
+        queryFn: async () => {
+
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
         }
 
@@ -150,6 +163,26 @@ const ProductItemPage = () => {
             refetchProductArrivals();
 
             refetchCommentsArrivals();
+
+        }
+
+    })
+
+
+    // описываем запрос на сервер для обновления рейтинга товаров корзины,чтобы когда обновлялись комментарии и рейтинг обычного товара каталога,то обновлялся и рейтинг этого же товара в корзине у всех пользователей,у которых он есть,если так не сделать,то рейтинг товара корзины не будет обновляться при обновлении комментариев и рейтинга обычного товара каталога
+    const { mutate: mutateProductRatingCart } = useMutation({
+        mutationKey: ['updateRatingProductCart'],
+        mutationFn: async (product: IProduct) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IProduct),но здесь не обязательно указывать тип
+            await axios.put<IProduct>(`${API_URL}/updateProductRatingCart`, product);
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем массив товаров корзины
+        onSuccess() {
+
+            refetchProductsCart();
 
         }
 
@@ -251,11 +284,16 @@ const ProductItemPage = () => {
     // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара и массив товаров для секции sectionNewArrivals,чтобы при обновлении рейтинга товара,шел повторный запрос для обновления массива товаров для секции sectionNewArrivals
     useEffect(() => {
 
-        refetchComments();
-
         refetchProductArrivals();
 
     }, [data?.data, dataComments?.allCommentsForName])
+
+    useEffect(() => {
+
+        refetch();
+
+    }, [data?.data])
+
 
     // при запуске(рендеринге) этого компонента(при загрузке этой страницы),а также при изменении массива комментариев,будем обновлять рейтинг товара
     useEffect(() => {
@@ -263,16 +301,17 @@ const ProductItemPage = () => {
         const commentsRating = dataComments?.allCommentsForName.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
 
         // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.data.length true(этот массив отфильтрованных комментариев для товара на этой странице есть),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
-        if (commentsRating && dataComments?.allCommentsForName.length) {
+        if (commentsRating && dataComments?.allCommentsForName.length && !isFetching) {
 
             const commentsRatingMiddle = commentsRating / dataComments?.allCommentsForName.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.data.length(длину массива комментариев)
 
             mutateProductRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct);  // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id может быть undefined)
 
-            // здесь еще нужно делать запрос на обновление рейтинга у товаров корзины
-
+            mutateProductRatingCart({ ...data?.data, rating: commentsRatingMiddle } as IProduct); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
 
         }
+
+        refetchComments();
 
     }, [dataComments?.allCommentsForName])
 
@@ -362,7 +401,7 @@ const ProductItemPage = () => {
                                     <div className="descBlock__reviews-inner">
                                         <div className="reviews__leftBlock">
 
-                                            {dataComments?.allCommentsForName.length ?
+                                            {!isFetching && dataComments?.allCommentsForName.length ?
                                                 <>
 
                                                     <div className="reviews__leftBlock-comments">
@@ -374,43 +413,54 @@ const ProductItemPage = () => {
                                                     </div>
 
 
-                                                    <div className="productsBlock__pagination">
+                                                    {/* если dataComments.allCommentsForName.length больше 3,то есть комментариев для этого товара больше 3,то показывать пагинацию,в другом случае пустая строка,то есть не показывать,делаем эту проверку,так как указываем минимальную высоту для блока комментариев,чтобы пагинация не прыгала,а была на одном месте,даже если комментарий 1,и если всего комментариев 3 и меньше,то вообще пагинация не нужна */}
+                                                    {dataComments.allCommentsForName.length > 3 ?
 
-                                                        <button className="pagination__btnLeft" onClick={prevPage}>
-                                                            <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnLeft-img" />
-                                                        </button>
+                                                        <div className="productsBlock__pagination">
 
-                                                        {pagesArray.map(p =>
-
-                                                            <button
-                                                                className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
-
-                                                                key={p}
-
-                                                                onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
-
-                                                            >
-                                                                {p}
+                                                            <button className="pagination__btnLeft" onClick={prevPage}>
+                                                                <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnLeft-img" />
                                                             </button>
 
-                                                        )}
+                                                            {pagesArray.map(p =>
 
-                                                        {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки  */}
-                                                        {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+                                                                <button
+                                                                    className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
 
-                                                        {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
-                                                        {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>
-                                                        }
+                                                                    key={p}
 
-                                                        <button className="pagination__btnRight" onClick={nextPage}>
-                                                            <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
-                                                        </button>
+                                                                    onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
 
-                                                    </div>
+                                                                >
+                                                                    {p}
+                                                                </button>
+
+                                                            )}
+
+                                                            {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки  */}
+                                                            {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+
+                                                            {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
+                                                            {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>
+                                                            }
+
+                                                            <button className="pagination__btnRight" onClick={nextPage}>
+                                                                <img src="/images/sectionCatalog/ArrowCatalogRight.png" alt="" className="pagination__btnRight-img" />
+                                                            </button>
+
+                                                        </div>
+                                                        :
+                                                        ''
+
+                                                    }
 
                                                 </>
-                                                :
-                                                <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
+                                                : isFetching ?
+                                                    <div className="innerForLoader">
+                                                        <div className="loader"></div>
+                                                    </div>
+                                                    :
+                                                    <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
                                             }
 
                                         </div>
@@ -476,8 +526,10 @@ const ProductItemPage = () => {
                     </div>
                 </div>
             </section>
+            
+            <SectionNewArrivals className="sectionNewArrivalsProductPage" /> {/* передаем параметр className этой секции со значением класса sectionNewArrivalsProductPage,чтобы для этой секции на этой странице были другие отступы(margin и padding) и анимация */} 
 
-            <SectionNewArrivals className="sectionNewArrivalsProductPage" /> {/* передаем параметр className этой секции со значением класса sectionNewArrivalsProductPage,чтобы для этой секции на этой странице были другие отступы(margin и padding) и анимация */}
+            
         </main>
     )
 

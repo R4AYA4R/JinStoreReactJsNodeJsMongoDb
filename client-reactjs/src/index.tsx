@@ -24,15 +24,16 @@ const queryClient = new QueryClient({
 })
 
 root.render(
-  <React.StrictMode>
-    {/* оборачиваем наше приложение в QueryClientProvider,чтобы работал react query,в client указываем наш queryClient,который мы создали выше и указали в нем настройки */}
+  // убираем React.StrictMode,иначе из-за него запросы на сервер идут в два раза больше и из-за этого они грузятся дольше
+  // <React.StrictMode>
+    //* оборачиваем наше приложение в QueryClientProvider,чтобы работал react query,в client указываем наш queryClient,который мы создали выше и указали в нем настройки */}
     <QueryClientProvider client={queryClient}>
       {/* оборачиваем в Provider,чтобы состояние из redux toolkit было доступно во всех компонентах,указываем в store наш store */}
       <Provider store={store}>
         <App />
       </Provider>
     </QueryClientProvider>
-  </React.StrictMode> 
+  //* </React.StrictMode>  */}
 );
 
 // If you want to start measuring performance in your app, pass a function

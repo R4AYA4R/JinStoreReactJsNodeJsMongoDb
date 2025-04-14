@@ -1742,6 +1742,10 @@ a {
   letter-spacing: -0.32px;
 }
 
+.reviews__leftBlock-comments{
+  min-height: 272px;
+}
+
 
 .reviews__rightBlock-btnBlock {
   display: flex;
