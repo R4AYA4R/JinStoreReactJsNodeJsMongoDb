@@ -52,12 +52,12 @@ const ProductItemCatalog = ({ product,comments }: IProductItemCatalog) => {
 
     }, [product])
 
-    // при рендеринге(запуске) этого компонента будет отработан код в этом useEffect,так как он с пустым массивом зависимостей
+    // при рендеринге(запуске) этого компонента и при изменении массива комментариев comments будет отработан код в этом useEffect,так как он с пустым массивом зависимостей, обязательно указываем массив комментариев comments в массиве зависимостей этого useEffect,чтобы при двойном переобновлении страницы комментарии отображались,иначе они могут не отобразиться
     useEffect(()=>{
 
         setCommentsForProduct(comments?.filter(p => p.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
 
-    },[])
+    },[comments])
 
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionCatalog__productsItems-item">

@@ -193,7 +193,8 @@ const Catalog = () => {
 
         // setFilteredCategoryBreadsAndBakery(data?.allProducts.filter(p => p.category === 'Breads & Bakery'));
 
-    }, [data?.products]);
+    }, [data?.products])
+
 
     // при изменении priceFilterMax изменяем значение filterPrice,возвращаем массив,первым элементом указываем предыдущее значение по индексу 0(то есть минимальное значение фильтра цены) и второй элемент указываем со значением как priceFilterMax(делаем эти манипуляции с priceFilterMax,иначе выдает ошибку,что для ReacSlider нельзя указать значение с типом undefined и тд)
     useEffect(() => {

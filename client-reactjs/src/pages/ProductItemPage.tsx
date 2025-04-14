@@ -24,10 +24,11 @@ const ProductItemPage = () => {
 
     const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
+    // не используем здесь уже анимацию появления,так как отслеживаем загрузку запроса на сервер для получения комментариев товара
     // скопировали это из файла SectionNewArrivals,так как здесь тоже самое,чтобы дополнительно не писать
-    const sectionBestSellers = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+    // const sectionBestSellers = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
-    const onScreen = useIsOnScreen(sectionBestSellers as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+    // const onScreen = useIsOnScreen(sectionBestSellers as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
@@ -59,8 +60,8 @@ const ProductItemPage = () => {
     })
 
     // не указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев отдельно для этой страницы productItemPage
-    const { data: dataComments, refetch: refetchComments, isFetching,isLoading } = useQuery({
-        queryKey: ['commentsForProductItemPage'],
+    const { data: dataComments, refetch: refetchComments, isFetching, isLoading } = useQuery({
+        queryKey: [`commentsForProductItemPage${params.id}`], // делаем отдельный queryKey для комментариев для каждого товара с помощью params.id,чтобы правильно отображалась пагинация комментариев при переходе на разные страницы товаров и правильно работала отслеживание заргузки запроса на сервер
         queryFn: async () => {
 
             const response = await axios.get<ICommentResponse>(`${API_URL}/getCommentsForProduct`, {
@@ -361,10 +362,24 @@ const ProductItemPage = () => {
         }
     }
 
+    if (isLoading) {
+        return (
+            // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
+            <main className="main">
+                <div className="container">
+                    <div className="innerForLoader">
+                        <div className="loader"></div>
+                    </div>
+                </div>
+            </main>
+
+        )
+    }
+
     return (
         <main className="main">
-            {/* скопировали id и тд из файла sectionNewArrivals,так как здесь такая же анимация и это страница товара,поэтому здесь не будет такой секции как в sectionNewArrivals,поэтому id будут нормально работать,это просто,чтобы не писать больше дополнительного */}
-            <section className={onScreen.sectionProductItemPage ? "sectionProductItemPage__active sectionProductItemPage" : "sectionProductItemPage"} ref={sectionBestSellers} id="sectionProductItemPage">
+            {/* скопировали id и тд из файла sectionNewArrivals,так как здесь такая же анимация и это страница товара,поэтому здесь не будет такой секции как в sectionNewArrivals,поэтому id будут нормально работать,это просто,чтобы не писать больше дополнительного,не используем здесь уже анимацию появления,так как отслеживаем загрузку запроса на сервер для получения комментариев товара  */}
+            <section className="sectionProductItemPage__active sectionProductItemPage" id="sectionProductItemPage">
                 <div className="container">
                     <div className="sectionProductItemPage__inner">
                         <div className="sectionProductItemPage__top sectionCatalog__topBlock">
@@ -526,10 +541,10 @@ const ProductItemPage = () => {
                     </div>
                 </div>
             </section>
-            
-            <SectionNewArrivals className="sectionNewArrivalsProductPage" /> {/* передаем параметр className этой секции со значением класса sectionNewArrivalsProductPage,чтобы для этой секции на этой странице были другие отступы(margin и padding) и анимация */} 
 
-            
+            <SectionNewArrivals className="sectionNewArrivalsProductPage" /> {/* передаем параметр className этой секции со значением класса sectionNewArrivalsProductPage,чтобы для этой секции на этой странице были другие отступы(margin и padding) и анимация */}
+
+
         </main>
     )
 
