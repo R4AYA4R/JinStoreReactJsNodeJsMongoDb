@@ -5,7 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import { API_URL } from "../http/http";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import AuthService from "../service/AuthService";
 
 const UserPage = () => {
@@ -15,6 +15,12 @@ const UserPage = () => {
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
     const { setLoadingUser, authorizationForUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+    const [inputNameAccSettings, setInputNameAccSettings] = useState('');
+
+    const [inputEmailAccSettings, setInputEmailAccSettings] = useState('');
+
+    const [errorAccSettings, setErrorAccSettings] = useState('');
 
 
     const checkAuth = async () => {
@@ -63,7 +69,7 @@ const UserPage = () => {
     const logout = async () => {
 
         // оборачиваем в try catch,чтобы отлавливать ошибки 
-        try{
+        try {
 
             await AuthService.logout(); // вызываем нашу функцию logout() у AuthService
 
@@ -75,11 +81,20 @@ const UserPage = () => {
             // здесь потом будем очищать поля инпутов в форме для изменения данных пользователя
 
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
 
         }
+
+    }
+
+    // функция для формы изменения имени и почты пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitAccSettings = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+
 
     }
 
@@ -155,15 +170,34 @@ const UserPage = () => {
                                         <h3 className="sectionUserPage__dashboard-title">{user.userName}</h3>
                                         <p className="sectionUserPage__dashboard-text">{user.email}</p>
 
-                                        <button className="sectionUserPage__dashboard-btn" onClick={()=>setTab('Account Settings')}>Edit Profile</button>
+                                        <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
 
                                     </div>
                                 </div>
                             }
 
                             {tab === 'Account Settings' &&
-                                <div className="sectionUserPage__mainBlock-inner">
-                                    Account Settings, {user.userName}
+                                <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accSettings">
+                                    <form className="sectionUserPage__mainBlock-formInfo" onSubmit={onSubmitAccSettings}>
+                                        <h2 className="sectionUserPage__formInfo-title">Account Settings</h2>
+                                        <div className="sectionUserPage__formInfo-main">
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Name</p>
+                                                <input type="text" className="sectionUserPage__formInfo-itemInput" placeholder={`${user.userName}`} value={inputNameAccSettings} onChange={(e) => setInputNameAccSettings(e.target.value)} />
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Email</p>
+                                                <input type="text" className="sectionUserPage__formInfo-itemInput" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)} />
+                                            </div>
+
+                                            {/* если errorAccSettings true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+                                            {errorAccSettings && <p className="formErrorText">{errorAccSettings}</p>}
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button className="sectionUserPage__formInfo-btn" type="submit">Save Changes</button>
+
+                                        </div>
+                                    </form>
                                 </div>
                             }
 

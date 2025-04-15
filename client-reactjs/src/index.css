@@ -2124,14 +2124,11 @@ a {
   border-top-right-radius: 6px;
 }
 
-.sectionUserPage__mainBlock {
-  border: 1px solid #E5E7EB;
-  border-radius: 6px;
-}
-
 .sectionUserPage__mainBlock-inner {
   padding: 20px;
   animation: appear 1s ease forwards;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
 }
 
 .sectionUserPage__mainBlock-dashboard {
@@ -2434,4 +2431,73 @@ a {
 .item__priceBlock-priceUsualDefaultCart{
   font-size: 16px;
   font-weight: 500;
+}
+
+.sectionUserPage__mainBlock-accSettings{
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.sectionUserPage__mainBlock-formInfo{
+  border:1px solid #E5E7EB;
+  border-radius: 6px;
+}
+
+.sectionUserPage__formInfo-title{
+  font-weight: 500;
+  font-size: 18px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #E5E7EB;
+  letter-spacing: -0.32px;
+}
+
+.sectionUserPage__formInfo-main{
+  padding: 20px;
+}
+
+.sectionUserPage__formInfo-itemText{
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.28px;
+  margin-bottom: 6px;
+}
+
+.sectionUserPage__formInfo-itemInput{
+  padding: 14px 16px;
+  border: 1px solid #E5E7EB;
+  outline: none;
+  width: 100%;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.sectionUserPage__formInfo-item{
+  margin-bottom: 10px;
+}
+
+.sectionUserPage__formInfo-itemInput::placeholder{
+  font-family: 'Inter',sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.28px;
+}
+
+.sectionUserPage__formInfo-btn{
+  padding: 12px 18px;
+  border:none;
+  color: #fff;
+  font-family: 'Inter',sans-serif;
+  letter-spacing: -0.28px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 5px;
+  background-color: #16a34a;
+  border-radius: 6px;
+  transition:all .5s ease;
+}
+
+.sectionUserPage__formInfo-btn:hover{
+  cursor: pointer;
+  background-color: #0bca51;
 }
