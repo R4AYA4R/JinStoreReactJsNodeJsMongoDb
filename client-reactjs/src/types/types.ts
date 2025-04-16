@@ -1,7 +1,7 @@
 
 export interface IProduct{
 
-    _id:string, // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием 
+    _id:string, // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием, поле id в объектах в базе mongodb с типом string по дефолту 
     name:string,
     category:string,
     descText:string,
@@ -22,7 +22,7 @@ export interface IProductCart extends IProduct{
 
     usualProductId:string,  // указываем это поле,чтобы туда потом указывать значение id обычного товара из каталога,чтобы потом можно было перейти на страницу этого обычного товара из корзины
  
-    forUser:number // указываем это поле,чтобы указать значение id объекта пользователя,чтобы потом показывать в корзине товары только для определенного авторизованного пользователя
+    forUser:string // указываем это поле,чтобы указать значение id объекта пользователя,чтобы потом показывать в корзине товары только для определенного авторизованного пользователя
 
 }
 
@@ -37,7 +37,7 @@ export interface IResponseCatalog{
 export interface IUser{
     email:string,
     userName:string,
-    id:number,
+    id:string,
     role:string
 }
 
@@ -66,7 +66,7 @@ export interface AuthResponse {
 }
 
 export interface IComment {
-    _id:number,  // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием по дефолту
+    _id:string,  // указываем поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием по дефолту
     name:string,
     text:string,
     rating:number,

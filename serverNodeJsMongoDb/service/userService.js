@@ -58,7 +58,7 @@ class UserService {
         const isPassEquals = await bcrypt.compare(password, user.password);  // сравниваем пароль,который отправил пользователь с захешированным паролем в базе данных,используем функцию compare() у bcrypt,передаем туда первым параметром пароль,который пользователь отправил(параметр этой функции login),а вторым параметром передаем пароль из базы данных(то есть пароль,который есть у объекта user(мы его нашли в переменной user по email))
 
         // если isPassEquals false(или null),то есть пароли не одинаковы
-        if(!isPassEquals){
+        if (!isPassEquals) {
 
             throw ApiError.BadRequest('Wrong password'); // бросаем ошибку с помощью нашего ApiError,указываем у него функцию BadRequest и передаем туда сообщение
 
@@ -92,7 +92,7 @@ class UserService {
         const tokenFromDb = await tokenService.findToken(refreshToken);  // ищем такой токен в базе данных,помещаем найденный токен в переменную tokenFromDb,используя нашу функцию findToken(),куда передаем в параметре refreshToken
 
         // если userData false(или null) или tokenFromDb false(или null),то есть пользователь не авторизован
-        if(!userData || !tokenFromDb){
+        if (!userData || !tokenFromDb) {
 
             throw ApiError.UnauthorizedError(); // бросаем ошибку с помощью нашего ApiError,указываем у него функцию UnauthorizedError(),если у пользователя токена нет,то он и не авторизован
 
@@ -120,6 +120,66 @@ class UserService {
         const token = await tokenService.removeToken(refreshToken); // удаляем refreshToken из базы данных,вызывая нашу функцию removeToken(),передавая в параметре refreshToken
 
         return token; // возвращаем токен(в данном случае это будет удаленный объект из базы данных с таким значением refreshToken как и в параметре этой функции logout, но в данном случае возвращается не сам удаленный объект токена из базы данных, а объект с полем deletedCount и значением 1,типа был удален объект)
+
+    }
+
+    // функция для изменения данных пользователя в базе данных
+    async changeInfo(userId, name, email, errors) {
+
+        const user = await userModel.findById(userId); // находим объект пользователя по id,который передали с фронтенда
+
+        // если user false,то есть такой пользователь не найден
+        if (!user) {
+
+            throw ApiError.BadRequest('This user is not found'); // бросаем ошибку
+
+        }
+
+        // если параметр name (который мы взяли с фронтенда) true,то есть в name есть какое-то значение,то изменяем его у пользователя
+        if (name) {
+
+            // если name.length < 3(если параметр name,то есть новое имя пользователя,которое мы взяли с фронтенда, по количеству символов меньше трех) или name.length > 20,то показываем ошибку,в другом случае изменяем имя пользователя
+            if (name.length < 3 || name.length > 20) {
+
+                throw ApiError.BadRequest('Name must be 3 - 20 characters');
+
+            } else {
+
+                user.userName = name; // изменяем поле userName у user(объект пользователя) на name,который передали с фронтенда
+
+                await user.save(); // сохраняем объект пользователя в базе данных
+
+            }
+
+        }
+
+        // если параметр email (который мы взяли с фронтенда) true,то есть в email есть какое-то значение,то изменяем его у пользователя
+        if (email) {
+
+            const userEmailFounded = await userModel.findOne({ email }); // ищем пользователя в базе данных,у которого поле email равно параметру email,который мы передали с фронтенда(то есть новому email,на который пользователь хочет изменить),если такой пользователь не будет найден,то переменная userEmailFounded будет равна null
+
+            // если errors.isEmpty() false,то есть массив ошибок не пустой,этот параметр errors мы передали в эту функцию changeInfo из userController(этот параметр errors является результатом валидации поля email с помощью валидатора body(то есть если есть ошибки при валидации поля email,то показываем ошибку),это мы прописывали у эндпоинта /changeAccInfo)
+            if (!errors.isEmpty()) {
+
+                throw ApiError.BadRequest('Enter email correctly', errors.array()); // бросаем ошибку и в нашу функцию BadRequest() передаем сообщение для ошибки и массив ошибок,полученных при валидации с помощью errors.array()
+
+            } else if(userEmailFounded){
+                // если userEmailFounded true,то есть такой пользователь с такой почтой,которую пользователь хочет сделать, уже найден,то показываем ошибку,что такая почта уже существует
+                throw ApiError.BadRequest('This email already exists');
+
+            } else {
+
+                user.email = email; // изменяем поле email у user(объект пользователя) на email,который передали с фронтенда
+
+                await user.save(); // сохраняем объект пользователя в базе данных
+
+            }
+
+        }
+
+        const userDto = new UserDto(user); // создаем дтошку,то есть выбрасываем из модели user базы данных все не нужное,помещаем в переменную userDto объект,созданный на основе нашего класса UserDto и передаем в параметре конструктора модель(в данном случае объект user,который мы нашли в базе данных по email,в коде выше),в итоге переменная userDto(объект) будет обладать полями id,email,isActivated,userName
+
+        return userDto; // в данном случае возвращаем уже обновленный объект пользователя (userDto, только с определенными полями,не всеми,которые есть в базе данных)
 
     }
 
