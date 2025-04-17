@@ -23,6 +23,23 @@ const UserPage = () => {
     const [errorAccSettings, setErrorAccSettings] = useState('');
 
 
+    const [inputPassCurrent, setInputPassCurrent] = useState('');
+
+    const [inputNewPass, setInputNewPass] = useState('');
+
+    const [inputConfirmPass, setInputConfirmPass] = useState('');
+
+    
+
+    const [hideInputCurrentPass, setHideInputCurrentPass] = useState(true);
+
+    const [hideInputNewPass, setHideInputNewPass] = useState(true);
+
+    const [hideInputConfirmPass, setHideInputConfirmPass] = useState(true);
+
+    const [errorPassSettings, setErrorPassSettings] = useState('');
+
+
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
     const changeAccInfoInDb = async (userId: string, name: string, email: string) => {
 
@@ -127,7 +144,7 @@ const UserPage = () => {
 
                 setInputNameAccSettings(''); // изменяем состояние инпута имени на пустую строку,чтобы убирался текст в инпуте имени после успешного запроса
 
-            } catch (e:any) {
+            } catch (e: any) {
 
                 console.log(e.response?.data?.message); // выводим ошибку в логи
 
@@ -136,6 +153,15 @@ const UserPage = () => {
             }
 
         }
+
+    }
+
+    // функция для формы изменения пароля пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitPassSettings = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+       
 
     }
 
@@ -239,6 +265,43 @@ const UserPage = () => {
 
                                         </div>
                                     </form>
+
+                                    <form className="sectionUserPage__mainBlock-formInfo sectionUserPage__formPassSettings" onSubmit={onSubmitPassSettings}>
+                                        <h2 className="sectionUserPage__formInfo-title">Change Password</h2>
+                                        <div className="sectionUserPage__formInfo-main">
+                                            <div className="sectionUserPage__formInfo-item signInMainForm__inputEmailBlock">
+                                                <p className="sectionUserPage__formInfo-itemText">Current Password</p>
+
+                                                {/* если состояние hideInputCurrentPass true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
+                                                <input type={hideInputCurrentPass ? "password" : "text"} className="sectionUserPage__formInfo-itemInput" placeholder='Current Password' value={inputPassCurrent} onChange={(e) => setInputPassCurrent(e.target.value)} />
+                                                <button className="inputEmailBlock__btn sectionUserPage__formPassSettings-hideBtn" type="button" onClick={() => setHideInputCurrentPass((prev) => !prev)}>
+                                                    <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="signInMainForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item signInMainForm__inputEmailBlock">
+                                                <p className="sectionUserPage__formInfo-itemText">New Password</p>
+                                                <input type={hideInputNewPass ? "password" : "text"} className="sectionUserPage__formInfo-itemInput" placeholder='New Password' value={inputNewPass} onChange={(e) => setInputNewPass(e.target.value)} />
+                                                <button className="inputEmailBlock__btn sectionUserPage__formPassSettings-hideBtn" type="button" onClick={() => setHideInputNewPass((prev) => !prev)}>
+                                                    <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="signInMainForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item signInMainForm__inputEmailBlock">
+                                                <p className="sectionUserPage__formInfo-itemText">Confirm Password</p>
+                                                <input type={hideInputConfirmPass ? "password" : "text"} className="sectionUserPage__formInfo-itemInput" placeholder='Confirm Password' value={inputConfirmPass} onChange={(e) => setInputConfirmPass(e.target.value)} />
+                                                <button className="inputEmailBlock__btn sectionUserPage__formPassSettings-hideBtn" type="button" onClick={() => setHideInputConfirmPass((prev) => !prev)}>
+                                                    <img src="/images/sectionSignUp/eye-open 1.png" alt="" className="signInMainForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+
+                                            {/* если errorPassSettings true(то есть в состоянии errorPassSettings что-то есть),то показываем текст ошибки */}
+                                            {errorPassSettings && <p className="formErrorText">{errorPassSettings}</p>}
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button className="sectionUserPage__formInfo-btn" type="submit">Change Password</button>
+
+                                        </div>
+                                    </form>
+
                                 </div>
                             }
 
