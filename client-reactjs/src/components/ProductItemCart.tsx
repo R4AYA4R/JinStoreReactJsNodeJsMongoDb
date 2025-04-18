@@ -29,7 +29,7 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
-    const { mutate: mutateUpdateProductCart } = useMutation({
+    const { mutate: mutateUpdateProductCart,isPending } = useMutation({
         mutationKey: ['updateProductCart'],
         mutationFn: async (productCart: IProductCart) => {
 
@@ -68,7 +68,8 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
     // при рендеринге(запуске) этого компонента и при изменении поля updateProductsCart у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре в корзине
     useEffect(() => {
 
-        if (updateProductsCart && productCart.amount !== inputAmountValue) {
+        // если updateProductsCart true и productCart.amount не равно inputAmountValue(то есть количество товара в корзине(которое мы получили из запроса на сервер на получения всех товаров корзины в компоненте Cart.tsx) не равно значению состояния inputAmountValue,то есть пользователь изменил количество товара в корзине),то обновляем данные товара,делаем эту проверку,чтобы не циклился запрос на переобновление массива товаров корзины ,который мы делаем при обновлении данных товара,если эту проверку не сделать,то будут циклиться запросы на сервер и не будет нормально работать сайт, и чтобы если пользователь нажал на кнопку обновить товары в корзине,но не изменил inputAmountValue(количество товара) на новое значение,то не делать запрос на обновление товара корзины,чтобы не шли запросы на сервер просто так,а также указываем проверку на !isPending(isPending false),то есть сейчас запрос на обновление товара корзины не грузится,если не сделать эту проверку,то можно будет кучу раз нажимать на кнопку обновления товаров корзины и будет идти куча запросов на обновление товаров корзины,пока еще первый не загрузился
+        if (updateProductsCart && productCart.amount !== inputAmountValue && !isPending) {
 
             mutateUpdateProductCart({ ...productCart, amount: inputAmountValue, totalPrice: subtotalPriceProduct }); // делаем запрос на обновление данных товара корзины,разворачиваем весь объект productCart,то есть вместо productCart будут подставлены все поля из объекта productCart,в поля amount и totalPrice указываем значения состояний количества товара (inputAmountValue) и цены товара(subtotalPriceProduct) на этой странице
 
@@ -106,6 +107,7 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
         }
 
+        setUpdateProductsCart(false); // обязательно изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на false при изменении inputAmountValue,чтобы срабатывала нормально проверка на updateProductsCart true,при изменении этого состояния updateProductsCart,иначе,если без изменения количества товара просто тыкать на кнопку обновления товаров корзины,то updateProductsCart будет изменено на true,но запрос не будет идти на обновление количества товара корзины,так как текущее значение инпута количества товара будет такое же,как уже есть у этого товара в базе данных,и потом,когда все-таки пользователь изменит инпут количества товара,то запрос на обновление количества товара корзины тоже не будет идти,так как уже не будет правильно срабатывать эта проверка на updateProductsCart true,поэтому при каждом изменении inputAmountValue изменяем updateProductsCart на false,чтобы можно было нажимать на кнопку обновления товаров корзины и шел запрос на обновление товара корзины и уже будет не важно,нажимал ли до этого пользователь эту кнопку,так как ему придется изменить значение инпута количества товара и соответсвенно состояние  updateProductsCart изменится на false и это все будет работать правильно
 
 
     }, [inputAmountValue])

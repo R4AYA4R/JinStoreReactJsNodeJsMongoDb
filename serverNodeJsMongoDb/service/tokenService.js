@@ -12,7 +12,7 @@ class TokenService {
 
         console.log(accessToken);
 
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "10s" });  // создаем refreshToken,также как и accessToken,только секретный ключ для refresh токена указываем другой и время жизни токена 30d(30 дней),чтобы если пользователь не заходил на сайт 30 дней,ему придется заново логиниться
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "1m" });  // создаем refreshToken,также как и accessToken,только секретный ключ для refresh токена указываем другой и время жизни токена 30d(30 дней),чтобы если пользователь не заходил на сайт 30 дней,ему придется заново логиниться
 
         // возвращаем объект с полями accessToken и refreshToken
         return {
