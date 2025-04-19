@@ -29,7 +29,7 @@ const UserPage = () => {
 
     const [inputConfirmPass, setInputConfirmPass] = useState('');
 
-    
+
 
     const [hideInputCurrentPass, setHideInputCurrentPass] = useState(true);
 
@@ -48,7 +48,7 @@ const UserPage = () => {
     }
 
     // фукнция для запроса на сервер на изменение пароля пользователя в базе данных
-    const changePassInDb = async (userId: string, currentPass:string, newPass:string) => {
+    const changePassInDb = async (userId: string, currentPass: string, newPass: string) => {
 
         return $api.put('/changeAccPass', { userId, currentPass, newPass }); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение пароля пользователя в базе данных(на /changePass в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
 
@@ -111,7 +111,7 @@ const UserPage = () => {
 
             // очищаем поля инпутов форм для изменения данных пользователя
             setInputEmailAccSettings(''); // изменяем состояние инпута почты на пустую строку,чтобы когда пользователь выходил из аккаунта очищался инпут почты,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то в инпуте почты может быть текст,который он до этого там вводил
-            
+
             setInputNameAccSettings(''); // изменяем состояние инпута имени на пустую строку,чтобы когда пользователь выходил из аккаунта очищался инпут имени,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то в инпуте имени может быть текст,который он до этого там вводил
 
             setErrorAccSettings(''); // изменяем состояние ошибки формы изменения данных пользователя на пустую строку,чтобы когда пользователь выходил из аккаунта убиралась ошибка,даже если она там была,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то может показываться ошибка,которую пользователь до этого получил
@@ -186,27 +186,27 @@ const UserPage = () => {
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если инпут текущего пароля равен пустой строке,то показываем ошибку
-        if(inputPassCurrent === ''){
+        if (inputPassCurrent === '') {
 
             setErrorPassSettings('Enter current password');
 
-        } else if(inputNewPass.length < 3 || inputNewPass.length > 32){
+        } else if (inputNewPass.length < 3 || inputNewPass.length > 32) {
             // если инпут нового пароля по длине(по количеству символов) меньше 3 или больше 32,то показываем ошибку
             setErrorPassSettings('New password must be 3 - 32 characters');
-        } else if(inputNewPass !== inputConfirmPass){
+        } else if (inputNewPass !== inputConfirmPass) {
             // если значение инпута нового пароля не равно значению инпута подтвержденного пароля,то показываем ошибку
             setErrorPassSettings('Passwords don`t match');
         } else {
 
             // здесь обрабатываем запрос на сервер для изменения пароля пользователя с помощью try catch(чтобы отлавливать ошибки,можно было сделать это с помощью react query,но в данном случае уже сделали так)
 
-            try{
+            try {
 
                 const response = await changePassInDb(user.id, inputPassCurrent, inputNewPass);  // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
 
                 console.log(response.data);
 
-            }catch(e:any){
+            } catch (e: any) {
 
                 console.log(e.response?.data?.message); // выводим ошибку в логи
 
@@ -273,12 +273,32 @@ const UserPage = () => {
                                         <p className="sectionUserPage__menu-btnText">Dashboard</p>
                                     </button>
                                 </li>
-                                <li className="sectionUserPage__menu-item">
-                                    <button className={tab === 'Account Settings' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Account Settings')}>
-                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
-                                        <p className="sectionUserPage__menu-btnText">Account Settings</p>
-                                    </button>
-                                </li>
+
+                                {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем таб с настройками профиля пользователя */}
+                                {user.role === 'USER' &&
+
+                                    <li className="sectionUserPage__menu-item">
+                                        <button className={tab === 'Account Settings' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Account Settings')}>
+                                            <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                            <p className="sectionUserPage__menu-btnText">Account Settings</p>
+                                        </button>
+                                    </li>
+
+                                }
+
+                                {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN"),то показываем таб с панелью администратора */}
+                                {user.role === 'ADMIN' &&
+
+                                    <li className="sectionUserPage__menu-item">
+                                        <button className={tab === 'Admin Panel' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Admin Panel')}>
+                                            <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                            <p className="sectionUserPage__menu-btnText">Admin Panel</p>
+                                        </button>
+                                    </li>
+
+                                }
+
+
                             </ul>
 
                             <div className="sectionUserPage__menu-item">
@@ -297,13 +317,23 @@ const UserPage = () => {
                                         <h3 className="sectionUserPage__dashboard-title">{user.userName}</h3>
                                         <p className="sectionUserPage__dashboard-text">{user.email}</p>
 
-                                        <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+                                        {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем кнопку, по которой можно перейти в настройки аккаунта пользователя*/}
+                                        {user.role === 'USER' &&
+                                            <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+                                        }
+
+                                        {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN"),то показываем кнопку,по которой можно перейти в админ панель */}
+                                        {user.role === 'ADMIN' &&
+                                            <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Admin Panel')}>Go to Admin Panel</button>
+                                        }
+
 
                                     </div>
                                 </div>
                             }
 
-                            {tab === 'Account Settings' &&
+                            {/* если user.role === 'USER'(то есть если роль пользователя равна "USER") и tab === 'Account Settings',то показываем таб с настройками профиля пользователя */}
+                            {user.role === 'USER' && tab === 'Account Settings' &&
                                 <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accSettings">
                                     <form className="sectionUserPage__mainBlock-formInfo" onSubmit={onSubmitAccSettings}>
                                         <h2 className="sectionUserPage__formInfo-title">Account Settings</h2>
@@ -365,6 +395,14 @@ const UserPage = () => {
                                 </div>
                             }
 
+                            {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN") и tab === 'Admin Panel',то показываем таб с панелью администратора */}
+                            {user.role === 'ADMIN' && tab === 'Admin Panel' &&
+                                <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accSettings">
+                                    
+                                    adminPanel
+
+                                </div>
+                            }
 
                         </div>
                     </div>
