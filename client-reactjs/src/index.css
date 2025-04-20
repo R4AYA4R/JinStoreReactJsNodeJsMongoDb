@@ -2509,3 +2509,30 @@ a {
 .sectionUserPage__formPassSettings-hideBtn{
   top: 36px;
 }
+
+.sectionUserPage__formInfo-itemCategoryBlock{
+  margin-top: 25px;
+}
+
+.sortBlock__optionsBlockAdminForm--active{
+  max-height: 165px;
+}
+
+.sectionUserPage__adminForm-inputBlock{
+  display: block;
+  margin-top: 10px;
+}
+
+.adminForm__categoryBlock-text{
+  font-size: 14px;
+}
+
+.sectionUserPage__adminForm-inputBlockMain{
+  display: flex;
+  align-items: center;
+  gap:20px;
+}
+
+.infoBlock__inputBlock-leftInputBlockAdminForm{
+  max-width: 114px;
+}

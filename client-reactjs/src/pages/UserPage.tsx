@@ -5,7 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import $api, { API_URL } from "../http/http";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import AuthService from "../service/AuthService";
 
 const UserPage = () => {
@@ -30,7 +30,6 @@ const UserPage = () => {
     const [inputConfirmPass, setInputConfirmPass] = useState('');
 
 
-
     const [hideInputCurrentPass, setHideInputCurrentPass] = useState(true);
 
     const [hideInputNewPass, setHideInputNewPass] = useState(true);
@@ -38,6 +37,20 @@ const UserPage = () => {
     const [hideInputConfirmPass, setHideInputConfirmPass] = useState(true);
 
     const [errorPassSettings, setErrorPassSettings] = useState('');
+
+
+    const [inputNameProduct, setInputNameProduct] = useState('');
+
+    const [errorAdminForm, setErrorAdminForm] = useState('');
+
+    const [activeSortBlock, setActiveSortBlock] = useState(false);
+
+    const [sortBlockValue, setSortBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
+
+    const [inputPriceValue, setInputPriceValue] = useState(1);
+
+    const [inputPriceDiscountValue, setInputPriceDiscountValue] = useState(0);
+
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
@@ -225,6 +238,138 @@ const UserPage = () => {
 
     }
 
+    // функция для формы админа для создания нового товара,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitAdminForm = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+
+    }
+
+    const sortItemHandlerFruitsAndVegetables = () => {
+
+        setSortBlockValue('Fruits & Vegetables'); // изменяем состояние sortBlockValue на значение Fruits & Vegetables
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+
+    }
+
+    const sortItemHandlerBeverages = () => {
+
+        setSortBlockValue('Beverages'); // изменяем состояние sortBlockValue на значение Beverages
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+
+    }
+
+    const sortItemHandlerMeatsAndSeafood = () => {
+
+        setSortBlockValue('Meats & Seafood'); // изменяем состояние sortBlockValue на значение Meats & Seafood
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+
+    }
+
+    const sortItemHandlerBreadsAndBakery = () => {
+
+        setSortBlockValue('Breads & Bakery'); // изменяем состояние sortBlockValue на значение Breads & Bakery
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+
+    }
+
+    // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // здесь нужно убирать ошибку формы
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceValue(0);
+
+        } else {
+
+            setInputPriceValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    const handlerMinusAmountBtn = () => {
+
+        // здесь нужно еще убирать ошибку формы
+
+        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        if (inputPriceValue > 1) {
+
+            setInputPriceValue((prev) => prev - 1);
+
+        } else {
+
+            setInputPriceValue(1);
+
+        }
+
+    }
+
+    const handlerPlusAmountBtn = () => {
+
+        // здесь нужно убирать ошибку формы
+
+        // изменяем текущее значение инпута цены на + 1
+        setInputPriceValue((prev) => prev + 1);
+
+
+
+    }
+
+
+    // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceDiscountValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // здесь нужно убирать ошибку формы
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceDiscountValue(0);
+
+        } else {
+
+            setInputPriceDiscountValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    const handlerMinusAmountBtnDiscount = () => {
+
+        // здесь нужно еще убирать ошибку формы
+
+        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 0,чтобы после нуля не отнимало - 1
+        if (inputPriceDiscountValue > 1) {
+
+            setInputPriceDiscountValue((prev) => prev - 1);
+
+        } else {
+
+            setInputPriceDiscountValue(0);
+
+        }
+
+    }
+
+    const handlerPlusAmountBtnDiscount = () => {
+
+        // здесь нужно убирать ошибку формы
+
+        // изменяем текущее значение инпута цены на + 1
+        setInputPriceDiscountValue((prev) => prev + 1);
+
+
+
+    }
 
     // если состояние загрузки true,то есть идет загрузка запроса на сервер для проверки,авторизован ли пользователь,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
     if (isLoading) {
@@ -398,8 +543,82 @@ const UserPage = () => {
                             {/* если user.role === "ADMIN"(то есть если роль пользователя равна "ADMIN") и tab === 'Admin Panel',то показываем таб с панелью администратора */}
                             {user.role === 'ADMIN' && tab === 'Admin Panel' &&
                                 <div className="sectionUserPage__mainBlock-inner sectionUserPage__mainBlock-accSettings">
-                                    
-                                    adminPanel
+
+                                    <form className="sectionUserPage__mainBlock-formInfo" onSubmit={onSubmitAdminForm}>
+                                        <h2 className="sectionUserPage__formInfo-title">New Product</h2>
+                                        <div className="sectionUserPage__formInfo-main">
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Name</p>
+                                                <input type="text" className="sectionUserPage__formInfo-itemInput" placeholder="Name" value={inputNameProduct} onChange={(e) => setInputNameProduct(e.target.value)} />
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__formInfo-itemCategoryBlock">
+                                                <div className="searchBlock__sortBlock">
+                                                    <p className="sortBlock__text adminForm__categoryBlock-text">Category:</p>
+                                                    <div className="sortBlock__inner">
+                                                        <div className="sortBlock__topBlock" onClick={() => setActiveSortBlock((prev) => !prev)}>
+                                                            {/* если sortBlockValue true,то есть если в sortBlockValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
+                                                            <p className={sortBlockValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{sortBlockValue}</p>
+                                                            <img src="/images/sectionCatalog/ArrowDown.png" alt="" className={activeSortBlock ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
+                                                        </div>
+                                                        <div className={activeSortBlock ? "sortBlock__optionsBlock sortBlock__optionsBlock--active sortBlock__optionsBlockAdminForm--active" : "sortBlock__optionsBlock"}>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerFruitsAndVegetables}>
+                                                                <p className="optionsBlock__item-text">Fruits & Vegetables</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerBeverages}>
+                                                                <p className="optionsBlock__item-text">Beverages</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerMeatsAndSeafood}>
+                                                                <p className="optionsBlock__item-text">Meats & Seafood</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerBreadsAndBakery}>
+                                                                <p className="optionsBlock__item-text">Breads & Bakery</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-inputBlockMain">
+                                                <div className="sectionProductItemPage__infoBlock-inputBlock sectionUserPage__adminForm-inputBlock">
+                                                    <p className="sectionUserPage__formInfo-itemText">Price</p>
+                                                    <div className="infoBlock__inputBlock-leftInputBlock">
+                                                        {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
+                                                        <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                                                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                                        </button>
+                                                        <input type="number" className="infoBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} />
+                                                        <button type="button"  className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="sectionProductItemPage__infoBlock-inputBlock sectionUserPage__adminForm-inputBlock">
+                                                    <p className="sectionUserPage__formInfo-itemText">Price with Discount</p>
+                                                    <div className="infoBlock__inputBlock-leftInputBlock infoBlock__inputBlock-leftInputBlockAdminForm">
+                                                        <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtnDiscount}>
+                                                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                                        </button>
+                                                        <input type="number" className="infoBlock__inputBlock-input" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} />
+                                                        <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtnDiscount}>
+                                                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+
+                                            {/* если errorAdminForm true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+                                            {errorAdminForm && <p className="formErrorText">{errorAdminForm}</p>}
+
+
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button className="sectionUserPage__formInfo-btn" type="submit">Save Product</button>
+
+                                        </div>
+                                    </form>
 
                                 </div>
                             }
