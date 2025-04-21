@@ -2536,3 +2536,37 @@ a {
 .infoBlock__inputBlock-leftInputBlockAdminForm{
   max-width: 114px;
 }
+
+.sectionUserPage__adminForm-loadImageBlock{
+  margin: 20px 0 17px 0;
+}
+
+.adminForm__loadImageBlock-title{
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.adminForm__loadImageBlock-label{
+  display: inline-block; /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+  background-color: #fff;
+  border: 2px solid #D5EDFD;
+  text-transform: uppercase;
+  color: #2DA5F3;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 16px 24px;
+  font-family: 'Inter',sans-serif;
+  opacity: 1;
+  transition:opacity .5s ease;
+}
+
+.adminForm__loadImageBlock-label:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+/* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,этот label будет иметь такую же функцию,как и этот инпут */
+.adminForm__loadImageBlock-input{
+  display: none;
+}

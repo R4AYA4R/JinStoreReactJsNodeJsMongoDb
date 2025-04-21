@@ -43,6 +43,8 @@ const UserPage = () => {
 
     const [errorAdminForm, setErrorAdminForm] = useState('');
 
+    const [errorAdminFormForImg, setErrorAdminFormForImg] = useState('');
+
     const [activeSortBlock, setActiveSortBlock] = useState(false);
 
     const [sortBlockValue, setSortBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
@@ -51,6 +53,9 @@ const UserPage = () => {
 
     const [inputPriceDiscountValue, setInputPriceDiscountValue] = useState(0);
 
+    const [inputFileMainImage, setInputFileMainImage] = useState<File | null>();  // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File или null
+
+    const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
@@ -141,6 +146,13 @@ const UserPage = () => {
             setHideInputCurrentPass(true);
 
             setErrorPassSettings(''); // изменяем состояние ошибки формы изменения пароля пользователя на пустую строку,чтобы когда пользователь выходил из аккаунта убиралась ошибка,даже если она там была,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то может показываться ошибка,которую пользователь до этого получил
+
+            // если user.role равно 'ADMIN',то есть роль у пользователя 'ADMIN',то есть пользователь сейчас авторизован как админ,делаем эту проверку,чтобы шел запрос на удаление папки checkStatic только если пользователь авторизован как админ
+            if(user.role === 'ADMIN'){
+
+                deleteCheckStatic(); // вызываем нашу функцию для удаления папки checkStatic на бэкэнде,это тестовая папка,которая создается,когда админ выбирает картинки для нового товара,удаляем ее,при редндеринге(запуске) страницы и при изменении состояния пользователя user
+
+            }
 
         } catch (e: any) {
 
@@ -243,8 +255,100 @@ const UserPage = () => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
+        // если значение инпута названия продукта,из которого убрали пробелы с помощью trim() равно пустой строке,то выводим ошибку(то есть если без пробелов это значение равно пустой строке,то показываем ошибку) или если это значение меньше 3
+        if (inputNameProduct.trim() === '' || inputNameProduct.length < 3) {
+
+            setErrorAdminForm('Product name must be more than 2 characters');
+
+        } else if (sortBlockValue === '') {
+            // если состояние значения селекта категорий равно пустой строке,то показываем ошибку
+            setErrorAdminForm('Choose category');
+
+        } else if (inputPriceValue < 1) {
+            // если состояние цены нового товара меньше 1,то показываем ошибку
+            setErrorAdminForm('Product price must be more than 0');
+
+        } else if (!inputFileMainImage) {
+            // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку,в данном случае указываем ошибку у состояния errorAdminFormForImg,так как разделии состояния ошибок всяких инпутов формы и ошибки,связанные с картинкой для нового товара,так сделали,чтобы правильно обработать ошибки
+            setErrorAdminFormForImg('Choose main image');
+
+        } else {
+
+
+
+        }
 
     }
+
+    // функция для выбора картинки с помощью инпута для файлов
+    const inputLoadImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true(делаем эту проверку,потому что выдает ошибку,что e.target.files может быть null) и e.target.files[0] true,то есть пользователь выбрал файл
+        if (e.target.files && e.target.files[0]) {
+
+            setInputFileMainImage(e.target.files[0]); // помещаем в состояние файл,который выбрал пользователь,у files указываем тут [0],то есть берем первый элемент массива(по индексу 0) этих файлов инпута
+
+            const formData = new FormData(); // создаем объект на основе FormData(нужно,чтобы передавать файлы на сервер)
+
+            formData.append('image', e.target.files[0]); // добавляем в этот объект formData по ключу(названию) 'image' сам файл в e.target.files[0] по индексу 0 (первым параметром тут передаем название файла,вторым сам файл)
+
+            console.log(e.target.files[0]);
+
+            // оборачиваем в try catch,чтобы отлавливать ошибки и делаем пока такой запрос на сервер для загрузки файла на сервер,загружаем объект formData(лучше вынести это в отдельную функцию запроса на сервер но и так можно),указываем здесь наш инстанс axios ($api в данном случае),чтобы обрабатывать правильно запросы с access токеном и refresh токеном,в данном случае делаем запрос на бэкэнд для загрузки файла и там сразу будет проверка нашего authMiddleware на нашем node js сервере для проверки на access токен
+            try {
+
+                const response = await $api.post(`${API_URL}/uploadFile`, formData); // делаем запрос на сервер для сохранения файла на сервере и как тело запроса тут передаем formData
+
+                console.log(response);
+
+                setImgPath(`http://localhost:5000/${response.data.name}`); // помещаем в состояние imgPath путь до файла,то есть пишем путь до нашего сервера (http://localhost:5000/) в данном случае и добавляем название файла,который нужно показать,который есть в папке (в данном случае static) на нашем сервере,это название пришло от сервера
+
+                setErrorAdminForm(''); // убираем ошибку формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+                setErrorAdminFormForImg(''); // убираем ошибку(это состояние конкретно для ошибки,связанной с картинкой) формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+            } catch (e: any) {
+
+                setInputFileMainImage(null); // изменяем состояние файла на null,чтобы если ошибка,то название картинки не показывались
+
+                return setErrorAdminFormForImg(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+        }
+
+    }
+    
+    // функция для удаления папки checkStatic на бэкэнде
+    const deleteCheckStatic = async () => {
+    
+        // оборачиваем в try catch для обработки ошибок
+        try{
+
+            const response = await axios.delete(`${API_URL}/deleteCheckStatic`); // делаем delete запрос на удаление папки checkStatic на бэкэнде,используем здесь обычный axios,а не наш $api(наш инстанс axios с определенными настройками),так здесь не нужна проверка на авторизацию пользователя
+
+            console.log(response);
+
+        }catch(e:any){
+
+            console.log(e.response?.data?.message);
+
+        }
+
+    }
+
+    // при редндеринге(запуске) страницы и при изменении состояния пользователя user будет отработан код в этом useEffect
+    useEffect(()=>{
+
+        // если user.role равно 'ADMIN',то есть роль у пользователя 'ADMIN',то есть пользователь сейчас авторизован как админ,делаем эту проверку,чтобы шел запрос на удаление папки checkStatic только если пользователь авторизован как админ
+        if(user.role === 'ADMIN'){
+
+            deleteCheckStatic(); // вызываем нашу функцию для удаления папки checkStatic на бэкэнде,это тестовая папка,которая создается,когда админ выбирает картинки для нового товара,удаляем ее,при редндеринге(запуске) страницы и при изменении состояния пользователя user
+
+        }
+        
+
+    },[user])
 
     const sortItemHandlerFruitsAndVegetables = () => {
 
@@ -586,7 +690,7 @@ const UserPage = () => {
                                                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>
                                                         <input type="number" className="infoBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} />
-                                                        <button type="button"  className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                                        <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
                                                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>
                                                     </div>
@@ -607,11 +711,48 @@ const UserPage = () => {
 
                                             </div>
 
+                                            <div className="sectionUserPage__adminForm-loadImageBlock">
+                                                <h3 className="adminForm__loadImageBlock-title">Main Image</h3>
+                                                <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
+                                                    Load Image
+
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
+                                                    <input id="inputFileImage" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadImageHandler} />
+                                                </label>
+                                            </div>
+
+                                            {/* если imgPath не равно пустой строке,то показываем картинку */}
+                                            {imgPath !== '' &&
+
+                                                <div className="adminForm__imageBlock">
+                                                    <img src={imgPath} alt="" className="adminForm__imageBlock-previewImg" />
+                                                    <p className="adminForm__imageBlock-previewImgText">{inputFileMainImage?.name}</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined */}
+                                                </div>
+
+                                            }
 
 
-                                            {/* если errorAdminForm true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+
+                                            {/* <div className="sectionUserPage__adminForm-loadImageBlock">
+                                                <h3 className="adminForm__loadImageBlock-title">Description Images</h3>
+                                                <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
+                                                    Load Images
+
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа 
+                                                    <input id="inputFileImage" type="file" className="adminForm__loadImageBlock-input" accept="image/*" />
+                                                </label>
+                                            </div> */}
+
+                                            {/* <div className="adminForm__imageBlock">
+                                                <img src="" alt="" className="adminForm__imageBlock-previewImg" />
+                                                <p className="adminForm__imageBlock-previewImgText">name</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined 
+                                            </div> */}
+
+                                            {/* если errorAdminForm true(то есть в состоянии errorAdminForm что-то есть),то показываем текст ошибки */}
                                             {errorAdminForm && <p className="formErrorText">{errorAdminForm}</p>}
 
+                                            {/* если errorAdminFormForImg true(то есть в состоянии errorAdminFormForImg что-то есть),то показываем текст ошибки */}
+                                            {errorAdminFormForImg && <p className="formErrorText">{errorAdminFormForImg}</p>}
 
 
                                             {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
