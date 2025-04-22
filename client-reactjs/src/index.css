@@ -2570,3 +2570,11 @@ a {
 .adminForm__loadImageBlock-input{
   display: none;
 }
+
+.adminForm__imageBlock{
+  margin-bottom: 15px;
+}
+
+.adminForm__imageBlock-previewImg{
+  max-width: 177px;
+}

@@ -151,7 +151,7 @@ class UserController {
             const folderPath = `${path.resolve()}\\checkStatic`; // помещаем в переменную folderPath путь на диске до папки checkStatic,которая возможно существует
 
             // если fs.existsSync(folderPath) false,то есть такого пути нет,который мы указали в переменной folderPath,то есть папки checkStatic нет,то ее создаем
-            if(!fs.existsSync(folderPath)){
+            if (!fs.existsSync(folderPath)) {
 
                 fs.mkdirSync(path.resolve('checkStatic')); // создаем папку с помощью mkdirSync(),указываем путь до этой папки с помощью path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsMongoDb) и добавляет к ней папку,которую мы передаем в параметре
 
@@ -189,7 +189,7 @@ class UserController {
             const folderPath = `${path.resolve()}\\checkStatic`; // помещаем в переменную folderPath путь на диске до папки checkStatic,которая возможно существует
 
             // если fs.existsSync(folderPath) false,то есть такого пути нет,который мы указали в переменной folderPath,то есть папки checkStatic нет,то показываем ошибку
-            if(!fs.existsSync(folderPath)){
+            if (!fs.existsSync(folderPath)) {
 
                 return next(ApiError.BadRequest('No such file or directory'));
 
@@ -198,7 +198,35 @@ class UserController {
             fs.rmSync(path.resolve('checkStatic'), { recursive: true }); // удаляем папку checkStatic,указываем до нее путь с помощью path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsMongoDb) и добавляет к ней папку,которую мы передаем в параметре,также указываем вторым параметром объект опций,указываем поле recursive:true,то есть папка будет удалена рекурсивно со всем содержимым
 
             // возвращаем на фронтенд объект с сообщением
-            return res.json({message:'Successfully deleted'});
+            return res.json({ message: 'Successfully deleted' });
+
+        } catch (e) {
+
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
+
+    async deleteImage(req, res, next) {
+
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try {
+
+            const imageName = req.params.imageName; // получаем из параметров запроса название файла картинки,его мы указывали как динамический параметр у эндпоинта /deleteImage,поэтому ее мы можем взять и помещаем ее в переменную imageName,просто у delete запросов на сервер нету тела запроса и все параметры нужно передавать как query параметры запроса(то есть в url(ссылке) к эндпоинту)
+
+            const imagePath = `${path.resolve()}\\checkStatic\\${imageName}`; // помещаем путь до файла,который хотим удалить в переменную imagePath(здесь path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsMongoDb) потом через слеши наша папка checkStatic в которой мы храним все скачанные файлы с фронтенда и еще через слеши указываем название файла)
+
+            // если fs.existsSync(imagePath) false,то есть файл по такому пути,который находится в переменной imagePath не найден,то показываем ошибку и не удаляем такой файл,иначе может быть ошибка,когда хотим удалить файл,что такого файла и так нету
+            if (!fs.existsSync(imagePath)) {
+
+                return next(ApiError.BadRequest('No such file or directory to delete')); // бросаем ошибку,возвращаем с помощью return нашу функцию next(это наш errorMiddleware) и передаем туда ошибку с помощью нашего ApiError и в BadRequest(наша функция для ошибки) передаем сообщение ошибки,не используем тут throw ApiError,так как это родительский компонент ошибки(то есть если и будет ошибка,то она будет только тут) и тут есть сразу функция next в параметрах этой функции deleteImage,указываем return,чтобы код ниже не работал,если будет ошибка,но можно тут указать и throw ApiError
+
+            }
+
+            fs.unlinkSync(imagePath); // удаляем файл по такому пути,который находится в переменной imagePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
+
+            return res.json({ message: 'Successfully deleted', deletedFilePath: imagePath }); // возвращаем на клиент объект с сообщением
 
         } catch (e) {
 

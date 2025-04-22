@@ -5,7 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import $api, { API_URL } from "../http/http";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 
 const UserPage = () => {
@@ -56,6 +56,8 @@ const UserPage = () => {
     const [inputFileMainImage, setInputFileMainImage] = useState<File | null>();  // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File или null
 
     const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
+
+    const newMainProductImage = useRef<HTMLImageElement>(null); // используем useRef для подключения к html тегу картинки нового товара,чтобы взять у него ширину и проверить ее,в generic типе этого useRef указываем,что в этом useRef будет HTMLImageElement(то есть картинка)
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
@@ -148,7 +150,7 @@ const UserPage = () => {
             setErrorPassSettings(''); // изменяем состояние ошибки формы изменения пароля пользователя на пустую строку,чтобы когда пользователь выходил из аккаунта убиралась ошибка,даже если она там была,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то может показываться ошибка,которую пользователь до этого получил
 
             // если user.role равно 'ADMIN',то есть роль у пользователя 'ADMIN',то есть пользователь сейчас авторизован как админ,делаем эту проверку,чтобы шел запрос на удаление папки checkStatic только если пользователь авторизован как админ
-            if(user.role === 'ADMIN'){
+            if (user.role === 'ADMIN') {
 
                 deleteCheckStatic(); // вызываем нашу функцию для удаления папки checkStatic на бэкэнде,это тестовая папка,которая создается,когда админ выбирает картинки для нового товара,удаляем ее,при редндеринге(запуске) страницы и при изменении состояния пользователя user
 
@@ -280,6 +282,57 @@ const UserPage = () => {
 
     }
 
+    // функция для удаления файла главной картинки нового товара на сервере,указываем тип imageName как string | undefined,так как иначе показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
+    const deleteMainImageRequest = async (imageName:string | undefined) => {
+
+        try{
+
+            const response = await axios.delete(`${API_URL}/deleteMainImage/${imageName}`);  // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр imageName,чтобы на бэкэнде его достать,здесь уже используем обычный axios вместо нашего axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера уже не проверяем пользователя на access токен,так как проверяем это у запроса на загрузку файла на сервер(поэтому будет и так понятно,валидный(годен ли по сроку годности еще) ли access токен у пользователя или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она не правильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
+
+
+        }catch(e:any){
+
+            setErrorAdminFormForImg(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
+
+        }
+
+    }
+
+    // при изменении imgPath проверяем ширину и высоту картинки,которую выбрал пользователь(мы помещаем путь до картинки на нашем сервере node js в тег img и к этому тегу img привязали useRef с помощью которого берем ширину и высоту картинки)
+    useEffect(() => {
+
+        // используем тут setTimeout(код в этом callback будет выполнен через время,которое указали вторым параметром в setTimeout после запятой,это время указывается в миллисекундах,в данном случае этот код будет выполнен через 0.1 секунду(через 100 миллисекунд)),в данном случае это делаем для того,чтобы успела появится новая картинка,после того,как пользователь ее выбрал в ипнуте файлов,иначе не успевает появиться и показывает ширину картинки как 0
+        setTimeout(() => {
+
+            console.log(newMainProductImage.current?.width);
+            console.log(newMainProductImage.current?.height);
+
+            // если newProductImage.current true,то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)
+            if (newMainProductImage.current) {
+
+                if (newMainProductImage.current.width < 177 || newMainProductImage.current.height < 177) {
+                    // если newProductImage.current.width меньше 312(то есть если ширина картинки меньше 312),или если высота картинки меньше 267,то показываем ошибку
+
+
+                    setErrorAdminFormForImg('Width and height of main image must be more than 176px');
+
+                    setInputFileMainImage(null); // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы если админ получил ошибку,что размер картинки неправильный,то это состояние для файла картинки становилось null,иначе будет идти запрос на сервер,когда состояние файла картинки пустое,и тогда будет ошибка на сервере,что файл картинки пустой
+
+                    // делаем удаление файла(картинки) на сервере,который не правильного размера ширины и высоты,так как если не удалять,а нужна конкретная ширина и высота картинки,то файлы будут просто скачиваться на наш node js сервер и не удаляться,поэтому отдельно делаем запрос на сервер на удаление файла
+                    deleteMainImageRequest(inputFileMainImage?.name); // передаем в нашу функцию название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFileMainImage),наша функция deleteMainImageRequest делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями)
+
+                }
+
+            }
+
+        }, 100)
+
+    }, [imgPath])
+
     // функция для выбора картинки с помощью инпута для файлов
     const inputLoadImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -318,18 +371,18 @@ const UserPage = () => {
         }
 
     }
-    
+
     // функция для удаления папки checkStatic на бэкэнде
     const deleteCheckStatic = async () => {
-    
+
         // оборачиваем в try catch для обработки ошибок
-        try{
+        try {
 
             const response = await axios.delete(`${API_URL}/deleteCheckStatic`); // делаем delete запрос на удаление папки checkStatic на бэкэнде,используем здесь обычный axios,а не наш $api(наш инстанс axios с определенными настройками),так здесь не нужна проверка на авторизацию пользователя
 
             console.log(response);
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.response?.data?.message);
 
@@ -338,17 +391,17 @@ const UserPage = () => {
     }
 
     // при редндеринге(запуске) страницы и при изменении состояния пользователя user будет отработан код в этом useEffect
-    useEffect(()=>{
+    useEffect(() => {
 
         // если user.role равно 'ADMIN',то есть роль у пользователя 'ADMIN',то есть пользователь сейчас авторизован как админ,делаем эту проверку,чтобы шел запрос на удаление папки checkStatic только если пользователь авторизован как админ
-        if(user.role === 'ADMIN'){
+        if (user.role === 'ADMIN') {
 
             deleteCheckStatic(); // вызываем нашу функцию для удаления папки checkStatic на бэкэнде,это тестовая папка,которая создается,когда админ выбирает картинки для нового товара,удаляем ее,при редндеринге(запуске) страницы и при изменении состояния пользователя user
 
         }
-        
 
-    },[user])
+
+    }, [user])
 
     const sortItemHandlerFruitsAndVegetables = () => {
 
@@ -713,6 +766,17 @@ const UserPage = () => {
 
                                             <div className="sectionUserPage__adminForm-loadImageBlock">
                                                 <h3 className="adminForm__loadImageBlock-title">Main Image</h3>
+
+                                                {/* если imgPath не равно пустой строке,то показываем картинку */}
+                                                {imgPath !== '' &&
+
+                                                    <div className="adminForm__imageBlock">
+                                                        <img src={imgPath} alt="" className="adminForm__imageBlock-previewImg" ref={newMainProductImage} />
+                                                        <p className="adminForm__imageBlock-previewImgText">{inputFileMainImage?.name}</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined */}
+                                                    </div>
+
+                                                }
+
                                                 <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
                                                     Load Image
 
@@ -721,15 +785,7 @@ const UserPage = () => {
                                                 </label>
                                             </div>
 
-                                            {/* если imgPath не равно пустой строке,то показываем картинку */}
-                                            {imgPath !== '' &&
 
-                                                <div className="adminForm__imageBlock">
-                                                    <img src={imgPath} alt="" className="adminForm__imageBlock-previewImg" />
-                                                    <p className="adminForm__imageBlock-previewImgText">{inputFileMainImage?.name}</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined */}
-                                                </div>
-
-                                            }
 
 
 
