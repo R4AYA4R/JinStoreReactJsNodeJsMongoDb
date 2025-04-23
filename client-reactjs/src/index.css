@@ -2538,7 +2538,7 @@ a {
 }
 
 .sectionUserPage__adminForm-loadImageBlock{
-  margin: 20px 0 17px 0;
+  margin: 25px 0 17px 0;
 }
 
 .adminForm__loadImageBlock-title{
@@ -2577,4 +2577,26 @@ a {
 
 .adminForm__imageBlock-previewImg{
   max-width: 177px;
+}
+
+.adminForm__descImagesBlock{
+  display: flex;
+  align-items: center;
+  gap:20px;
+}
+
+.adminForm__descImagesBlock-imageBlock{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 170px;
+}
+
+.adminForm__descImagesBlock-nameImage{
+  font-size: 14px;
+}
+
+.adminForm__loadImageBlock-top{
+  display: flex;
+  gap:10px;
 }

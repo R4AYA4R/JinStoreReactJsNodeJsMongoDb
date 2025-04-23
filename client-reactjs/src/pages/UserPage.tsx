@@ -3,7 +3,7 @@ import SectionUserPageTop from "../components/SectionUserPageTop";
 import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse } from "../types/types";
+import { AuthResponse, IDescImage } from "../types/types";
 import $api, { API_URL } from "../http/http";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
@@ -54,6 +54,8 @@ const UserPage = () => {
     const [inputPriceDiscountValue, setInputPriceDiscountValue] = useState(0);
 
     const [inputFileMainImage, setInputFileMainImage] = useState<File | null>();  // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File или null
+
+    const [descImages, setDescImages] = useState<IDescImage[]>([]); // состояние массива объектов картинок описания,указываем ему тип в generic на основе нашего интерфейса IDescImage,и указываем,что это массив [],по дефолту делаем ему значение пустого массива
 
     const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
 
@@ -155,6 +157,8 @@ const UserPage = () => {
                 deleteCheckStatic(); // вызываем нашу функцию для удаления папки checkStatic на бэкэнде,это тестовая папка,которая создается,когда админ выбирает картинки для нового товара,удаляем ее,при редндеринге(запуске) страницы и при изменении состояния пользователя user
 
             }
+
+            // здесь также еще нужно очищать поля инпутов и состояния инпутов файлов  формы админа 
 
         } catch (e: any) {
 
@@ -274,6 +278,10 @@ const UserPage = () => {
             // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку,в данном случае указываем ошибку у состояния errorAdminFormForImg,так как разделии состояния ошибок всяких инпутов формы и ошибки,связанные с картинкой для нового товара,так сделали,чтобы правильно обработать ошибки
             setErrorAdminFormForImg('Choose main image');
 
+        } else if (!descImages.length) {
+            // если состояние descImages.length false,то есть массив descImages пустой,то показываем ошибку,в данном случае указываем ошибку у состояния errorAdminFormForImg,так как разделии состояния ошибок всяких инпутов формы и ошибки,связанные с картинкой для нового товара,так сделали,чтобы правильно обработать ошибки
+            setErrorAdminFormForImg('Choose desc images');
+
         } else {
 
 
@@ -283,9 +291,9 @@ const UserPage = () => {
     }
 
     // функция для удаления файла главной картинки нового товара на сервере,указываем тип imageName как string | undefined,так как иначе показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
-    const deleteMainImageRequest = async (imageName:string | undefined) => {
+    const deleteMainImageRequest = async (imageName: string | undefined) => {
 
-        try{
+        try {
 
             const response = await axios.delete(`${API_URL}/deleteMainImage/${imageName}`);  // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр imageName,чтобы на бэкэнде его достать,здесь уже используем обычный axios вместо нашего axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера уже не проверяем пользователя на access токен,так как проверяем это у запроса на загрузку файла на сервер(поэтому будет и так понятно,валидный(годен ли по сроку годности еще) ли access токен у пользователя или нет)
 
@@ -294,7 +302,7 @@ const UserPage = () => {
             setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она не правильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
 
 
-        }catch(e:any){
+        } catch (e: any) {
 
             setErrorAdminFormForImg(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
 
@@ -402,6 +410,53 @@ const UserPage = () => {
 
 
     }, [user])
+
+    // функция для выбора картинок описаний товара с помощью инпута для файлов
+    const inputLoadDescImagesHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+        console.log(descImages.length)
+
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true(делаем эту проверку,потому что выдает ошибку,что e.target.files может быть null) и e.target.files[0] true,то есть пользователь выбрал файл и также делаем проверку на descImage.length <= 3,то есть длина массива descImages меньше или равно 3,то загружаем файл картинки на сервер,указываем здесь проверку меншье 3(а предполагаем,что максимум можно 3 картинки),так как здесь еще не успевает переобновиться состояние descImages и оно на 1 опережает,не делаем здесь проверку на descImages.length,чтобы показать ошибку,так как будем просто выводить текст с текущим и максимально допустимым количеством картинок,иначе если показывать тут ошибку,то она будет видна и нельзя будет создать новый товар,так как будет висеть эта ошибка,даже если количество картинок правильное
+        if (e.target.files && e.target.files[0] && descImages.length < 3) {
+
+            const formData = new FormData(); // создаем объект на основе FormData(нужно,чтобы передавать файлы на сервер)
+
+            formData.append('image', e.target.files[0]); // добавляем в этот объект formData по ключу(названию) 'image' сам файл в e.target.files[0] по индексу 0 (первым параметром тут передаем название файла,вторым сам файл)
+
+            console.log(e.target.files[0]);
+
+            // оборачиваем в try catch,чтобы отлавливать ошибки и делаем пока такой запрос на сервер для загрузки файла на сервер,загружаем объект formData(лучше вынести это в отдельную функцию запроса на сервер но и так можно),указываем здесь наш инстанс axios ($api в данном случае),чтобы обрабатывать правильно запросы с access токеном и refresh токеном,в данном случае делаем запрос на бэкэнд для загрузки файла и там сразу будет проверка нашего authMiddleware на нашем node js сервере для проверки на access токен
+            try {
+
+                const response = await $api.post(`${API_URL}/uploadFile`, formData); // делаем запрос на сервер для сохранения файла на сервере и как тело запроса тут передаем formData
+
+                console.log(response);
+
+                // это уже не используем,так как используем массив картинок
+                // setImgPath(`http://localhost:5000/${response.data.name}`); // помещаем в состояние imgPath путь до файла,то есть пишем путь до нашего сервера (http://localhost:5000/) в данном случае и добавляем название файла,который нужно показать,который есть в папке (в данном случае static) на нашем сервере,это название пришло от сервера
+
+                // создаем переменную объекта картинки описания
+                const objImage = {
+                    name: e.target.files[0].name, // указываем поле name со значением e.target.files[0].name,то есть названием текущего файла,который пользователь выбрал сейчас у инпута файлов
+
+                    url: `http://localhost:5000/${response.data.name}` // указываем поле url,в котором будет путь до картинки на нашем сервере,то есть пишем путь до нашего сервера (http://localhost:5000/) в данном случае и добавляем название файла(он пришел от сервера в response.data.name),который нужно показать,который есть в папке (в данном случае checkStatic) на нашем сервере,это название пришло от сервера
+                }
+
+                setDescImages((prev) => [...prev, objImage]); // изменяем массив descImages,разворачиваем в новый массив текущее состояние этого массива(...prev) и добавляем новый объект картинки описания(objImage)
+
+                setErrorAdminForm(''); // убираем ошибку формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+                setErrorAdminFormForImg(''); // убираем ошибку(это состояние конкретно для ошибки,связанной с картинкой) формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+            } catch (e: any) {
+
+                return setErrorAdminFormForImg(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+        }
+
+    }
 
     const sortItemHandlerFruitsAndVegetables = () => {
 
@@ -785,24 +840,42 @@ const UserPage = () => {
                                                 </label>
                                             </div>
 
+                                            <div className="sectionUserPage__adminForm-loadImageBlock">
+                                                <div className="adminForm__loadImageBlock-top">
+                                                    <h3 className="adminForm__loadImageBlock-title">Description Images</h3>
+                                                    <p className="adminForm__loadImageBlock-number">{descImages.length} / 3</p> {/* указываем здесь текущее значение длины массива descImages и максимально допустимое число картинок */}
+                                                </div>
 
+                                                {/* если descImages.length true,то есть длина массива descImage есть,то есть этот массив не пустой,то показываем картинки,в другом случае пустая строка,то есть ничего не показываем,делаем эту проверку именно таким образом с помощью знака вопроса,иначе,если массив пустой,то будет показываться 0 */}
+                                                {descImages.length ?
 
+                                                    <div className="adminForm__descImagesBlock">
+                                                        {/* пробегаемся по массиву descImages с помощью map,и отрисовываем картинки, */}
+                                                        {descImages.map((image) =>
 
+                                                            // указываем в key имя картинки,оно будет уникальным,так как мы проверяем на бэкэнде,чтобы не было одинаковых файлов
+                                                            <div className="adminForm__imageBlock adminForm__descImagesBlock-imageBlock" key={image.name}>
+                                                                {/* указываем в src поле url у image(текущий итерируемый объект картинки,в массиве descImages) */}
+                                                                <img src={image.url} alt="" className="adminForm__imageBlock-previewImg" />
+                                                                <p className="adminForm__imageBlock-previewImgText adminForm__descImagesBlock-nameImage">{image.name}</p> {/* указываем название файла у состояния inputFile у image(текущий итерируемый объект картинки,в массиве descImages) */}
+                                                            </div>
 
-                                            {/* <div className="sectionUserPage__adminForm-loadImageBlock">
-                                                <h3 className="adminForm__loadImageBlock-title">Description Images</h3>
-                                                <label htmlFor="inputFileImage" className="adminForm__loadImageBlock-label">
-                                                    Load Images
+                                                        )}
 
-                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа 
-                                                    <input id="inputFileImage" type="file" className="adminForm__loadImageBlock-input" accept="image/*" />
+                                                    </div>
+                                                    : ''
+
+                                                }
+
+                                                {/* указываем тут другой id для инпута в htmlFor,чтобы не путался этот лейбл(label) с лейблом для инпута главной картинки,иначе вместо этого может срабатывать лейбл для инпута главной картинки */}
+                                                <label htmlFor="inputFileImages" className="adminForm__loadImageBlock-label">
+                                                    Load Image
+
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
+                                                    <input id="inputFileImages" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadDescImagesHandler} />
                                                 </label>
-                                            </div> */}
+                                            </div>
 
-                                            {/* <div className="adminForm__imageBlock">
-                                                <img src="" alt="" className="adminForm__imageBlock-previewImg" />
-                                                <p className="adminForm__imageBlock-previewImgText">name</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined 
-                                            </div> */}
 
                                             {/* если errorAdminForm true(то есть в состоянии errorAdminForm что-то есть),то показываем текст ошибки */}
                                             {errorAdminForm && <p className="formErrorText">{errorAdminForm}</p>}

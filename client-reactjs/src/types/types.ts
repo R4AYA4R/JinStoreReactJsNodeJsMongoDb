@@ -85,3 +85,8 @@ export interface IProductsCartResponse{
     allProductsCart:IProductCart[], // указываем поле для всех товаров корзины,уже отфильтрованных для отдельного авторизованного пользователя
     productsCart:IProductCart[] // указываем поле для всех товаров корзины для одной страницы пагинации
 }
+
+export interface IDescImage{
+    name:string,
+    url:string
+}
