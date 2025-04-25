@@ -2573,6 +2573,30 @@ a {
 
 .adminForm__imageBlock{
   margin-bottom: 15px;
+  position: relative;
+}
+
+.adminForm__imageBlock-mainImageBlock{
+  max-width: 180px;
+}
+
+.adminForm__imageBlock-deleteBtn{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border:none;
+  z-index: 5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:all .5s ease;
+}
+
+.adminForm__imageBlock-deleteBtn:hover{
+  cursor: pointer;
+  border:1px solid red;
 }
 
 .adminForm__imageBlock-previewImg{
@@ -2589,7 +2613,6 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 170px;
 }
 
 .adminForm__descImagesBlock-nameImage{
