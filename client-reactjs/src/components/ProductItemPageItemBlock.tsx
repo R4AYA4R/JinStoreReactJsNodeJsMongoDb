@@ -62,7 +62,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
         },
 
         // при успешной мутации,то есть в данном случае при успешном добавлении товара в корзину обновляем dataProductsCart(массив объектов товаров корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
-        onSuccess(){
+        onSuccess() {
 
             refetchProductsCart();
 
@@ -157,7 +157,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                 let totalPriceProduct; // создаем переменную для общей суммы товара,указываем ей let,чтобы изменять значение,считаем эту общую цену,чтобы потом в корзине сразу можно было нормально отобразить общую сумму чека корзины
 
                 // если product.priceDiscount true,то есть у товара есть цена со скидкой
-                if(product.priceDiscount){
+                if (product.priceDiscount) {
 
                     totalPriceProduct = inputAmountValue * product.priceDiscount; // изменяем значение totalPriceProduct на inputAmountValue, умноженное на product.priceDiscount(цену товара со скидкой)
 
@@ -228,9 +228,9 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                     >
                         {/* указываем SwiperSlide(элемент слайдера) и в него помещаем картинку для этого слайдера,указываем картинке для первого слайда в src путь до картинки,в конце этого пути указываем product?.mainImage,то есть название картинки у объекта товара(product) для главной(первой) картинки для слайдера */}
                         <SwiperSlide>
-                            {/* добавляем блок div с классом swiper-zoom-container (это класс этому слайдеру для зума по дефолту,мы подключили стили для этого zoom),чтобы работал зум картинок*/}
+                            {/* добавляем блок div с классом swiper-zoom-container (это класс этому слайдеру для зума по дефолту,мы подключили стили для этого zoom),чтобы работал зум картинок,в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля mainImage у product(объекта товара) */}
                             <div className="swiper-zoom-container">
-                                <img src={`/images/sectionNewArrivals/${product?.mainImage}`} alt="" className="sectionProductItemPage__imgBlock-img" />
+                                <img src={`http://localhost:5000/${product?.mainImage}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSlider" />
                             </div>
                         </SwiperSlide>
 
@@ -238,7 +238,8 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                         {product?.descImages.map((image, index) =>
                             <SwiperSlide key={index}>
                                 <div className="swiper-zoom-container">
-                                    <img src={`/images/sectionNewArrivals/${image}`} alt="" className="sectionProductItemPage__imgBlock-img" />
+                                    {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и image(текущий итерируемый элемент массива descImages,то есть название каждой картинки описания) */}
+                                    <img src={`http://localhost:5000/${image}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSlider" />
                                 </div>
                             </SwiperSlide>
                         )}
@@ -267,15 +268,18 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
                             {/* указываем SwiperSlide(элемент слайдера) и в него помещаем картинку для этого слайдера,указываем картинке для первого слайда в src путь до картинки,в конце этого пути указываем product?.mainImage,то есть название картинки у объекта товара(product) для главной(первой) картинки для слайдера */}
                             <SwiperSlide className="sectionProductItemPage__sliderBlock__sliderPreview">
-                                <img src={`/images/sectionNewArrivals/${product?.mainImage}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSliderPreview" />
+                                {/* здесь уже не используем zoom контейнер(div элемент с классом zoom контейнера для этого слайдера),так как здесь уже не нужен зум и это просто превью картинок */}
+                                {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и mainImage(название главной картинки товара) у product(объект товара) */}
+                                <img src={`http://localhost:5000/${product?.mainImage}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSliderPreview" />
                             </SwiperSlide>
 
                             {/* проходимся по массиву descImages у product,и возвращаем новый массив,на каждой итерации(месте предыдущего элемента) будет подставлен элемент,который мы указали в функции callback у этого map(),в данном случае это будет элемент слайдера <SwiperSlide/>,то есть отображаем картинки товара,в параметрах этой функции callback у map берем image(текущий итерируемый элемент массива,название может быть любое) и index(текущий индекс итерируемого элемента массива),указываем этот index в key,чтобы эти ключи(key) были разные,так как в данном случае у нас есть одинаковые названия у картинок,лучше указывать отдельный какой-нибудь id в key,но в данном случае это подходит,в src у img указываем путь до картинки,указываем в конце этого пути параметр image(текущий итерируемый объект массива) этой функции callback у map,чтобы указать разные названия картинок */}
                             {product?.descImages.map((image, index) =>
                                 <SwiperSlide key={index} className="sectionProductItemPage__sliderBlock__sliderPreview">
-                                    <div className="swiper-zoom-container">
-                                        <img src={`/images/sectionNewArrivals/${image}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSliderPreview" />
-                                    </div>
+                                    {/* здесь уже не используем zoom контейнер(div элемент с классом zoom контейнера для этого слайдера),так как здесь уже не нужен зум и это просто превью картинок */}
+                                    {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и image(текущий итерируемый элемент массива descImages,то есть название каждой картинки описания) */}
+                                    <img src={`http://localhost:5000/${image}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSliderPreview" />
+
                                 </SwiperSlide>
                             )}
 

@@ -1460,6 +1460,7 @@ a {
   justify-content: center;
   align-items: center;
   position: relative;
+  padding: 10px;
 }
 
 .sectionProductItemPage__infoBlock-title {
@@ -1636,6 +1637,7 @@ a {
   /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
   align-items: center;
   justify-content: center;
+  padding: 10px;
 }
 
 .sectionProductItemPage__imgBlock-img {
@@ -1654,6 +1656,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 30px;
 }
 
 .sectionProductItemPage__sliderBlock__sliderPreview {
@@ -1666,8 +1669,12 @@ a {
 }
 
 .sectionProductItemPage__imgBlock-imgSliderPreview {
-  max-width: 73px;
+  max-width: 55px;
   max-height: 75px;
+}
+
+.sectionProductItemPage__imgBlock-imgSlider{
+  max-width: 300px !important; /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
 }
 
 .swiper-slide-thumb-active {
@@ -2622,4 +2629,9 @@ a {
 .adminForm__loadImageBlock-top{
   display: flex;
   gap:10px;
+}
+
+.adminForm__descProductArea{
+  border-radius: 8px;
+  margin-bottom: 0;
 }

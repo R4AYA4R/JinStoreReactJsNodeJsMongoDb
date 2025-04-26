@@ -3,7 +3,7 @@ import SectionUserPageTop from "../components/SectionUserPageTop";
 import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse, IDescImage } from "../types/types";
+import { AuthResponse, IDescImage, IProduct } from "../types/types";
 import $api, { API_URL } from "../http/http";
 import { ChangeEvent, createRef, FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
@@ -40,6 +40,8 @@ const UserPage = () => {
 
 
     const [inputNameProduct, setInputNameProduct] = useState('');
+
+    const [inputDescProduct, setInputDescProduct] = useState('');
 
     const [errorAdminForm, setErrorAdminForm] = useState('');
 
@@ -166,7 +168,32 @@ const UserPage = () => {
 
             }
 
-            // здесь также еще нужно очищать поля инпутов и состояния инпутов файлов  формы админа 
+
+            // очищаем инпуты формы создания нового товара
+            setInputNameProduct('');
+            setSortBlockValue('');
+            setInputDescProduct('');
+            setInputPriceValue(1);
+            setInputPriceDiscountValue(0);
+            setImgPath('');  // указываем состоянию пути для главной картинки товара пустую строку,чтобы когда пользователь(админ) сохранил новый товар,то картинка не показывалась уже
+            setDescImages([]); // изменяем состяние descImages на пустой массив,чтобы не показывались картинки описания после выхода из аккаунта и сразу же захода обратно
+
+            setInputFileMainImage(null); // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы когда админ удалил эту картинку,то это состояние для файла картинки становилось null и имя удаленного файла картинки не показывалось
+
+            // если inputMainImage.current true(то есть inputMainImage.current есть),делаем эту проверку,так как выдает ошибку,что inputMainImage.current может быть undefined
+            if (inputMainImage.current) {
+
+                inputMainImage.current.value = ''; // изменяем текущее значение у inputMainImage.current(инпута файла для главной картинки для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас,делаем это в данном случае,чтобы очищисть этот инпут файлов,чтобы можно было сразу выбирать даже такой же файл,после создания товара
+
+            }
+
+            // если inputDescImages.current true(то есть inputDescImages.current есть),делаем эту проверку,так как выдает ошибку,что inputDescImages.current может быть undefined
+            if (inputDescImages.current) {
+
+                inputDescImages.current.value = ''; // изменяем текущее значение у inputDescImages.current(инпута файла для картинки описания для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас,делаем это в данном случае,чтобы очищисть этот инпут файлов,чтобы можно было сразу выбирать даже такой же файл,после создания товара
+
+            }
+
 
         } catch (e: any) {
 
@@ -274,6 +301,10 @@ const UserPage = () => {
 
             setErrorAdminForm('Product name must be more than 2 characters');
 
+        } else if (inputDescProduct.length <= 10 || inputDescProduct.length > 200) {
+            // если состояние inputDescProduct.length <= 10 или inputDescProduct.length > 200,то есть если состояние для textarea inputDescProduct по длине меньше или равно 10 символов или больше 200,то показываем ошибку
+            setErrorAdminForm('Product description must be 11 - 200 characters');
+
         } else if (sortBlockValue === '') {
             // если состояние значения селекта категорий равно пустой строке,то показываем ошибку
             setErrorAdminForm('Choose category');
@@ -281,6 +312,10 @@ const UserPage = () => {
         } else if (inputPriceValue < 1) {
             // если состояние цены нового товара меньше 1,то показываем ошибку
             setErrorAdminForm('Product price must be more than 0');
+
+        }else if (inputPriceDiscountValue >= inputPriceValue) {
+            // если состояние inputPriceDiscountValue >= inputPriceValue,то состояние инпута цены со скидкой inputPriceDiscountValue больше или равно инпуту обычной цены товара inputPriceValue,то показываем ошибку,что цена со скидкой должна быть меньше,чем обычная цена товара
+            setErrorAdminForm('Price discount must be less than usual product price');
 
         } else if (!inputFileMainImage) {
             // если состояние файла false(или null),то есть его(файла) нет,то показываем ошибку,в данном случае указываем ошибку у состояния errorAdminFormForImg,так как разделии состояния ошибок всяких инпутов формы и ошибки,связанные с картинкой для нового товара,так сделали,чтобы правильно обработать ошибки
@@ -292,7 +327,80 @@ const UserPage = () => {
 
         } else {
 
+            // если errorAdminFormForImg === '', то есть состояние ошибки для картинок в форме для создания нового товара для админа равно пустой строке,то есть ошибки нет(делаем эту проверку,потому что при загрузке неправильной картинки товара на сервер мы показываем ошибку в другом useEffect,поэтому проверяем,нету ли ошибки,перед тем,как создать новый объект товара в базе данных)
+            if (errorAdminFormForImg === '') {
 
+                // оборачиваем в try catch для обработки ошибок
+                try {
+
+                    let objPriceDiscount; // создаем переменную для объекта,указываем ей let,чтобы можно было изменять ей значение потом,делаем эту переменную для объекта,чтобы потом ее разворачивать в объект при создании товара
+
+                    let descImagesProduct: string[] = []; // создаем переменную для массива названий картинок,указываем ей let,чтобы можно было изменять ей значение потом
+
+                    // если inputPriceDiscountValue больше 0,то есть админ указал цену со скидкой для этого товара
+                    if (inputPriceDiscountValue > 0) {
+
+                        // изменяем переменную objPriceDiscount на значения полей priceDiscount и totalPriceDiscount, со значением как inputPriceDiscountValue(состояние инпута для цены со скидкой)
+                        objPriceDiscount = {
+
+                            priceDiscount: inputPriceDiscountValue,
+                            totalPriceDiscount: inputPriceDiscountValue
+
+                        }
+
+                    } else {
+                        // в другом случае указываем значение переменной objPriceDiscount как null
+                        objPriceDiscount = null;
+
+                    }
+
+                    // проходимся по массиву descImages и на каждой итерации добавляем image.name(название текущего итерируемого объекта картинки) в массив descImagesProduct,чтобы сохранить только названия файлов картинок в массив descImagesProduct
+                    descImages.forEach(image => {
+
+                        descImagesProduct.push(image.name);
+
+                    })
+
+                    // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+                    const response = await $api.post<IProduct>(`${API_URL}/addNewProductCatalog`, { name: inputNameProduct, descText: inputDescProduct, category: sortBlockValue, price: inputPriceValue, ...objPriceDiscount, amount: 1, rating: 0, totalPrice: inputPriceValue, mainImage: inputFileMainImage.name, descImages: descImagesProduct }); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем поле mainImage как поле name у состояния inputFileMainImage(inputFileMainImage.name,то есть название файла,который выбрал пользователь(админ)), в mainImage передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера),также указываем поле descImages со значением как descImagesProduct(массив только названий файлов картинок описания для товара),разворачиваем объект objPriceDiscount,то есть вместо него будет подставлено либо поля и значения для priceDiscount и totalPriceDiscount,либо null(то есть ничего не будет подставлено),в зависимости от условия для этого объекта objPriceDiscount выше в коде,это чтобы указать цену со скидкой для товара,если она указана
+
+
+                } catch (e: any) {
+
+                    console.log(e.respnse?.data?.message);
+
+                    return setErrorAdminForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+                }
+
+                setErrorAdminForm(''); // убираем ошибку формы для создания нового товара для админа
+
+                // очищаем инпуты формы создания нового товара
+                setInputNameProduct('');
+                setSortBlockValue('');
+                setInputDescProduct('');
+                setInputPriceValue(1);
+                setInputPriceDiscountValue(0);
+                setImgPath('');  // указываем состоянию пути для главной картинки товара пустую строку,чтобы когда пользователь(админ) сохранил новый товар,то картинка не показывалась уже
+                setDescImages([]); // изменяем состяние descImages на пустой массив,чтобы не показывались картинки описания после создания нового товара
+
+                setInputFileMainImage(null); // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы когда админ удалил эту картинку,то это состояние для файла картинки становилось null и имя удаленного файла картинки не показывалось
+
+                // если inputMainImage.current true(то есть inputMainImage.current есть),делаем эту проверку,так как выдает ошибку,что inputMainImage.current может быть undefined
+                if (inputMainImage.current) {
+
+                    inputMainImage.current.value = ''; // изменяем текущее значение у inputMainImage.current(инпута файла для главной картинки для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас,делаем это в данном случае,чтобы очищисть этот инпут файлов,чтобы можно было сразу выбирать даже такой же файл,после создания товара
+
+                }
+
+                // если inputDescImages.current true(то есть inputDescImages.current есть),делаем эту проверку,так как выдает ошибку,что inputDescImages.current может быть undefined
+                if (inputDescImages.current) {
+
+                    inputDescImages.current.value = ''; // изменяем текущее значение у inputDescImages.current(инпута файла для картинки описания для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас,делаем это в данном случае,чтобы очищисть этот инпут файлов,чтобы можно было сразу выбирать даже такой же файл,после создания товара
+
+                }
+
+            }
 
         }
 
@@ -330,7 +438,7 @@ const UserPage = () => {
             setInputFileMainImage(null); // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы когда админ удалил эту картинку,то это состояние для файла картинки становилось null и имя удаленного файла картинки не показывалось
 
             // если inputMainImage.current true(то есть inputMainImage.current есть),делаем эту проверку,так как выдает ошибку,что inputMainImage.current может быть undefined
-            if(inputMainImage.current){
+            if (inputMainImage.current) {
 
                 inputMainImage.current.value = ''; // изменяем текущее значение у inputMainImage.current(инпута файла для главной картинки для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас
 
@@ -361,7 +469,7 @@ const UserPage = () => {
             setDescImages((prev) => [...prev.filter(i => i.name !== imageName)]);  // изменяем состояние массива descImages,разворачиваем предыдущий массив (...prev) и фильтруем его,указываем,что оставляем все элементы в массиве,у которых поле name не равно imageName,то есть удаляем из этого массива элемент той картинки,которую удалил админ по кнопке и этот новый отфильтрованный массив разворачиваем в новый [],то есть сразу предыдущий(текущий) массив(prev) фильтруем,а потом уже этот отфильтрованный массив разворачиваем в новый массив []
 
             // если inputDescImages.current true(то есть inputDescImages.current есть),делаем эту проверку,так как выдает ошибку,что inputDescImages.current может быть undefined
-            if(inputDescImages.current){
+            if (inputDescImages.current) {
 
                 inputDescImages.current.value = ''; // изменяем текущее значение у inputDescImages.current(инпута файла для картинки описания для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки,можно очищать значение для инпута файлов с помощью useRef,как это сделали сейчас
 
@@ -870,6 +978,10 @@ const UserPage = () => {
                                                 <p className="sectionUserPage__formInfo-itemText">Name</p>
                                                 <input type="text" className="sectionUserPage__formInfo-itemInput" placeholder="Name" value={inputNameProduct} onChange={(e) => setInputNameProduct(e.target.value)} />
                                             </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Product Description</p>
+                                                <textarea placeholder="Enter product description" className="form__mainBlock-textarea adminForm__descProductArea" value={inputDescProduct} onChange={(e) => setInputDescProduct(e.target.value)}></textarea>
+                                            </div>
                                             <div className="sectionUserPage__formInfo-item sectionUserPage__formInfo-itemCategoryBlock">
                                                 <div className="searchBlock__sortBlock">
                                                     <p className="sortBlock__text adminForm__categoryBlock-text">Category:</p>
@@ -950,7 +1062,7 @@ const UserPage = () => {
                                                     Load Image
 
                                                     {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа,указываем этому инпуту ref как наш ref inputMainImage,указываем это,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки */}
-                                                    <input id="inputFileImage" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadImageHandler} ref={inputMainImage}/>
+                                                    <input id="inputFileImage" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadImageHandler} ref={inputMainImage} />
                                                 </label>
                                             </div>
 
@@ -992,7 +1104,7 @@ const UserPage = () => {
                                                     Load Image
 
                                                     {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа,указываем этому инпуту ref как наш ref inputDescImages,указываем это,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки  */}
-                                                    <input id="inputFileImages" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadDescImagesHandler} ref={inputDescImages}/>
+                                                    <input id="inputFileImages" type="file" className="adminForm__loadImageBlock-input" accept="image/*" onChange={inputLoadDescImagesHandler} ref={inputDescImages} />
                                                 </label>
                                             </div>
 

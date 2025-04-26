@@ -7,7 +7,7 @@ export interface IProduct{
     descText:string,
     price:number,
     priceDiscount:number, // указываем это поле для цены со скидкой
-    priceFilter:string,
+    priceFilter?:string, // указываем вопрос после названия этого поля,чтобы указать,что это поле может быть undefined,то есть не указано,то есть необязательное,делаем так,так как уже не используем этот priceFilter и фильтруем товары просто проверкой по цене,и чтобы не удалять уже созданные товары в базе данных с рейтингом и комментариями,то делаем уже так
     amount:number,
     totalPrice:number,
     totalPriceDiscount:number, // указываем это поле для конечной цены со скидкой
