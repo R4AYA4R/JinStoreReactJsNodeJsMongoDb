@@ -309,9 +309,9 @@ const UserPage = () => {
             // если состояние значения селекта категорий равно пустой строке,то показываем ошибку
             setErrorAdminForm('Choose category');
 
-        } else if (inputPriceValue < 1) {
-            // если состояние цены нового товара меньше 1,то показываем ошибку
-            setErrorAdminForm('Product price must be more than 0');
+        } else if (inputPriceValue < 0.1) {
+            // если состояние цены нового товара меньше 0.1,то показываем ошибку
+            setErrorAdminForm('Product price must be more than 0.1');
 
         }else if (inputPriceDiscountValue >= inputPriceValue) {
             // если состояние inputPriceDiscountValue >= inputPriceValue,то состояние инпута цены со скидкой inputPriceDiscountValue больше или равно инпуту обычной цены товара inputPriceValue,то показываем ошибку,что цена со скидкой должна быть меньше,чем обычная цена товара
@@ -343,8 +343,8 @@ const UserPage = () => {
                         // изменяем переменную objPriceDiscount на значения полей priceDiscount и totalPriceDiscount, со значением как inputPriceDiscountValue(состояние инпута для цены со скидкой)
                         objPriceDiscount = {
 
-                            priceDiscount: inputPriceDiscountValue,
-                            totalPriceDiscount: inputPriceDiscountValue
+                            priceDiscount: inputPriceDiscountValue.toFixed(2), // указывае toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
+                            totalPriceDiscount: inputPriceDiscountValue.toFixed(2) 
 
                         }
 
@@ -362,7 +362,7 @@ const UserPage = () => {
                     })
 
                     // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
-                    const response = await $api.post<IProduct>(`${API_URL}/addNewProductCatalog`, { name: inputNameProduct, descText: inputDescProduct, category: sortBlockValue, price: inputPriceValue, ...objPriceDiscount, amount: 1, rating: 0, totalPrice: inputPriceValue, mainImage: inputFileMainImage.name, descImages: descImagesProduct }); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем поле mainImage как поле name у состояния inputFileMainImage(inputFileMainImage.name,то есть название файла,который выбрал пользователь(админ)), в mainImage передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера),также указываем поле descImages со значением как descImagesProduct(массив только названий файлов картинок описания для товара),разворачиваем объект objPriceDiscount,то есть вместо него будет подставлено либо поля и значения для priceDiscount и totalPriceDiscount,либо null(то есть ничего не будет подставлено),в зависимости от условия для этого объекта objPriceDiscount выше в коде,это чтобы указать цену со скидкой для товара,если она указана
+                    const response = await $api.post<IProduct>(`${API_URL}/addNewProductCatalog`, { name: inputNameProduct, descText: inputDescProduct, category: sortBlockValue, price: inputPriceValue.toFixed(2), ...objPriceDiscount, amount: 1, rating: 0, totalPrice: inputPriceValue.toFixed(2), mainImage: inputFileMainImage.name, descImages: descImagesProduct }); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем поле mainImage как поле name у состояния inputFileMainImage(inputFileMainImage.name,то есть название файла,который выбрал пользователь(админ)), в mainImage передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера),также указываем поле descImages со значением как descImagesProduct(массив только названий файлов картинок описания для товара),разворачиваем объект objPriceDiscount,то есть вместо него будет подставлено либо поля и значения для priceDiscount и totalPriceDiscount,либо null(то есть ничего не будет подставлено),в зависимости от условия для этого объекта objPriceDiscount выше в коде,это чтобы указать цену со скидкой для товара,если она указана,указывае toFixed(2) для inputPriceValue,чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
 
 
                 } catch (e: any) {
@@ -1016,7 +1016,10 @@ const UserPage = () => {
                                                         <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
                                                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>
-                                                        <input type="number" className="infoBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} />
+
+                                                        {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                                        <input type="number" className="infoBlock__inputBlock-input adminForm__priceInput" value={inputPriceValue} onChange={changeInputPriceValue} step={0.01}/>
+
                                                         <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
                                                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>
@@ -1029,7 +1032,10 @@ const UserPage = () => {
                                                         <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtnDiscount}>
                                                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>
-                                                        <input type="number" className="infoBlock__inputBlock-input" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} />
+
+                                                        {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                                        <input type="number" className="infoBlock__inputBlock-input adminForm__priceInput" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} step={0.01} />
+
                                                         <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtnDiscount}>
                                                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
                                                         </button>

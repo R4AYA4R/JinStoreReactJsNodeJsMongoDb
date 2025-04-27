@@ -1660,8 +1660,10 @@ a {
 }
 
 .sectionProductItemPage__sliderBlock__sliderPreview {
-  max-width: 75px;
+  max-width: 77px;
   /* указываем максимальную ширину на 2px больше,чем для картинки,чтобы было место на границу этого слайда */
+  min-width: 75px;
+  max-height: 85px;
 }
 
 .sectionProductItemPage__sliderBlock__sliderPreview:hover {
@@ -2634,4 +2636,8 @@ a {
 .adminForm__descProductArea{
   border-radius: 8px;
   margin-bottom: 0;
+}
+
+.adminForm__priceInput{
+  padding: 14.5px 32px;
 }
