@@ -390,8 +390,8 @@ const ProductItemPage = () => {
                             <p className="sectionCatalog__topBlock-subtitle">{data?.data.name}</p>
                         </div>
 
-                        {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов */}
-                        <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForName} />
+                        {/* вынесли блок с информацией о товара и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
+                        <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForName} refetchProduct={refetch}/>
 
                         <div className="sectionProductItemPage__descBlock">
                             <div className="sectionProductItemPage__descBlock-tabs">

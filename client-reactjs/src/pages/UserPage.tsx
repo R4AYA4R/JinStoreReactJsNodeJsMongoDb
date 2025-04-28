@@ -343,7 +343,7 @@ const UserPage = () => {
                         // изменяем переменную objPriceDiscount на значения полей priceDiscount и totalPriceDiscount, со значением как inputPriceDiscountValue(состояние инпута для цены со скидкой)
                         objPriceDiscount = {
 
-                            priceDiscount: inputPriceDiscountValue.toFixed(2), // указывае toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
+                            priceDiscount: inputPriceDiscountValue.toFixed(2), // указываем toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
                             totalPriceDiscount: inputPriceDiscountValue.toFixed(2) 
 
                         }

@@ -430,6 +430,67 @@ class ProductController {
 
     }
 
+    async changeProductPriceCatalog(req, res, next) {
+
+        // оборачиваем в try catch для обработки ошибок
+        try {
+
+            const productCatalog = req.body;  // достаем(деструктуризируем) из тела запроса весь объект запроса со всеми полями,которые мы передали с фронтенда(не используем здесь деструктуризацию типа деструктурировать из req.body {productCatalog} в квадратных скобках,так как просто берем все тело запроса,то есть весь объект тела запроса,а не отдельные поля)
+
+            const foundedProductCatalog = await productModel.findById(productCatalog._id); // находим объект товара каталога с помощью findById(), у которого id равен _id(указываем здесь нижнее подчеркивание перед id,так как оно по дефолту идет у объектов базы данных mongodb с нижним подчеркиванием) товара,который хотим обновить,который взяли из тела запроса(productCatalog._id)
+
+            foundedProductCatalog.price = productCatalog.price; // изменяем поле price у foundedProductCatalog(у товара каталога) на значение поля price у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            foundedProductCatalog.totalPrice = productCatalog.totalPrice; // изменяем поле totalPrice у foundedProductCatalog(у товара каталога) на значение поля totalPrice у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            foundedProductCatalog.priceDiscount = productCatalog.priceDiscount; // изменяем поле priceDiscount у foundedProductCatalog(у товара каталога) на значение поля priceDiscount у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            foundedProductCatalog.totalPriceDiscount = productCatalog.totalPriceDiscount; // изменяем поле totalPriceDiscount у foundedProductCatalog(у товара каталога) на значение поля totalPriceDiscount у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            await foundedProductCatalog.save(); // сохраняем объект товара каталога в базе данных
+
+            const foundedProductsCart = await cartProductModel.find({ name: productCatalog.name }); // ищем все объекты товаров у которых name равен полю name у productCatalog(объект товара,который мы взяли из тела запроса),ищем эти объекты товаров по полю name,так как поле name может быть одинаковое у товаров в корзине,но у разных пользователей,поэтому находим все
+
+            // если foundedProductsCart true,то есть объекты товаров в корзине были найдены
+            if (foundedProductsCart) {
+
+                // проходимся по массиву найденных товаров корзины(если они были найдены),указываем async для функции внутри forEach,так как делаем там асинхронный запрос к базе данных для сохранения товара в базе данных,и на каждой итерации этого массива изменяем поля price и totalPrice этого товара в корзине
+                foundedProductsCart.forEach(async (productCart) => {
+
+                    productCart.price = productCatalog.price; // изменяем поле price у этого товара корзины(productCart) на значение поля price у productCatalog(объект товара каталога,который мы взяли из тела запроса)
+
+                    // если productCatalog.priceDiscount больше 0,то есть поле priceDiscount у productCatalog(объект тела запроса) больше 0,то есть цена со скидко указана,то изменяем поле totalPrice на значение количества товара,умноженное на цену со скидкой
+                    if(productCatalog.priceDiscount > 0){
+
+                        productCart.totalPrice = productCart.amount * productCatalog.priceDiscount; // изменяем поле totalPrice у этого товара корзины(productCart) на значение поля amount у этого товара корзины(productCart),умноженное на поле priceDiscount у productCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара со скидкой(productCatalog.priceDiscount), делаем так,так как в корзине будет считаться общий счет и тд по полю totalPrice,и если не сделать проверку,есть ли цена со скидкой,и просто умножить количество товара на его обычную цену,то оно не будет считать цену со скидкой
+
+                    } else {
+                        // в другом случае,если поле priceDiscount меньше или равно 0(то есть оно не указано),то изменяем поле totalPrice на значение количества товара,умноженное на его обычную цену
+                        productCart.totalPrice = productCart.amount * productCatalog.price; // изменяем поле totalPrice у этого товара корзины(productCart) на значение поля amount у этого товара корзины(productCart),умноженное на поле price у productCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара(productCatalog.price)
+
+                    }
+
+                    
+                    productCart.priceDiscount = productCatalog.priceDiscount; // изменяем поле priceDiscount у productCart(текущий итерируемый объект товара корзины) на значение поля priceDiscount у productCatalog(объект товара,который мы взяли из тела запроса)
+
+                    // вообще это поле totalPriceDiscount мы не используем,поэтому оно особо не нужно,но чтобы уже не удалять объекты товаров из базы данных(комментарии к ним и тд),изменять модель объекта товара,то просто уже указываем ему значение
+                    productCart.totalPriceDiscount = productCart.amount * productCatalog.priceDiscount; // изменяем поле totalPriceDiscount у этого товара корзины(productCart) на значение поля amount у этого товара корзины(productCart),умноженное на поле priceDiscount у productCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара со скидкой(productCatalog.priceDiscount)
+
+                    await productCart.save(); // сохраняем этот обновленный объект товара корзины в базе данных
+
+                })
+
+            }
+
+            return res.json({foundedProductCatalog,foundedProductsCart}); // возвращаем на клиент объект с полями измененного объекта товара каталога и обновленного массива товаров корзины,если они были найдены,возвращаем именно объект,так как уже указываем несколько полей в этом объекте,если не вернуть объект для нескольких полей,то выдает ошибку
+
+        } catch (e) {
+
+            next(e); // вызываем функцию next()(параметр этой функции getProducts) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции getProducts,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
 
 }
 

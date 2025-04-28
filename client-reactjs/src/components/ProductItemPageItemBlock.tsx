@@ -11,9 +11,9 @@ import 'swiper/css/thumbs'; // импортируем стили для моду
 import 'swiper/css/zoom';
 import { ChangeEvent, useEffect, useState } from "react";
 import { IComment, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../http/http";
+import { QueryObserverResult, useMutation, useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
+import $api, { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useNavigate } from "react-router-dom";
 
@@ -23,12 +23,22 @@ interface IProductItemPageItemBlock {
 
     pathname: string, // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
 
-    comments: IComment[] | undefined // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
+    comments: IComment[] | undefined, // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
+
+    refetchProduct: () => Promise<QueryObserverResult<AxiosResponse<IProduct, any>, Error>> // указываем поле для функции переобновления данных товара,указываем,что это стрелочная функция и она возвращает тип Promise,в котором QueryObserverResult,в котором AxiosResponse,в котором тип IProduct(тип для объекта товара), и тип Error(что может прийти еще и ошибка),скопировали этот весь тип в файле ProductItemPage у этой функции refetch у react query(tanstack query),этот полный тип подсветил vs code
 }
 
-const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemPageItemBlock) => {
+const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct }: IProductItemPageItemBlock) => {
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const [tabChangePrice, setTabChangePrice] = useState(false);
+
+    const [inputPriceValue, setInputPriceValue] = useState(product?.price); // указываем первоначальное значение этому состоянию inputPriceValue как product.price,чтобы в инпуте изменения цены товара изначально было значение как у product.price(текущее значение цены товара)
+
+    const [inputPriceDiscountValue, setInputPriceDiscountValue] = useState(product?.priceDiscount);
+
+    const [errorAdminChangePrice, setErrorAdminChangePrice] = useState('');
 
     const router = useNavigate();  // useNavigate может перемещатьтся на другую страницу вместо ссылок
 
@@ -65,6 +75,27 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
         onSuccess() {
 
             refetchProductsCart();
+
+        }
+
+    })
+
+    // функция мутации(изменения данных) для изменения цены товара(она будет для админа)
+    const { mutate: mutateProductPrice } = useMutation({
+        mutationKey: ['updateProductPrice'],
+        mutationFn: async (product: IProduct) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+            await $api.put<IProduct>(`${API_URL}/changeProductPriceCatalog`, product);
+
+        },
+
+        // при успешной мутации(изменения) цены товара,переобновляем данные товара
+        onSuccess() {
+
+            refetchProduct();
+
+            setTabChangePrice(false);  // изменяем значение tabChangePrice на false,чтобы убрать инпут для изменения цены товара
 
         }
 
@@ -180,6 +211,145 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
     }
 
+    // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // здесь нужно убирать ошибку формы
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceValue(0);
+
+        } else {
+
+            setInputPriceValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    const handlerMinusPriceBtn = () => {
+
+        // здесь нужно еще убирать ошибку формы
+
+        // если значение инпута количества товара больше 1 и если inputPriceValue true(делаем эту проверку,так как показывает ошибку,что это значение может быть undefined),то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        if (inputPriceValue && inputPriceValue > 1) {
+
+            setInputPriceValue((prev) => prev && prev - 1); // если prev true(prev &&),то указываем значение состоянию inputPriceValue prev - 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputPriceValue) может быть undefined
+
+        } else {
+
+            setInputPriceValue(1);
+
+        }
+
+    }
+
+    const handlerPlusPriceBtn = () => {
+
+        // здесь нужно убирать ошибку формы
+
+        // изменяем текущее значение инпута цены на + 1
+        setInputPriceValue((prev) => prev !== undefined ? prev + 1 : 0);  // если prev !== undefined (то есть текущее значение inputPriceValue не равно undefined),то указываем значение состоянию inputPriceValue prev + 1,в другом случае указываем значение inputPriceValue как 0,делаем эту проверку,иначе показывает ошибку,что prev(текущее значение inputPriceValue) может быть undefined,здесь не работает проверка типа prev &&,так как она проверяет еще и на значение 0,и если prev будет равно 0,то значение увеличиваться не будет
+
+
+
+    }
+
+
+    // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceDiscountValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // здесь нужно убирать ошибку формы
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceDiscountValue(0);
+
+        } else {
+
+            setInputPriceDiscountValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+
+        }
+
+    }
+
+    const handlerMinusAmountBtnDiscount = () => {
+
+        // здесь нужно еще убирать ошибку формы
+
+        // если значение инпута количества товара больше 1 и если inputPriceDiscountValue true(делаем эту проверку,так как показывает ошибку,что это значение может быть undefined),то изменяем это значение на - 1,в другом случае указываем ему значение 0,чтобы после нуля не отнимало - 1
+        if (inputPriceDiscountValue && inputPriceDiscountValue > 1) {
+
+            setInputPriceDiscountValue((prev) => prev && prev - 1); // если prev true(prev &&),то указываем значение состоянию inputPriceDiscountValue prev - 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputPriceDiscountValue) может быть undefined
+
+        } else {
+
+            setInputPriceDiscountValue(0);
+
+        }
+
+    }
+
+    const handlerPlusAmountBtnDiscount = () => {
+
+        // здесь нужно убирать ошибку формы
+
+
+        // изменяем текущее значение инпута цены на + 1
+        setInputPriceDiscountValue((prev) => prev !== undefined ? prev + 1 : 0); // если prev !== undefined (то есть текущее значение inputPriceDiscountValue не равно undefined),то указываем значение состоянию inputPriceDiscountValue prev + 1,в другом случае указываем значение inputPriceDiscountValue как 0,делаем эту проверку,иначе показывает ошибку,что prev(текущее значение inputPriceDiscountValue) может быть undefined,здесь не работает проверка типа prev &&,так как она проверяет еще и на значение 0,и если prev будет равно 0,то значение увеличиваться не будет
+
+
+    }
+
+    const saveNewPriceProduct = () => {
+
+        if (inputPriceDiscountValue && inputPriceValue && inputPriceDiscountValue >= inputPriceValue) {
+            // если inputPriceDiscountValue && inputPriceValue true(делаем эту проверку,так как показывает,что inputPriceDiscountValue и inputPriceValue может быть undefined) и если inputPriceDiscountValue(значение инпута новой цены со скидкой для товара) >= inputPriceValue(значение инпута новой цены товара),то показываем ошибку
+
+            return setErrorAdminChangePrice('New product price must be more than new product discount price'); // показываем ошибку,возвращаем(используем return),чтобы код ниже не работал,если будет ошибка
+
+        } else if (inputPriceValue !== undefined && inputPriceValue <= 0) {
+            // если inputPriceValue !== undefined(делаем эту проверку,так как показывает,что inputPriceValue может быть undefined,проверка на inputPriceValue && (типа если inputPriceValue true) не работает правильно в данном случае,так как эта проверка проверяет на значение 0,и если текущее значение инпута новой цены товара равно 0,то эта проверка вообще не срабатывает) и если inputPriceValue(значение инпута новой цены со скидкой для товара) <= 0 (меньше или равно 0),то показываем ошибку
+
+            return setErrorAdminChangePrice('New product price must be more than 0'); // показываем ошибку,возвращаем(используем return),чтобы код ниже не работал,если будет ошибка
+
+        } else {
+
+            let priceDiscountObj;  // создаем переменную для объекта,указываем ей let,чтобы можно было изменять ей значение потом,делаем эту переменную для объекта,чтобы потом ее разворачивать в объект при запросе на сервер для изменения цены товара
+
+            // если inputPriceDiscountValue !== undefined(делаем эту проверку,иначе выдает ошибку,что inputPriceDiscountValue может быть undefined) и inputPriceDiscountValue больше 0,то есть админ указал новую цену со скидкой для этого товара
+            if (inputPriceDiscountValue !== undefined && inputPriceDiscountValue > 0) {
+
+                // изменяем переменную priceDiscountObj на значения полей priceDiscount и totalPriceDiscount, со значением как inputPriceDiscountValue(состояние инпута для цены со скидкой)
+                priceDiscountObj = {
+
+                    priceDiscount: inputPriceDiscountValue.toFixed(2), // указываем toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
+                    totalPriceDiscount: inputPriceDiscountValue.toFixed(2)
+
+                }
+
+            } else {
+                // в другом случае указываем значение переменной priceDiscountObj как объект с полями и значениями,как текущие значения этих полей у объекта товара(то есть они будут такими же)
+                priceDiscountObj = {
+
+                    priceDiscount: product?.priceDiscount, // указываем значение полю priceDiscount как product?.priceDiscount(текущее значение цены товара со скидкой)
+
+                    totalPriceDiscount: product?.totalPriceDiscount // указываем значение полю totalPriceDiscount как product?.totalPriceDiscount(текущее значение итоговой цены товара со скидкой)
+
+                }
+
+            }
+
+            mutateProductPrice({ ...product, price: inputPriceValue, totalPrice: inputPriceValue, ...priceDiscountObj } as IProduct); // делаем запрос на изменение цены товара каталога, разворачиваем в объект все поля текущего объекта товара(...product),указываем поле price и totalPrice со значением inputPriceValue(значение инпута новой цены для товара),также разворачиваем объект priceDiscountObj для полей цены товара со скидкой,в зависимости от условия выше в коде,этот объект будет иметь разные значения,и вместо него будут подставлены поля,которые мы указали ему,указываем тип этого всего объекта как IProduct,то есть поля в этом объекте точно будут иметь такие же типы как и в IProduct(в данном случае указываем это,иначе выдает ошибку,что inputPriceValue может быть undefined и его нельзя назначить для поля price)
+
+            setErrorAdminChangePrice('');
+
+        }
+
+    }
 
     return (
 
@@ -314,16 +484,91 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                 </div>
                 <p className="sectionProductItemPage__infoBlock-desc">{product?.descText}</p>
 
-                {/* если product?.priceDiscount true(указываем знак вопроса после product,так как product может быть undefined и выдает ошибку об этом),то есть поле priceDiscount у product(объект товара) есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
-                {product?.priceDiscount ?
+                {/* если состояние таба tabChangePrice false,то показываем цену товара и кнопку,чтобы изменить цену товара,если это состояние tabChangePrice будет равно true,то этот блок показываться не будет */}
+                {!tabChangePrice &&
+                    <>
 
-                    <div className="sectionNewArrivals__item-priceBlock">
-                        <p className="item__priceBlock-priceSale">${product?.priceDiscount}</p>
-                        <p className="item__priceBlock-priceUsual">${product?.price}</p>
-                    </div>
-                    :
-                    <div className="sectionNewArrivals__item-priceBlock">
-                        <p className="item__priceBlock-priceUsualDefault">${product?.price}</p>
+                        {/* если product?.priceDiscount true(указываем знак вопроса после product,так как product может быть undefined и выдает ошибку об этом),то есть поле priceDiscount у product(объект товара) есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                        {product?.priceDiscount ?
+
+                            <div className="sectionNewArrivals__item-priceBlock">
+                                <p className="item__priceBlock-priceSale">${product?.priceDiscount}</p>
+                                <p className="item__priceBlock-priceUsual">${product?.price}</p>
+
+                                {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для изменения цены товара в базе данных */}
+                                {user.role === 'ADMIN' &&
+
+                                    <button className="sectionProductItemPage__changePriceBtn" onClick={() => setTabChangePrice(true)}>
+                                        <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                                    </button>
+
+                                }
+
+                            </div>
+                            :
+                            <div className="sectionNewArrivals__item-priceBlock">
+                                <p className="item__priceBlock-priceUsualDefault">${product?.price}</p>
+
+                                {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для изменения цены товара в базе данных */}
+                                {user.role === 'ADMIN' &&
+
+                                    <button className="sectionProductItemPage__changePriceBtn" onClick={() => setTabChangePrice(true)}>
+                                        <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                                    </button>
+
+                                }
+                            </div>
+                        }
+
+                    </>
+                }
+
+                {/* если состояние таба tabChangePrice true,то показываем блок с инпутом изменения цены товара,в другом случае он показан не будет */}
+                {tabChangePrice &&
+
+                    <div className="sectionUserPage__changePriceBlock">
+                        <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-inputBlockMain">
+                            <div className="sectionProductItemPage__infoBlock-inputBlock sectionUserPage__adminForm-inputBlock">
+                                <p className="sectionUserPage__formInfo-itemText">Price</p>
+                                <div className="infoBlock__inputBlock-leftInputBlock">
+                                    {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
+                                    <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusPriceBtn}>
+                                        <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                    </button>
+
+                                    {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                    <input type="number" className="infoBlock__inputBlock-input adminForm__priceInput" value={inputPriceValue} onChange={changeInputPriceValue} step={0.01} />
+
+                                    <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusPriceBtn}>
+                                        <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="sectionProductItemPage__infoBlock-inputBlock sectionUserPage__adminForm-inputBlock">
+                                <p className="sectionUserPage__formInfo-itemText">Price with Discount</p>
+                                <div className="infoBlock__inputBlock-leftInputBlock infoBlock__inputBlock-leftInputBlockAdminForm">
+                                    <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtnDiscount}>
+                                        <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                    </button>
+
+                                    {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                    <input type="number" className="infoBlock__inputBlock-input adminForm__priceInput" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} step={0.01} />
+
+                                    <button type="button" className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtnDiscount}>
+                                        <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* если errorAdminChangePrice true(то есть в состоянии errorAdminChangePrice что-то есть),то показываем текст ошибки */}
+                        {errorAdminChangePrice && <p className="formErrorText">{errorAdminChangePrice}</p>}
+
+                        <button className="infoBlock__inputBlock-cartBtn sectionUserPage__saveChangesBtn" onClick={saveNewPriceProduct}>
+                            <p className="inputBlock__cartBtn-text">Save Changes</p>
+                        </button>
+
                     </div>
                 }
 
@@ -333,7 +578,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
                     {user.userName && isExistsCart ?
 
                         <h3 className="textAlreadyInCart">Already in Cart</h3>
-                        :
+                        : !tabChangePrice &&
                         <>
                             <div className="infoBlock__inputBlock-leftInputBlock">
                                 <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>

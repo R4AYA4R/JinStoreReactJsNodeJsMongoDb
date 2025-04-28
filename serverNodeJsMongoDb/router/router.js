@@ -44,6 +44,8 @@ router.delete('/deleteMainImage/:imageName',userController.deleteImage); // ук
 
 router.post('/addNewProductCatalog',authMiddleware,productController.createNewProductCatalog); // создаем post запрос для создания нового товара в базе данных
 
+router.put('/changeProductPriceCatalog',authMiddleware,productController.changeProductPriceCatalog); // создаем put запрос для изменения цены товара каталога(эта функция будет для админа)
+
 
 router.post('/registration',
     body('email').isEmail(),
