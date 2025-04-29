@@ -351,6 +351,27 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
     }
 
+    // фукнция для удаления картинки описания для товара на сервере для удаления по кнопке
+    const deleteDescImageRequestByBtn = async (imageName: string | undefined, productId:string) => {
+
+        try {
+
+            const response = await $api.delete(`${API_URL}/deleteDescImage/${productId}/${imageName}`);  // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр productId и imageName,чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            console.log(imageName);
+
+            refetchProduct(); // переобновляем данные товара,чтобы сразу переобновился слайдер с картинками,уже без удаленной картинки
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     return (
 
         <div className="sectionProductItemPage__itemBlock">
@@ -407,6 +428,15 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
                         {/* проходимся по массиву descImages у product,и возвращаем новый массив,на каждой итерации(месте предыдущего элемента) будет подставлен элемент,который мы указали в функции callback у этого map(),в данном случае это будет элемент слайдера <SwiperSlide/>,то есть отображаем картинки товара,в параметрах этой функции callback у map берем image(текущий итерируемый элемент массива,название может быть любое) и index(текущий индекс итерируемого элемента массива),указываем этот index в key,чтобы эти ключи(key) были разные,так как в данном случае у нас есть одинаковые названия у картинок,лучше указывать отдельный какой-нибудь id в key,но в данном случае это подходит,в src у img указываем путь до картинки,указываем в конце этого пути параметр image(текущий итерируемый объект массива) этой функции callback у map,чтобы указать разные названия картинок */}
                         {product?.descImages.map((image, index) =>
                             <SwiperSlide key={index}>
+
+                                {/* помещаем эту картинку не в swiper-zoom-container,чтобы не зумилась кнопка удаления картинки вместе с самой картинкой,делаем проверку если user.role === 'ADMIN' (если роль у пользователя сейчас админ) и product.descImages.length > 1 (массив картинок описания у товара по длине больше 1,делаем эту проверку,чтобы если в массиве картинок описания осталась одна картинка,то эта кнопке не показывалась,чтобы нельзя было удалить последнюю картинку описания,в данном случае,делаем так,что чтобы изменить главную картинку товара или все картинки описания,то надо будет удалить весь товар и заново добавить это все) */}
+                                {user.role === 'ADMIN' && product.descImages.length > 1 &&
+                                    // в onClick этой button передаем в нашу функцию deleteDescImageRequestByBtn название файла картинки image(которая сейчас итерируется с помощью map,то есть саму картинку описания),также передаем параметр id товара (product._id),у которого надо удалить эту картинку,наша функция deleteDescImageRequestByBtn делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе в ответе от сервера будет объект с полями) 
+                                    <button className="adminForm__imageBlock-deleteBtn" type="button" onClick={()=>deleteDescImageRequestByBtn(image,product._id)}>
+                                        <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                                    </button>
+                                }
+
                                 <div className="swiper-zoom-container">
                                     {/* в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и image(текущий итерируемый элемент массива descImages,то есть название каждой картинки описания) */}
                                     <img src={`http://localhost:5000/${image}`} alt="" className="sectionProductItemPage__imgBlock-img sectionProductItemPage__imgBlock-imgSlider" />
