@@ -105,8 +105,8 @@ const ProductItemCatalog = ({ product, comments, setPage }: IProductItemCatalog)
 
                 {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для удаления товара из базы данных */}
                 {user.role === 'ADMIN' &&
-                    // в onClick этой button передаем в нашу функцию deleteProductCatalogByBtn название товара каталога(product.name),product._id(id товара каталога), название файла главной картинки mainImage,также descImage(массив названий картинок описания для товара каталога)
-                    <button className="adminForm__imageBlock-deleteBtn" onClick={()=>deleteProductCatalogByBtn()}>
+                    // в onClick этой button указываем нашу функцию deleteProductCatalogByBtn 
+                    <button className="adminForm__imageBlock-deleteBtn" onClick={deleteProductCatalogByBtn}>
                         <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
                     </button>
                 }
