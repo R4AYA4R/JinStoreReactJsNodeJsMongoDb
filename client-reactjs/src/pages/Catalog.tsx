@@ -4,7 +4,7 @@ import ReactSlider from 'react-slider'; // импортируем ReactSlider и
 import ProductItemCatalog from "../components/ProductItemCatalog";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ICommentResponse, IProduct, IResponseCatalog } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCartResponse, IResponseCatalog } from "../types/types";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { getPagesArray } from "../utils/getPagesArray";
 import { API_URL } from "../http/http";
@@ -528,7 +528,8 @@ const Catalog = () => {
                                         <div className="sectionCatalog__productsBlock-productsItems">
                                             {data?.products.map(product =>
 
-                                                <ProductItemCatalog key={product._id} product={product} comments={dataComments?.allComments} />
+                                                // передаем этому компоненту функцию setPage в пропсах(параметрах),чтобы в этом компоненте указывать текущую страницу пагинации на 1 при удалении товара каталога
+                                                <ProductItemCatalog key={product._id} product={product} comments={dataComments?.allComments} setPage={setPage} />
 
                                             )}
                                         </div> : isFetching ?

@@ -1,18 +1,36 @@
 import { useNavigate } from "react-router-dom";
-import { IComment, IProduct } from "../types/types";
-import { useEffect, useState } from "react";
+import { IComment, IProduct, IProductsCartResponse } from "../types/types";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { API_URL } from "../http/http";
+import $api, { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 interface IProductItemCatalog {
     product: IProduct,
-    comments:IComment[] | undefined
+    comments: IComment[] | undefined,
+    setPage: Dispatch<SetStateAction<number>>  // указываем тип для функции setPage(она у нас меняет текущую страницу пагинации каталога),которая изменяет состояние useState и указываем,что параметр этой функции будет с типом number
 }
 
-const ProductItemCatalog = ({ product,comments }: IProductItemCatalog) => {
+const ProductItemCatalog = ({ product, comments, setPage }: IProductItemCatalog) => {
 
-    const [commentsForProduct,setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+    const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    // скопировали эту функцию запроса на сервер с помощью useQuery для получения товаров корзины,указываем такой же queryKey как и в файле Cart.tsx,чтобы эти данные были одинаковые и переобновлялись одинаково,указываем эту функцию в файле Catalog.tsx,потом передаем ее в компонент ProductItemCatalog,указываем ее здесь,чтобы не шли
+    const { data: dataProductsCart, refetch: refetchProductsCart } = useQuery({
+        queryKey: ['getAllProductsCart'],
+        queryFn: async () => {
+
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductsCartResponse,от сервера придут 2 массива товаров корзины,один общий для всех товаров корзины для отдельного авторизованного пользователя(allProductsCart),а второй для товаров корзины на одной странице пагинации(productsCart)),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
+
+
+        }
+
+    })
 
     // это уже не используем,так как фильтруем весь массив comments уже в этом компоненте,не делая дополнительный запрос на сервер
     // const { data: dataComments, refetch: refetchComments } = useQuery({
@@ -53,15 +71,45 @@ const ProductItemCatalog = ({ product,comments }: IProductItemCatalog) => {
     }, [product])
 
     // при рендеринге(запуске) этого компонента и при изменении массива комментариев comments будет отработан код в этом useEffect,так как он с пустым массивом зависимостей, обязательно указываем массив комментариев comments в массиве зависимостей этого useEffect,чтобы при двойном переобновлении страницы комментарии отображались,иначе они могут не отобразиться
-    useEffect(()=>{
+    useEffect(() => {
 
         setCommentsForProduct(comments?.filter(p => p.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
 
-    },[comments])
+    }, [comments])
+
+    // фукнция для удаления товара каталога по кнопке
+    const deleteProductCatalogByBtn = async () => {
+
+        try {
+
+            const response = await $api.post(`${API_URL}/deleteProductCatalog`, product);  // делаем запрос на сервер для удаления товара каталога из базы данных и указываем в ссылке на эндпоинт параметр productId(id этого товара каталога,который хотим удалить),productName(название этого товара каталога),mainImage(главную картинку этого товара),descImages(массив картинок описания этого товара),чтобы на бэкэнде их достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            setPage(1); // изменяем состояние текущей страницы пагинации каталога на 1,чтобы при удалении товара текущая страница становилась 1,в данном случае отдельно не переобновляем массив товаров каталога,так как изменяем состояние page(текущая страница пагинации) с помощью setPage и в файле Catalog.tsx при изменении этого состояния page,делается запрос на переобновление товаров каталога,поэтому здесь еще раз его указывать не нужно
+
+            refetchProductsCart(); // переобновляем массив товаров корзины
+
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
 
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionCatalog__productsItems-item">
             <div className="sectionBestSellers__item-imgBlock">
+
+                {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для удаления товара из базы данных */}
+                {user.role === 'ADMIN' &&
+                    // в onClick этой button передаем в нашу функцию deleteProductCatalogByBtn название товара каталога(product.name),product._id(id товара каталога), название файла главной картинки mainImage,также descImage(массив названий картинок описания для товара каталога)
+                    <button className="adminForm__imageBlock-deleteBtn" onClick={()=>deleteProductCatalogByBtn()}>
+                        <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                    </button>
+                }
 
                 {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
                 {product.priceDiscount ?

@@ -48,6 +48,8 @@ router.put('/changeProductPriceCatalog',authMiddleware,productController.changeP
 
 router.delete('/deleteDescImage/:productId/:imageName',authMiddleware,userController.deleteDescImage); // указываем delete запрос для удаления файла картинки описания с нашего node js сервера(в данном случае из папки static),delete запрос не имеет тела запроса и все параметры передаются через строку,тут указываем через :(двоеточие) динамический параметр imageName,то есть этот параметр может меняться(в данном случае этот параметр нужен,чтобы удалить файл из папки static по этому названию imageName)
 
+router.post('/deleteProductCatalog', authMiddleware, productController.deleteProductCatalog); // создаем post запрос на удаление товара из каталога для админа,делаем здесь post запрос,а не delete,так как нужно передать в тело запроса объект товара,который хотим удалить,чтобы брать у этого объекта нужные поля,а также,из-за того,что нужно брать еще и массив названий картинок описания для товара(descImages),то в delete запрос передать массив как параметр в url до эндпоинта сложнее,поэтому в данном случае уже сделали post запрос
+
 
 router.post('/registration',
     body('email').isEmail(),
