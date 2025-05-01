@@ -50,6 +50,10 @@ router.delete('/deleteDescImage/:productId/:imageName',authMiddleware,userContro
 
 router.post('/deleteProductCatalog', authMiddleware, productController.deleteProductCatalog); // создаем post запрос на удаление товара из каталога для админа,делаем здесь post запрос,а не delete,так как нужно передать в тело запроса объект товара,который хотим удалить,чтобы брать у этого объекта нужные поля,а также,из-за того,что нужно брать еще и массив названий картинок описания для товара(descImages),то в delete запрос передать массив как параметр в url до эндпоинта сложнее,поэтому в данном случае уже сделали post запрос
 
+router.get('/getAdminFields',userController.getAdminFields); // создаем get запрос для получения объекта админ полей(текста и тд на сайте),которые потом админ сможет изменять на сайте
+
+router.put('/changePhoneNumber',authMiddleware ,userController.changePhoneNumber); // создаем put запрос для изменения номера телефона на сайте
+
 
 router.post('/registration',
     body('email').isEmail(),

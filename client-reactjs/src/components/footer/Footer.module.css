@@ -9,14 +9,14 @@
     margin: 0 auto;
 }
 
-.footer__topBlock{
+.footer__topBlock {
     display: flex;
-    gap:100px;
+    gap: 100px;
     padding-bottom: 10px;
     border-bottom: 1px solid #D1D5DB;
 }
 
-.leftBlock__title{
+.leftBlock__title {
     font-size: 14px;
     font-weight: 600;
     color: #111827;
@@ -24,7 +24,7 @@
     letter-spacing: -0.28px;
 }
 
-.leftBlock__text{
+.leftBlock__text {
     font-size: 14px;
     font-weight: 400;
     line-height: 19.5px;
@@ -34,14 +34,14 @@
     max-width: 254px;
 }
 
-.leftBlock__infoItem{
+.leftBlock__infoItem {
     display: flex;
     align-items: center;
-    gap:22px;
+    gap: 22px;
     margin-bottom: 30px;
 }
 
-.infoItem__text{
+.infoItem__text {
     font-size: 13px;
     font-weight: 400;
     line-height: 18px;
@@ -49,28 +49,28 @@
     color: #111827;
 }
 
-.infoItem__link{
+.infoItem__link {
     font-size: 20px;
     font-weight: 700;
     line-height: 30px;
     color: #111827;
     letter-spacing: -1px;
-    transition:all .5s ease;
+    transition: all .5s ease;
     opacity: 1;
 }
 
-.infoItem__link:hover{
+.infoItem__link:hover {
     cursor: pointer;
     color: #EA580C;
 }
 
-.topBlock__mainBlock{
+.topBlock__mainBlock {
     display: flex;
     justify-content: space-between;
-    gap:200px;
+    gap: 200px;
 }
 
-.list__title{
+.list__title {
     font-size: 14px;
     font-weight: 600;
     line-height: 17px;
@@ -79,7 +79,7 @@
     margin-bottom: 20px;
 }
 
-.list__link{
+.list__link {
     display: inline-block;
     font-size: 13px;
     font-weight: 400;
@@ -87,22 +87,124 @@
     letter-spacing: -0.32px;
     color: #4B5563;
     margin-bottom: 15px;
-    transition:all .5s ease;
+    transition: all .5s ease;
 }
 
-.list__link:hover{
+.list__link:hover {
     color: #EA580C;
 }
 
-.footer__bottomBlock{
+.footer__bottomBlock {
     margin-top: 30px;
 }
 
-.bottomBlock__text{
+.bottomBlock__text {
     font-size: 12px;
     font-weight: 400;
     line-height: 18px;
     letter-spacing: -0.32px;
     text-align: center;
     color: #6B7280;
+}
+
+.infoBlock__telBlock {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.sectionProductItemPage__changePriceBtn {
+    background-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    transition: all .5s ease;
+}
+
+.sectionProductItemPage__changePriceBtn:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.sectionUserPage__formInfoItem {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.28px;
+    margin-bottom: 10px;
+}
+
+.sectionUserPage__formInfoItemText {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.28px;
+    margin-bottom: 6px;
+}
+
+.sectionUserPage__formInfoItemInput {
+    padding: 14px 16px;
+    border: 1px solid #E5E7EB;
+    outline: none;
+    max-width: 150px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.sectionUserPage__formInfoItemInput::placeholder {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.28px;
+}
+
+.sectionUserPage__formInfoItemInputNumber {
+    padding: 14px 16px;
+    border: 1px solid #E5E7EB;
+    outline: none;
+    max-width: 150px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* убираем стрелки вверх и вниз для инпута с типом number по умолчанию */
+.sectionUserPage__formInfoItemInputNumber::-webkit-inner-spin-button,
+.sectionUserPage__formInfoItemInputNumber::-webkit-outer-spin-button{
+    appearance: none;
+}
+
+.sectionUserPage__formInfoItemInputNumber::placeholder {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.28px;
+}
+
+.sectionUserPage__formInfoBtn {
+    padding: 12px 18px;
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.28px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #16a34a;
+    border-radius: 6px;
+    transition: all .5s ease;
+    margin-top: 5px;
+}
+
+.sectionUserPage__formInfoBtn:hover {
+    cursor: pointer;
+    background-color: #0bca51;
+}
+
+.formErrorText {
+    margin-bottom: 10px;
+    color: #EE5858;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.32px;
+    max-width: 440px;
+    margin-top: 5px;
 }
