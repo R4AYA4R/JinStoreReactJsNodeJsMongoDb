@@ -141,6 +141,9 @@ const ProductItemPage = () => {
 
         // при успешной мутации переобновляем массив комментариев
         onSuccess() {
+            
+            setPage(1); // изменяем состояние страницы пагинации комментариев на первую,чтобы после добавления нового комментария текущая страница пагинации комментариев становилась на первую
+
             refetchComments();
         }
 
@@ -213,7 +216,11 @@ const ProductItemPage = () => {
         // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10,то будем изменять состояние errorForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
         if (textAreaValue.trim().length <= 10) {
 
-            setErrorForm('Review must be more than 10 characters');
+            setErrorForm('Review must be 10 - 150 characters');
+
+        }else if (textAreaValue.trim().length > 300) {
+
+            setErrorForm('Review must be 10 - 300 characters');
 
         } else if (activeStarsForm === 0) {
 
@@ -256,7 +263,6 @@ const ProductItemPage = () => {
 
 
             mutate({ name: user.userName, text: textAreaValue, rating: activeStarsForm, productNameFor: data?.data.name, createdTime: showTime } as IComment); // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productNameFor со значением как у name товара на этой странице,чтобы в базе данных связать этот товар с комментарием
-
 
             setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
 
@@ -422,7 +428,7 @@ const ProductItemPage = () => {
                                                     <div className="reviews__leftBlock-comments">
                                                         {dataComments.comments.map(comment =>
 
-                                                            <ProductItemPageReviewItem key={comment._id} user={user} comment={comment} />
+                                                            <ProductItemPageReviewItem key={comment._id} user={user} comment={comment} refetchComments={refetchComments}/>
 
                                                         )}
                                                     </div>

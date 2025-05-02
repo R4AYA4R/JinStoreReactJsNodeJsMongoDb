@@ -71,7 +71,12 @@ export interface IComment {
     text:string,
     rating:number,
     createdTime:string,
-    productNameFor:string
+    productNameFor:string,
+    // указываем поле для объекта для ответа от админа на этот комментарий,указываем знак вопроса после названия этого поля,чтобы указать,что это поле необязательное,то есть оно может быть не указано,то есть может быть с типом undefined
+    adminReply?:{
+        text:string,
+        createdTime:string
+    }
 }
 
 // создаем и экспортируем наш интерфейс для ответа от сервера для получения комментариев для товара

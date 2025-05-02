@@ -7,6 +7,7 @@ import * as path from 'path'; // импортируем все из модуля
 import fs from 'fs'; // импортируем fs для работы с файлами
 import productModel from "../models/productModel.js";
 import adminFieldsModel from "../models/adminFieldsModel.js";
+import commentModel from "../models/commentModel.js";
 
 // создаем класс для UserController,где будем описывать функции для эндпоинтов
 class UserController {
@@ -311,6 +312,30 @@ class UserController {
             await foundedAdminFields.save(); // сохраняем обновленный объект полей для админа в базе данных
 
             return res.json(foundedAdminFields); // возвращаем на клиент  измененный объект админ полей
+
+
+        } catch (e) {
+
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+
+        }
+
+    }
+
+    async addReplyForComment(req, res, next) {
+
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try {
+
+            const comment = req.body; // достаем(деструктуризируем) из тела запроса весь объект запроса со всеми полями,которые мы передали с фронтенда(не используем здесь деструктуризацию типа деструктурировать из req.body {comment} в квадратных скобках,так как просто берем все тело запроса,то есть весь объект тела запроса,а не отдельные поля)
+
+            const foundedComment = await commentModel.findById(comment._id); // находим объект комментария в базе данных по id,который равен _id у comment(объект тела запроса)
+
+            foundedComment.adminReply = comment.adminReply; // изменяем поле adminReply у найденного объекта комментария на поле adminReply у comment(объект тела запроса,который передали с фронтенда)
+
+            await foundedComment.save(); // сохраняем этот обновленный объект комментария в базе данных
+
+            return res.json(foundedComment);  // возвращаем на клиент  измененный объект комментария
 
 
         } catch (e) {

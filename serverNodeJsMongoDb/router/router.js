@@ -54,6 +54,8 @@ router.get('/getAdminFields',userController.getAdminFields); // создаем g
 
 router.put('/changePhoneNumber',authMiddleware ,userController.changePhoneNumber); // создаем put запрос для изменения номера телефона на сайте
 
+router.put('/addReplyForComment',authMiddleware, userController.addReplyForComment); // создаем put запрос для изменения объекта комментария,чтобы добавить ему поле с объектом ответа от админа на этот комментарий
+
 
 router.post('/registration',
     body('email').isEmail(),

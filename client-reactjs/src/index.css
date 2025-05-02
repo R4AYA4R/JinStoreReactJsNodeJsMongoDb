@@ -1753,6 +1753,7 @@ a {
 
 .reviews__leftBlock-comments{
   min-height: 272px;
+  max-width: 645px;
 }
 
 
@@ -1789,15 +1790,18 @@ a {
   transition: all 1s ease;
 }
 
-.reviews__formAnswer{
-  opacity: 0;
-  transform: translateX(-100%);
-  transition: all 1s ease;
-}
-
-.reviews__form--active {
+.reviews__form--active{
   opacity: 1;
   transform: translateX(0);
+}
+
+.reviews__formAnswer{
+  display: none; /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
+}
+
+.reviews__formAnswer--active{
+  display: block;
+  animation: appear 1s ease forwards;
 }
 
 .form__mainBlock-bottomBlock{
@@ -1902,6 +1906,7 @@ a {
   font-size: 16px;
   font-weight: 400;
   color: #4B5563;
+  word-wrap: break-word; /* обязательно указываем это свойство для текста,который должен быть из textarea(в данном случае для текста у комментария и ответа от админа),чтобы текст не выходил за рамки родительского div елемента и переносились строки,даже если не указывали пробелы и переносы строк в textarea */
 }
 
 .reviews__item-starsBlock {
