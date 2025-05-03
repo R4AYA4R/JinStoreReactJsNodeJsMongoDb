@@ -111,6 +111,25 @@ const ProductItemPageReviewItem = ({ user, comment, refetchComments }: IProductI
 
     }
 
+    // фукнция для удаления ответа от админа на сервере для удаления по кнопке
+    const deleteReplyFromAdminByBtn = async () => {
+
+        try {
+
+            const response = await $api.delete(`${API_URL}/deleteReplyFromAdmin/${comment._id}`);  // делаем запрос на сервер для удаления ответа от админа, указываем в ссылке на эндпоинт параметр comment._id(id у объекта комментария),чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            refetchComments(); // переобновляем массив комментариев
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     return (
         <div className="reviews__leftBlock-item">
             <div className="reviews__item-topBlock">
@@ -132,7 +151,7 @@ const ProductItemPageReviewItem = ({ user, comment, refetchComments }: IProductI
             </div>
             <p className="reviews__item-text">{comment.text}</p>
 
-            
+
             {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор) и если comment.adminReply false(или null,или undefined),то есть поле adminReply у comment(объект комментария) не указано,или в нем нету значения(то есть у этого комментария нету еще ответа от админа),то показываем блок и кнопку для добавления ответа от админа,в другом случае этот блок(div элемент со всей формой и тд) и кнопка показана не будет*/}
             {user.role === 'ADMIN' && !comment.adminReply &&
                 <div className="reviews__item-blockAnswer">
@@ -170,6 +189,15 @@ const ProductItemPageReviewItem = ({ user, comment, refetchComments }: IProductI
             {/* если comment.adminReply true,то есть поле adminReply у объекта comment(объект комментария) есть и в нем есть какое-то значение,то показываем блок с ответом от админа для этого комментария*/}
             {comment.adminReply &&
                 <div className="reviews__item-blockAdminComment">
+
+                    {/* если role у user равно ADMIN,то есть пользователь зарегестрировался как админ,то показываем кнопку удаления ответа от админа */}
+                    {user.role === 'ADMIN' &&
+                        // в onClick этой button указываем нашу функцию deleteReplyFromAdminByBtn для удаления ответа от админа
+                        <button className="sectionProductItemPage__changePriceBtn reviews__blockAdminComment-deleteBtn" onClick={deleteReplyFromAdminByBtn}>
+                            <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                        </button>
+                    }
+
                     <p className="reviews__item-topBlockReply">Reply for {comment.name}</p>
                     <div className="reviews__item-topBlock">
                         <div className="reviews__item-topBlockLeftInfo">

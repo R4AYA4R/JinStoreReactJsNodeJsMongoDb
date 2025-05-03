@@ -1916,6 +1916,7 @@ a {
 .reviews__item-blockAdminComment{
   margin-left: 30px;
   margin-top: 15px;
+  position: relative;
 }
 
 .reviews__item-topBlockReply{
@@ -2664,4 +2665,10 @@ a {
 
 .sectionUserPage__saveChangesBtn{
   padding: 15px 10px;
+}
+
+.reviews__blockAdminComment-deleteBtn{
+  position: absolute;
+  top: 0;
+  right: 0;
 }
