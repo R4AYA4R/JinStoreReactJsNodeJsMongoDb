@@ -1,9 +1,10 @@
+import SectionTopAboutUs from "../components/SectionTopAboutUs";
 
 const AboutUs = () => {
 
     return (
         <main className="main">
-            AboutUs
+            <SectionTopAboutUs/>
         </main>
     )
 

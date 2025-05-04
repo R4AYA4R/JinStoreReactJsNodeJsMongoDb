@@ -130,6 +130,25 @@ const ProductItemPageReviewItem = ({ user, comment, refetchComments }: IProductI
 
     }
 
+    // фукнция для удаления комментария для админа на сервере для удаления по кнопке
+    const deleteCommentForAdminByBtn = async () => {
+
+        try {
+
+            const response = await $api.delete(`${API_URL}/deleteComment/${comment._id}`);  // делаем запрос на сервер для удаления ответа от админа, указываем в ссылке на эндпоинт параметр comment._id(id у объекта комментария),чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            refetchComments(); // переобновляем массив комментариев
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     return (
         <div className="reviews__leftBlock-item">
             <div className="reviews__item-topBlock">
@@ -148,6 +167,15 @@ const ProductItemPageReviewItem = ({ user, comment, refetchComments }: IProductI
                     </div>
                 </div>
                 <p className="reviews__item-topBlockTime">{comment.createdTime}</p>
+
+                {/* если role у user равно ADMIN,то есть пользователь зарегестрировался как админ,то показываем кнопку удаления ответа от админа */}
+                {user.role === 'ADMIN' &&
+                    // в onClick этой button указываем нашу функцию deleteCommentForAdminByBtn для удаления комментария у товара для админа
+                    <button className="sectionProductItemPage__changePriceBtn reviews__deleteCommentBtn" onClick={deleteCommentForAdminByBtn}>
+                        <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__deleteBtn-img" />
+                    </button>
+                }
+
             </div>
             <p className="reviews__item-text">{comment.text}</p>
 

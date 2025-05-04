@@ -58,6 +58,8 @@ router.put('/addReplyForComment',authMiddleware, userController.addReplyForComme
 
 router.delete('/deleteReplyFromAdmin/:commentId',authMiddleware,userController.deleteReplyFromAdmin); // делаем delete запрос на удаление ответа от админа(в данном случае будем изменять поле adminReply у объекта комментария),указываем как динамический параметр commentId
 
+router.delete('/deleteComment/:commentId',authMiddleware,userController.deleteComment); // делаем delete запрос на удаление комментария у товара для админа,указываем как динамический параметр commentId
+
 
 router.post('/registration',
     body('email').isEmail(),
