@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { IComment, IProduct, IProductsCartResponse } from "../types/types";
+import { IComment, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import $api, { API_URL } from "../http/http";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -27,6 +27,24 @@ const ProductItemCatalog = ({ product, comments, setPage }: IProductItemCatalog)
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
+
+        }
+
+    })
+
+    const { mutate: mutateAddProductCart } = useMutation({
+        mutationKey: ['add productCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип
+            await axios.post<IProductCart>(`${API_URL}/createProductCart`, productCart);
+
+        },
+
+        // при успешной мутации,то есть в данном случае при успешном добавлении товара в корзину обновляем dataProductsCart(массив объектов товаров корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
+        onSuccess() {
+
+            refetchProductsCart();
 
         }
 
@@ -99,6 +117,43 @@ const ProductItemCatalog = ({ product, comments, setPage }: IProductItemCatalog)
 
     }
 
+    const isExistsCart = dataProductsCart?.allProductsCart.some(p => p.name === product?.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart(в массиве объектов товаровкорзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
+
+    const addProductToCart = () => {
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
+        if (user.userName) {
+
+            // если product true,то есть product есть(делаем эту проверку,так как выдает ошибку,что product может быть undefined)
+            if (product) {
+
+                let totalPriceProduct; // создаем переменную для общей суммы товара,указываем ей let,чтобы изменять значение,считаем эту общую цену,чтобы потом в корзине сразу можно было нормально отобразить общую сумму чека корзины
+
+                // если product.priceDiscount true,то есть у товара есть цена со скидкой
+                if (product.priceDiscount) {
+
+                    totalPriceProduct = product.amount * product.priceDiscount; // изменяем значение totalPriceProduct на product.amount(по дефолту оно 1), умноженное на product.priceDiscount(цену товара со скидкой)
+
+                } else {
+                    // в другом случае,если у товара нет скидки,то изменяем значение totalPriceProduct на product.amount(по дефолту оно 1), умноженное на product.price(обычную цену товара)
+                    totalPriceProduct = product.amount * product.price;
+
+                }
+
+                mutateAddProductCart({ name: product?.name, category: product?.category, amount: product.amount, mainImage: product?.mainImage, descImages: product?.descImages, price: product?.price, priceDiscount: product?.priceDiscount, priceFilter: product?.priceFilter, rating: product?.rating, totalPrice: totalPriceProduct, totalPriceDiscount: product?.totalPriceDiscount, usualProductId: product?._id, forUser: user.id } as IProductCart); // передаем в mutateAddProductCart объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product(объект блюда в данном случае),в котором полe name,делаем поле name со значением,как и у этого товара name(product.name) и остальные поля также,указываем только полю amount значение как 1,так как сделали так,что можно в этом компоненте добавлять только одно количество этого товара в корзину,указываем 
+
+            }
+
+
+        } else {
+
+            router('/userPage');  // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
+
+        }
+
+    }
+
+
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionCatalog__productsItems-item">
             <div className="sectionBestSellers__item-imgBlock">
@@ -163,10 +218,20 @@ const ProductItemCatalog = ({ product, comments, setPage }: IProductItemCatalog)
                 }
 
                 <div className="sectionNewArrivals__item-cartBlock">
-                    <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
-                        <p className="cartBlock__btn-text">Add to cart</p>
-                        <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
-                    </button>
+
+                    {/* если isExistsCart true(то есть этот товарна этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае если tabChangePrice false(то есть таб с инпутом для изменения цены товара для админа равен false,то есть не показан),то показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                    {user.userName && isExistsCart ?
+
+                        <h3 className="textAlreadyInCart sectionArrivals__item-textAlreadyInCart">Already in Cart</h3>
+                        :
+                        // в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный, этот функционал теперь не используем,так как теперь не меняем задний фон карточки товара,а только картинки и текста,в данном случае не делаем эти стили,описанные выше,и просто в onClick этой кнопке указываем нашу функцию addProductToCart
+                        <button onClick={addProductToCart} className="sectionNewArrivals__cartBlock-btn">
+                            <p className="cartBlock__btn-text">Add to cart</p>
+                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                        </button>
+
+                    }
+
                 </div>
             </div>
         </div>

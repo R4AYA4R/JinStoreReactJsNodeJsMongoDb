@@ -1,23 +1,46 @@
 import { useEffect, useState } from "react";
-import { IComment, IProduct } from "../types/types";
+import { IComment, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { QueryObserverResult, useMutation, useQuery } from "@tanstack/react-query";
 import { API_URL } from "../http/http";
 import axios from "axios";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 interface IProductItemSideBestSellers {
     product: IProduct,
-    comments: IComment[] | undefined
+    comments: IComment[] | undefined,
+    refetchProductsCart: () => Promise<QueryObserverResult<IProductsCartResponse, Error>>, // указываем поле для функции переобновления данных товаров корзины,указываем,что это стрелочная функция и она возвращает тип Promise,в котором QueryObserverResult,в котором IProductsCartResponse и тип Error(что может прийти еще и ошибка),скопировали этот весь тип в файле sectionNewArrivals у этой функции refetchProductsCart у react query(tanstack query),этот полный тип подсветил vs code
+    dataProductsCart: IProductsCartResponse | undefined // указываем это поле для ответа от сервера на получение товаров корзины,указываем ему тип как наш IProductsCartResponse или undefined(указываем или undefined,иначе выдает ошибку,что нельзя назначить тип просто IProductsCartResponse,так как это поле может быть еще undefined)
 }
 
 
-const ProductItemSideBestSellers = ({ product,comments }: IProductItemSideBestSellers) => {
+const ProductItemSideBestSellers = ({ product, comments,refetchProductsCart, dataProductsCart}: IProductItemSideBestSellers) => {
 
     const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]); // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
     const [valueDiscount, setValueDiscount] = useState<number>(0); // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const { mutate: mutateAddProductCart } = useMutation({
+        mutationKey: ['add productCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип
+            await axios.post<IProductCart>(`${API_URL}/createProductCart`, productCart);
+
+        },
+
+        // при успешной мутации,то есть в данном случае при успешном добавлении товара в корзину обновляем dataProductsCart(массив объектов товаров корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
 
     // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
     useEffect(() => {
@@ -32,6 +55,42 @@ const ProductItemSideBestSellers = ({ product,comments }: IProductItemSideBestSe
         setCommentsForProduct(comments?.filter(c => c.productNameFor === product.name)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по имени товара(product.name),то есть оставляем в массиве все объекты комментариев,у которых поле productNameFor равно product.name(объект товара,который передали пропсом(параметром) в этот компонент)
 
     }, [comments])
+
+    const isExistsCart = dataProductsCart?.allProductsCart.some(p => p.name === product?.name); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart(в массиве объектов товаровкорзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
+
+    const addProductToCart = () => {
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
+        if (user.userName) {
+
+            // если product true,то есть product есть(делаем эту проверку,так как выдает ошибку,что product может быть undefined)
+            if (product) {
+
+                let totalPriceProduct; // создаем переменную для общей суммы товара,указываем ей let,чтобы изменять значение,считаем эту общую цену,чтобы потом в корзине сразу можно было нормально отобразить общую сумму чека корзины
+
+                // если product.priceDiscount true,то есть у товара есть цена со скидкой
+                if (product.priceDiscount) {
+
+                    totalPriceProduct = product.amount * product.priceDiscount; // изменяем значение totalPriceProduct на product.amount(по дефолту оно 1), умноженное на product.priceDiscount(цену товара со скидкой)
+
+                } else {
+                    // в другом случае,если у товара нет скидки,то изменяем значение totalPriceProduct на product.amount(по дефолту оно 1), умноженное на product.price(обычную цену товара)
+                    totalPriceProduct = product.amount * product.price;
+
+                }
+
+                mutateAddProductCart({ name: product?.name, category: product?.category, amount: product.amount, mainImage: product?.mainImage, descImages: product?.descImages, price: product?.price, priceDiscount: product?.priceDiscount, priceFilter: product?.priceFilter, rating: product?.rating, totalPrice: totalPriceProduct, totalPriceDiscount: product?.totalPriceDiscount, usualProductId: product?._id, forUser: user.id } as IProductCart); // передаем в mutateAddProductCart объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product(объект блюда в данном случае),в котором полe name,делаем поле name со значением,как и у этого товара name(product.name) и остальные поля также,указываем только полю amount значение как 1,так как сделали так,что можно в этом компоненте добавлять только одно количество этого товара в корзину
+
+            }
+
+
+        } else {
+
+            router('/userPage');  // перекидываем пользователя на страницу авторизации (/userPage в данном случае)
+
+        }
+
+    }
 
     return (
         <div className="sectionNewArrivals__items-item sectionBestSellers__itemsBlockSide-item sectionBestSellers__itemsBlockSide-itemTop">
@@ -90,11 +149,20 @@ const ProductItemSideBestSellers = ({ product,comments }: IProductItemSideBestSe
                 }
 
                 <div className="sectionNewArrivals__item-cartBlock">
-                    {/* в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный  */}
-                    <button className="sectionNewArrivals__cartBlock-btn sectionBestSellers__cartBlock-btn">
-                        <p className="cartBlock__btn-text">Add to cart</p>
-                        <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
-                    </button>
+
+                    {/* если isExistsCart true(то есть этот товарна этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае если tabChangePrice false(то есть таб с инпутом для изменения цены товара для админа равен false,то есть не показан),то показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                    {user.userName && isExistsCart ?
+
+                        <h3 className="textAlreadyInCart sectionArrivals__item-textAlreadyInCart">Already in Cart</h3>
+                        :
+                        // в onMouseEnter(то есть когда наводим курсор мыши на эту кнопку) указываем нашу функцию addNoHoverClass, а в onMouseLeave(то есть когда убираем курсор мыши с этой кнопки) указываем нашу функцию removeNoHoverClass,это чтобы когда наводим мышкой на кнопку добавления товара в корзину,задний фон карточки товара стал белый,а при убирании курсора мыши с кнопки добавления товара в корзину стал обычный, этот функционал теперь не используем,так как теперь не меняем задний фон карточки товара,а только картинки и текста,в данном случае не делаем эти стили,описанные выше,и просто в onClick этой кнопке указываем нашу функцию addProductToCart
+                        <button onClick={addProductToCart} className="sectionNewArrivals__cartBlock-btn">
+                            <p className="cartBlock__btn-text">Add to cart</p>
+                            <img src="/images/sectionNewArrivals/PlusImg.png" alt="" className="cartBlock__btn-img" />
+                        </button>
+
+                    }
+
                 </div>
             </div>
         </div>

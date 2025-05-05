@@ -3,9 +3,10 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ICommentResponse, IProduct } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCartResponse } from "../types/types";
 import ProductItemArrivals from "./ProductItemArrivals";
 import { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 interface ISectionNewArrivals{
     className:string
@@ -14,6 +15,8 @@ interface ISectionNewArrivals{
 const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
 
     const [sectionNewArrivalsClass,setSectionNewArrivalsClass] = useState(className); // состояние для класса этой секции sectionNewArrivals,по дефолту делаем ей значение как пропс(параметр) className
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
     // при запуске(рендеринге) этого компонента будет отработан код в этом useEffect,так как он с пустым массивом зависимостей
     useEffect(()=>{
@@ -38,6 +41,19 @@ const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
             console.log(response.data);
 
             return response; // возвращаем этот массив объектов товаров(он будет помещен в поле data у data,которую мы берем из этого useQuery)
+
+        }
+
+    })
+
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx
+    const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
+        queryKey: ['getAllProductsCart'],
+        queryFn: async () => {
+
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
 
         }
 
@@ -71,9 +87,9 @@ const SectionNewArrivals = ({className}:ISectionNewArrivals) => {
                     <div className="sectionNewArrivals__items">
                         {/* указываем класс этому элементу для карточки товара со значением нашего состояния classesForItem,чтобы когда наводим мышкой на кнопку добавления товара в корзину,изменять задний фон карточки товара на белый,а в данном случае еще и добавляем другой класс,чтобы сделать border-radius(радиус границы) правильным только для первой карточки товара */}
                         
-                        {/* указываем в key у product поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием  */}
+                        {/* указываем в key у product поле id с нижним подчеркиванием(_id),чтобы брать id у объекта из базы данных mongodb,так как там id указывается с нижним подчеркиванием,передаем еще refetchProductsCart и dataProductsCart,чтобы получить данные товаров корзины и переобновлять их  */}
                         {data?.data.map(product => 
-                            <ProductItemArrivals key={product._id} product={product} comments={dataComments?.allComments}/>
+                            <ProductItemArrivals key={product._id} product={product} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart} dataProductsCart={dataProductsCart}/>
                         )}
 
                     </div>

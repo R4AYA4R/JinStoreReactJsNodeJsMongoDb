@@ -154,7 +154,7 @@ const Footer = () => {
                                 <div className={cl.infoItem__infoBlock}>
                                     <p className={cl.infoItem__text}>Need help with your order?</p>
                                     {/* для ссылки на почту,в href нужно указывать mailto: и без пробела почту,чтобы сразу типа писать туда,но в данном случае указываем пока так */}
-                                    <a href="#" className={cl.infoItem__link}>jinstore@gmail.com</a>
+                                    <a href="/aboutUs" className={cl.infoItem__link}>jinstore@gmail.com</a>
                                 </div>
                             </div>
                         </div>

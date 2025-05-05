@@ -2,17 +2,20 @@ import { RefObject, useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ICommentResponse, IProduct } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCartResponse } from "../types/types";
 import axios from "axios";
 import ProductItemSideBestSellers from "./ProductItemSideBestSellers";
 import ProductItemMidBlockBestSellers from "./ProductItemMidBlockBestSellers";
 import { API_URL } from "../http/http";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const SectionBestSellers = () => {
 
     const sectionBestSellers = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnScreen(sectionBestSellers as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,в данном случае делаем этот запрос для левой колонки карточек товаров
     const { data: dataLeftSideBlock } = useQuery({
@@ -68,6 +71,20 @@ const SectionBestSellers = () => {
 
     })
 
+    
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx
+    const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
+        queryKey: ['getAllProductsCart'],
+        queryFn: async () => {
+
+            const response = await axios.get<IProductsCartResponse>(`http://localhost:5000/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары(блюда) корзины для конкретного авторизованного пользователя
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля allProductsCart и productsCart
+
+        }
+
+    })
+
 
     const leftBlockItemsRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную leftBlockItemsRef,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
 
@@ -98,16 +115,18 @@ const SectionBestSellers = () => {
                     <div className="sectionBestSellers__itemsBlock">
                         <div className={onScreenLeftBlock.sectionLeftBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft sectionBestSellers__itemsBlockSideLeft-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideLeft"} ref={leftBlockItemsRef} id="leftBlockItems">
 
+                            {/* передаем еще в ProductItemSideBestSellers пропсы(параметры) refetchProductsCart и dataProductsCart,чтобы получить данные товаров корзины и переобновлять их,указываем именно в этом компоненте саму функцию запроса на сервер на получения товаров корзины,чтобы не указывать ее в компоненте для каждой карточки товара,чтобы не шло много запросов на сервер(хотя и так можно было,так как queryKey у них были бы одинаковые на получения всего массива объектов товаров,и эти данные уже брались бы из кеша,но уже сделали так) */}
                             {dataLeftSideBlock?.data.map(product =>
-                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
+                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart} dataProductsCart={dataProductsCart}/>
                             )}
 
                         </div>
 
                         <div className={onScreenMidBlock.sectionMidBlockItemsIntersecting ? "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive sectionBestSellers__itemsBlock-midBlock--active" : "sectionBestSellers__itemsBlock-midBlock sectionBestSellers__itemsBlock-midBlockPassive"} ref={midBlockItemRef} id="midBlockItems">
 
+                            {/* передаем еще в ProductItemMidBlockBestSellers пропсы(параметры) refetchProductsCart и dataProductsCart,чтобы получить данные товаров корзины и переобновлять их,указываем именно в этом компоненте саму функцию запроса на сервер на получения товаров корзины,чтобы не указывать ее в компоненте для каждой карточки товара,чтобы не шло много запросов на сервер(хотя и так можно было,так как queryKey у них были бы одинаковые на получения всего массива объектов товаров,и эти данные уже брались бы из кеша,но уже сделали так) */}
                             {dataMidBlock?.data.map(product =>
-                                <ProductItemMidBlockBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
+                                <ProductItemMidBlockBestSellers key={product._id} product={product} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart} dataProductsCart={dataProductsCart}/>
                             )}
 
                         </div>
@@ -115,7 +134,7 @@ const SectionBestSellers = () => {
                         <div className={onScreenRightBlock.sectionRightBlockItemsIntersecting ? "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight sectionBestSellers__itemsBlockSideRight-active" : "sectionBestSellers__itemsBlockSide sectionBestSellers__itemsBlockSideRight"} ref={rightBlockItemsRef} id="rightBlockItems">
 
                             {dataRightSideBlock?.data.map(product =>
-                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments}/>
+                                <ProductItemSideBestSellers key={product._id} product={product} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart} dataProductsCart={dataProductsCart}/>
                             )}
 
                         </div>
