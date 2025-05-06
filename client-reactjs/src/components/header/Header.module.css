@@ -30,6 +30,10 @@
     opacity: 1;
 }
 
+.header__menuLinkActive{
+    color: #634c9f;
+}
+
 .header__menuLink:hover{
     color: #39245F;
     opacity: 0.5;
@@ -53,4 +57,124 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    line-height: 17px; /* указываем line-height с таким же значением как и height этого спана,чтобы текст внутри него стал ровно по центру */ 
+}
+
+.header__menuBtn{
+    display: none;
+}
+
+.header__menuItemUser{
+    position: absolute;
+    top: 30px;
+    left: 15px;
+}
+
+.header__menuItemCart{
+    position: absolute;
+    top: 30px;
+    left: 50px;
+}
+
+.header__menuMobile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(99, 76, 159,0.8);
+    transform:translateX(100%);
+    transition:all 1s ease;
+    gap:35px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: 50vh;
+    opacity: 0;
+    z-index: 5;
+    border-bottom-left-radius: 8px;
+}
+
+.header__menuMobileCloseDiv{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: transparent;
+    z-index: 2;
+}
+
+/* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
+@media (max-width:620px) {
+    
+    .header__menu{
+        display: none;
+    }
+
+    
+    .header__menuMobileActive{
+        transform: translateX(0);
+        opacity: 1;   
+    }
+
+    .header__menuBtn{
+        display: block;
+        width: 35px;
+        height: 40px;
+        background-color: transparent;
+        border:none;
+        position: relative;
+        z-index: 5;
+    }
+
+    .header__menuBtn:hover{
+        cursor: pointer;
+    }
+
+    .menuBtn__span{
+        width: 100%;
+        height: 1px;
+        background-color: #030712;
+        border-radius: 20%;
+        position: absolute;
+        right: 0;
+        transition:all .5s ease-in-out;
+    }
+
+    /* указываем стили для первого найденного элемента с классом menuBtn__span */
+    .menuBtn__span:nth-child(1){
+        top: 11px;
+    }
+    .menuBtn__span:nth-child(2){
+        top: 21px;
+    }
+    .menuBtn__span:nth-child(3){
+        top: 21px;
+    }
+    .menuBtn__span:nth-child(4){
+        top: 31px;
+    }
+
+    .menuBtn__spanActive1{
+        transform: scaleX(0);
+    }
+    .menuBtn__spanActive2{
+        transform: rotate(45deg);
+    }
+    .menuBtn__spanActive3{
+        transform: rotate(-45deg);
+    }
+
+    .header__menuLink{
+        font-size: 18px;
+        color: #fff;
+    }
+
+    .header__menuLinkActive{
+        padding: 8px 12px;
+        background-color: rgba(99, 76, 159,0.8);
+        border-radius: 12px;
+    }
 }
