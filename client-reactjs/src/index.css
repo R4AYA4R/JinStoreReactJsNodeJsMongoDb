@@ -65,6 +65,7 @@ a {
   /* указываем путь до картинки таким образом,сначала указываем папку /public,а потом папку с картинками и тд,иначе не находит картинки */
   background-position: right;
   background-repeat: no-repeat;
+  background-size: cover;
   transform: translateX(-50%);
   opacity: 0;
   transition: all 1s ease;
@@ -270,7 +271,7 @@ a {
 
 .sectionOuterGradient {
   background-image: linear-gradient(rgba(236, 235, 238, 1), rgba(255, 255, 255, 0) 100%);
-  width: 100vw;
+  width: 100%; /* указываем ему ширину 100%,а не 100vw(100 viewport width),так как если указывать 100vw,то это т блок для заднего градиента будет выходить за рамки скролла и наш контейнер(div с классом container) не будет работать(не будут работать padding(внутренние отступы)) */
 }
 
 .sectionNewArrivals__top {
@@ -2845,4 +2846,149 @@ a {
 
 .sectionArrivals__item-textAlreadyInCart{
   margin-top: 17px;
+}
+
+@media (max-width:1225px) {
+    
+  .sectionNewArrivals__items-item{
+    padding: 10px;
+  }
+
+}
+
+@media (max-width:1075px) {
+    
+  .sectionNewArrivals__items{
+    grid-template-columns: repeat(4,1fr);
+  }
+
+  .sectionNewArrivals__items-item{
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  .sectionNewArrivals__items-itemFirst{
+    border-radius: 0;
+  }
+
+  .sectionNewArrivals__items-itemFirst:nth-child(5){
+    border-radius: 0;
+    border-bottom: none;
+  }
+
+  .sectionDontMiss__inner{
+    gap: 10px;
+  }
+
+}
+
+@media (max-width:920px) {
+    
+  .sectionTop{
+    padding: 100px 0;
+  }
+
+  .sectionCategoryItems__inner{
+    gap:20px;
+  }
+
+  .sectionNewArrivals__items{
+    grid-template-columns: repeat(3,1fr);
+  }
+
+  .sectionDontMiss{
+    padding: 20px 0;
+  }
+
+  .sectionDontMiss__inner{
+    grid-template-columns: repeat(2,1fr);
+  }
+
+}
+
+@media (max-width:850px) {
+    
+  .sectionCategoryItems__inner{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+  }
+
+}
+
+@media (max-width:760px) {
+    
+  .sectionTop{
+    padding: 80px 0;
+  }
+
+  .sectionTop__title{
+    font-size: 48px;
+  }
+
+  .sectionTop__desc{
+    margin-bottom: 30px;
+    color: #000;
+  }
+
+  .sectionNewArrivals{
+    padding: 30px 0 10px;
+  }
+
+}
+
+@media (max-width:620px) {
+    
+  .sectionTop{
+    padding: 50px 0;
+  }
+
+  .sectionTop__title{
+    font-size: 38px;
+    line-height: 44px;
+  }
+
+  .sectionTop__desc{
+    margin-bottom: 20px;
+  }
+
+  .sectionNewArrivals__items{
+    grid-template-columns: repeat(2,1fr);
+  }
+
+}
+
+@media (max-width:470px) {
+    
+  .sectionCategoryItems__inner{
+    grid-template-columns: 1fr;
+  }
+
+  .sectionNewArrivals__items{
+    grid-template-columns: 1fr;
+  }
+
+  .sectionNewArrivals__item-text{
+    max-width: none;
+  }
+
+  .sectionDontMiss__inner{
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width:420px) {
+    
+  .sectionTop{
+    padding: 40px 0;
+  }
+
+  .sectionTop__title{
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .sectionTop__desc{
+    margin-bottom: 20px;
+  }
+
 }
