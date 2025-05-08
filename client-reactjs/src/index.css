@@ -254,8 +254,8 @@ a {
   opacity: 0;
 }
 
-.sectionNewArrivalsProductPage{
-  padding:0;
+.sectionNewArrivalsProductPage {
+  padding: 0;
   margin: 60px 0 80px;
   transform: translateX(50%);
   transition: all 1s ease;
@@ -271,7 +271,8 @@ a {
 
 .sectionOuterGradient {
   background-image: linear-gradient(rgba(236, 235, 238, 1), rgba(255, 255, 255, 0) 100%);
-  width: 100%; /* указываем ему ширину 100%,а не 100vw(100 viewport width),так как если указывать 100vw,то это т блок для заднего градиента будет выходить за рамки скролла и наш контейнер(div с классом container) не будет работать(не будут работать padding(внутренние отступы)) */
+  width: 100%;
+  /* указываем ему ширину 100%,а не 100vw(100 viewport width),так как если указывать 100vw,то это т блок для заднего градиента будет выходить за рамки скролла и наш контейнер(div с классом container) не будет работать(не будут работать padding(внутренние отступы)) */
 }
 
 .sectionNewArrivals__top {
@@ -831,8 +832,8 @@ a {
   margin-bottom: 30px;
   border-radius: 6px;
   border: 1px solid #FFF7ED;
-  background-size: contain;
-  /* указываем это свойство,чтобы виднелась граница блока,у которого картинка на заднем фоне,иначе не видно границы(border),даже когда ее указываешь */
+  background-size: cover;
+  /* указываем этому свойство contain,чтобы виднелась граница блока,у которого картинка на заднем фоне,иначе не видно границы(border),даже когда ее указываешь,но в данном случае указали cover,чтобы при адаптиве нормально изменяло размер */
 }
 
 .sectionPromo__promoTop-title {
@@ -852,11 +853,13 @@ a {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
+  margin-top: 20px;
 }
 
 .sectionPromo__sales-item {
   border-radius: 6px;
-  padding: 33px 20px;
+  padding: 20px;
+  background-size: cover;
 }
 
 .sectionPromo__sales-itemFirst {
@@ -1676,8 +1679,9 @@ a {
   max-height: 75px;
 }
 
-.sectionProductItemPage__imgBlock-imgSlider{
-  max-width: 300px !important; /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
+.sectionProductItemPage__imgBlock-imgSlider {
+  max-width: 300px !important;
+  /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
 }
 
 .swiper-slide-thumb-active {
@@ -1752,7 +1756,7 @@ a {
   letter-spacing: -0.32px;
 }
 
-.reviews__leftBlock-comments{
+.reviews__leftBlock-comments {
   min-height: 272px;
   max-width: 645px;
 }
@@ -1791,21 +1795,22 @@ a {
   transition: all 1s ease;
 }
 
-.reviews__form--active{
+.reviews__form--active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.reviews__formAnswer{
-  display: none; /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
+.reviews__formAnswer {
+  display: none;
+  /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
 }
 
-.reviews__formAnswer--active{
+.reviews__formAnswer--active {
   display: block;
   animation: appear 1s ease forwards;
 }
 
-.form__mainBlock-bottomBlock{
+.form__mainBlock-bottomBlock {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1908,45 +1913,46 @@ a {
   font-size: 16px;
   font-weight: 400;
   color: #4B5563;
-  word-wrap: break-word; /* обязательно указываем это свойство для текста,который должен быть из textarea(в данном случае для текста у комментария и ответа от админа),чтобы текст не выходил за рамки родительского div елемента и переносились строки,даже если не указывали пробелы и переносы строк в textarea */
+  word-wrap: break-word;
+  /* обязательно указываем это свойство для текста,который должен быть из textarea(в данном случае для текста у комментария и ответа от админа),чтобы текст не выходил за рамки родительского div елемента и переносились строки,даже если не указывали пробелы и переносы строк в textarea */
 }
 
 .reviews__item-starsBlock {
   gap: 2px;
 }
 
-.reviews__item-blockAdminComment{
+.reviews__item-blockAdminComment {
   margin-left: 30px;
   margin-top: 15px;
   position: relative;
 }
 
-.reviews__item-topBlockReply{
+.reviews__item-topBlockReply {
   color: #828282;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 10px;
 }
 
-.reviews__item-btnAnswer{
+.reviews__item-btnAnswer {
   color: #828282;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 10px;
   background-color: #fff;
-  border:none;
-  font-family: 'Inter',sans-serif;
+  border: none;
+  font-family: 'Inter', sans-serif;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.reviews__item-blockAnswer{
+.reviews__item-blockAnswer {
   position: relative;
   margin-left: 15px;
   margin-top: 10px;
 }
 
-.reviews__item-btnAnswer:hover{
+.reviews__item-btnAnswer:hover {
   cursor: pointer;
   opacity: 0.5;
 }
@@ -2179,70 +2185,70 @@ a {
   font-weight: 500;
   margin-top: 5px;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.sectionUserPage__dashboard-btn:hover{
+.sectionUserPage__dashboard-btn:hover {
   cursor: pointer;
   opacity: 0.7;
 }
 
-.sectionCart__inner{
-  padding:40px 0 120px;
+.sectionCart__inner {
+  padding: 40px 0 120px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 30px;
 }
 
-.sectionCart__table{
-  border:1px solid #E5E7EB;
+.sectionCart__table {
+  border: 1px solid #E5E7EB;
   border-radius: 6px;
   padding: 20px 20px 0 20px;
 }
 
-.sectionCart__table-names{
+.sectionCart__table-names {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
   padding-bottom: 20px;
-  gap:20px;
+  gap: 20px;
 }
 
-.sectionCart__table-name{
+.sectionCart__table-name {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.28px;
 }
 
 
-.sectionCart__table-bottomBlock{
+.sectionCart__table-bottomBlock {
   padding: 20px 0;
-  border-top:1px solid #E5E7EB;
+  border-top: 1px solid #E5E7EB;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.sectionCart__table-bottomBlockClearBtn{
+.sectionCart__table-bottomBlockClearBtn {
   padding: 8px 16px;
   border-radius: 6px;
   color: #fff;
   background-color: #333333;
   border: none;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.28px;
   opacity: 1;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionCart__table-bottomBlockClearBtn:hover{
+.sectionCart__table-bottomBlockClearBtn:hover {
   cursor: pointer;
   background-color: #ebebeb;
   color: #333333;
 }
 
-.sectionCart__table-bottomBlockUpdateBtn{
+.sectionCart__table-bottomBlockUpdateBtn {
   background-color: #ebebeb;
   color: #4D4D4D;
   font-size: 14px;
@@ -2250,218 +2256,218 @@ a {
   padding: 8px 16px;
   border-radius: 6px;
   border: none;
-  font-family: 'Inter',sans-serif;
-  transition:all .5s ease;
+  font-family: 'Inter', sans-serif;
+  transition: all .5s ease;
 }
 
-.sectionCart__table-bottomBlockUpdateBtn:hover{
+.sectionCart__table-bottomBlockUpdateBtn:hover {
   cursor: pointer;
   background-color: #333333;
   color: #ebebeb;
 }
 
-.sectionCart__bill{
-  border:1px solid #E5E7EB;
+.sectionCart__bill {
+  border: 1px solid #E5E7EB;
   border-radius: 6px;
 }
 
-.bill__topBlock{
+.bill__topBlock {
   padding: 20px 20px 9px 20px;
 }
 
-.bill__topBlock-item{
+.bill__topBlock-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
 }
 
-.bill__topBlock-itemText{
+.bill__topBlock-itemText {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.28px;
 }
 
-.bill__topBlock-itemSubText{
+.bill__topBlock-itemSubText {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.28px;
 }
 
 .bill__topBlock-itemTextGrey,
-.bill__topBlock-itemSubTextGrey{
+.bill__topBlock-itemSubTextGrey {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.28px;
   color: #828282;
 }
 
-.bill__bottomBlock{
+.bill__bottomBlock {
   border-top: 1px solid #E5E7EB;
   padding: 16px 20px 20px 20px;
 }
 
-.bill__bottomBlock-item{
+.bill__bottomBlock-item {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
   justify-content: space-between;
 }
 
-.bill__bottomBlock-itemText{
+.bill__bottomBlock-itemText {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.28px;
 }
 
-.bill__bottomBlock-itemSubText{
+.bill__bottomBlock-itemSubText {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.28px;
 }
 
-.bill__bottomBlock-btn{
+.bill__bottomBlock-btn {
   padding: 15px 0;
   background-color: #634C9F;
-  border:none;
+  border: none;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:8px;
+  gap: 8px;
   font-size: 16px;
   font-weight: 400;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
   letter-spacing: -0.28px;
   width: 100%;
   border-radius: 8px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.bill__bottomBlock-btn:hover{
+.bill__bottomBlock-btn:hover {
   cursor: pointer;
   background-color: #7a5dc4;
 }
 
 
-.sectionCart__table-item{
+.sectionCart__table-item {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
   align-items: center;
-  gap:20px;
+  gap: 20px;
   border-top: 1px solid #E5E7EB;
   padding: 20px 0;
 }
 
-.sectionCart__item-leftBlock{
+.sectionCart__item-leftBlock {
   display: flex;
   align-items: center;
-  gap:16px;
+  gap: 16px;
 }
 
-.sectionCart__item-img{
+.sectionCart__item-img {
   max-width: 120px;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.sectionCart__item-img:hover{
+.sectionCart__item-img:hover {
   cursor: pointer;
   opacity: 0.7;
 }
 
-.sectionCart__item-saleBlock{
+.sectionCart__item-saleBlock {
   padding: 3px 6px;
   left: 4px;
   top: 5px;
 }
 
-.sectionCart__item-saleBlockHot{
+.sectionCart__item-saleBlockHot {
   padding: 3px 6px;
   top: 35px;
   left: 4px;
 }
 
-.sectionCart__item-leftBlockInfoName{
+.sectionCart__item-leftBlockInfoName {
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.28px;
-  transition:all .5s ease;
+  transition: all .5s ease;
   margin-bottom: 5px;
 }
 
-.sectionCart__item-leftBlockInfoName:hover{
+.sectionCart__item-leftBlockInfoName:hover {
   color: #FF9F0D;
   cursor: pointer;
 }
 
-.sectionCart__item-priceSale{
+.sectionCart__item-priceSale {
   font-size: 18px;
 }
 
-.sectionCart__item-totalPrice{
+.sectionCart__item-totalPrice {
   font-size: 16px;
   font-weight: 600;
 }
 
-.sectionCart__item-removeBtn{
+.sectionCart__item-removeBtn {
   background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.sectionCart__item-removeBtn:hover{
+.sectionCart__item-removeBtn:hover {
   cursor: pointer;
   opacity: 0.5;
 }
 
-.sectionCart__item-inputBlock{
+.sectionCart__item-inputBlock {
   margin-top: 0;
 }
 
-.sectionCart__item-starsBlock{
+.sectionCart__item-starsBlock {
   margin-bottom: 0;
 }
 
-.textEmptyCart{
-  border-top:1px solid #E5E7EB;
+.textEmptyCart {
+  border-top: 1px solid #E5E7EB;
   padding-top: 15px;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.28px;
 }
 
-.textAlreadyInCart{
+.textAlreadyInCart {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.28px;
   color: #808080;
 }
 
-.sectionCart__table-productsBlock{
+.sectionCart__table-productsBlock {
   min-height: 484px;
 }
 
-.item__priceBlock-priceUsualDefaultCart{
+.item__priceBlock-priceUsualDefaultCart {
   font-size: 16px;
   font-weight: 500;
 }
 
-.sectionUserPage__mainBlock-accSettings{
+.sectionUserPage__mainBlock-accSettings {
   border: none;
   padding: 0;
   border-radius: 0;
 }
 
-.sectionUserPage__mainBlock-formInfo{
-  border:1px solid #E5E7EB;
+.sectionUserPage__mainBlock-formInfo {
+  border: 1px solid #E5E7EB;
   border-radius: 6px;
 }
 
-.sectionUserPage__formInfo-title{
+.sectionUserPage__formInfo-title {
   font-weight: 500;
   font-size: 18px;
   padding: 16px 24px;
@@ -2469,18 +2475,18 @@ a {
   letter-spacing: -0.32px;
 }
 
-.sectionUserPage__formInfo-main{
+.sectionUserPage__formInfo-main {
   padding: 20px;
 }
 
-.sectionUserPage__formInfo-itemText{
+.sectionUserPage__formInfo-itemText {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.28px;
   margin-bottom: 6px;
 }
 
-.sectionUserPage__formInfo-itemInput{
+.sectionUserPage__formInfo-itemInput {
   padding: 14px 35px 16px 16px;
   border: 1px solid #E5E7EB;
   outline: none;
@@ -2489,83 +2495,84 @@ a {
   font-family: 'Inter', sans-serif;
 }
 
-.sectionUserPage__formInfo-item{
+.sectionUserPage__formInfo-item {
   margin-bottom: 15px;
 }
 
-.sectionUserPage__formInfo-itemInput::placeholder{
-  font-family: 'Inter',sans-serif;
+.sectionUserPage__formInfo-itemInput::placeholder {
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.28px;
 }
 
-.sectionUserPage__formInfo-btn{
+.sectionUserPage__formInfo-btn {
   padding: 12px 18px;
-  border:none;
+  border: none;
   color: #fff;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
   letter-spacing: -0.28px;
   font-size: 14px;
   font-weight: 600;
   margin-top: 5px;
   background-color: #16a34a;
   border-radius: 6px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionUserPage__formInfo-btn:hover{
+.sectionUserPage__formInfo-btn:hover {
   cursor: pointer;
   background-color: #0bca51;
 }
 
-.sectionUserPage__formPassSettings{
+.sectionUserPage__formPassSettings {
   margin-top: 30px;
 }
 
-.sectionUserPage__formPassSettings-hideBtn{
+.sectionUserPage__formPassSettings-hideBtn {
   top: 36px;
 }
 
-.sectionUserPage__formInfo-itemCategoryBlock{
+.sectionUserPage__formInfo-itemCategoryBlock {
   margin-top: 25px;
 }
 
-.sortBlock__optionsBlockAdminForm--active{
+.sortBlock__optionsBlockAdminForm--active {
   max-height: 165px;
 }
 
-.sectionUserPage__adminForm-inputBlock{
+.sectionUserPage__adminForm-inputBlock {
   display: block;
   margin-top: 10px;
 }
 
-.adminForm__categoryBlock-text{
+.adminForm__categoryBlock-text {
   font-size: 14px;
 }
 
-.sectionUserPage__adminForm-inputBlockMain{
+.sectionUserPage__adminForm-inputBlockMain {
   display: flex;
   align-items: center;
-  gap:20px;
+  gap: 20px;
 }
 
-.infoBlock__inputBlock-leftInputBlockAdminForm{
+.infoBlock__inputBlock-leftInputBlockAdminForm {
   max-width: 114px;
 }
 
-.sectionUserPage__adminForm-loadImageBlock{
+.sectionUserPage__adminForm-loadImageBlock {
   margin: 25px 0 17px 0;
 }
 
-.adminForm__loadImageBlock-title{
+.adminForm__loadImageBlock-title {
   font-size: 16px;
   font-weight: 400;
   margin-bottom: 10px;
 }
 
-.adminForm__loadImageBlock-label{
-  display: inline-block; /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+.adminForm__loadImageBlock-label {
+  display: inline-block;
+  /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
   background-color: #fff;
   border: 2px solid #D5EDFD;
   text-transform: uppercase;
@@ -2573,146 +2580,147 @@ a {
   font-weight: 600;
   font-size: 14px;
   padding: 16px 24px;
-  font-family: 'Inter',sans-serif;
+  font-family: 'Inter', sans-serif;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.adminForm__loadImageBlock-label:hover{
+.adminForm__loadImageBlock-label:hover {
   cursor: pointer;
   opacity: 0.5;
 }
 
 /* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,этот label будет иметь такую же функцию,как и этот инпут */
-.adminForm__loadImageBlock-input{
+.adminForm__loadImageBlock-input {
   display: none;
 }
 
-.adminForm__imageBlock{
+.adminForm__imageBlock {
   margin-bottom: 15px;
   position: relative;
 }
 
-.adminForm__imageBlock-mainImageBlock{
+.adminForm__imageBlock-mainImageBlock {
   max-width: 180px;
 }
 
-.adminForm__imageBlock-deleteBtn{
+.adminForm__imageBlock-deleteBtn {
   position: absolute;
   top: 10px;
   right: 10px;
   background-color: transparent;
-  border:1px solid transparent; /* указываем границу этой кнопке изначально прозрачную (transparent),а потом при hover(наведении курсором мыши на нее) изменяем цвет этой границы,делаем так,иначе,если не указать границу по дефолту прозрачную,то при наведении будет добавляться новая граница и сдвигать другие элементы на 1 пиксель(размер границы),а также эта граница не будет анимироваться */
+  border: 1px solid transparent;
+  /* указываем границу этой кнопке изначально прозрачную (transparent),а потом при hover(наведении курсором мыши на нее) изменяем цвет этой границы,делаем так,иначе,если не указать границу по дефолту прозрачную,то при наведении будет добавляться новая граница и сдвигать другие элементы на 1 пиксель(размер границы),а также эта граница не будет анимироваться */
   z-index: 5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:border-color 1s ease;
+  transition: border-color 1s ease;
 }
 
-.adminForm__imageBlock-deleteBtn:hover{
+.adminForm__imageBlock-deleteBtn:hover {
   cursor: pointer;
   border-color: red;
 }
 
-.adminForm__imageBlock-previewImg{
+.adminForm__imageBlock-previewImg {
   max-width: 177px;
 }
 
-.adminForm__descImagesBlock{
+.adminForm__descImagesBlock {
   display: flex;
   align-items: center;
-  gap:20px;
+  gap: 20px;
 }
 
-.adminForm__descImagesBlock-imageBlock{
+.adminForm__descImagesBlock-imageBlock {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.adminForm__descImagesBlock-nameImage{
+.adminForm__descImagesBlock-nameImage {
   font-size: 14px;
 }
 
-.adminForm__loadImageBlock-top{
+.adminForm__loadImageBlock-top {
   display: flex;
-  gap:10px;
+  gap: 10px;
 }
 
-.adminForm__descProductArea{
+.adminForm__descProductArea {
   border-radius: 8px;
   margin-bottom: 0;
 }
 
-.adminForm__priceInput{
+.adminForm__priceInput {
   padding: 14.5px 32px;
 }
 
-.sectionProductItemPage__changePriceBtn{
+.sectionProductItemPage__changePriceBtn {
   background-color: transparent;
   border-radius: 50%;
   display: flex;
-  border:none;
+  border: none;
   align-items: center;
   justify-content: center;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionProductItemPage__changePriceBtn:hover{
+.sectionProductItemPage__changePriceBtn:hover {
   cursor: pointer;
   opacity: 0.5;
 }
 
-.sectionUserPage__saveChangesBtn{
+.sectionUserPage__saveChangesBtn {
   padding: 15px 10px;
 }
 
-.reviews__blockAdminComment-deleteBtn{
+.reviews__blockAdminComment-deleteBtn {
   position: absolute;
   top: 0;
   right: 0;
 }
 
-.reviews__deleteCommentBtn{
+.reviews__deleteCommentBtn {
   position: absolute;
   right: 80px;
   top: 8px;
 }
 
-.sectionTrusted{
+.sectionTrusted {
   padding: 0;
   background-image: url('/public/images/sectionTrusted/BG.png');
   background-repeat: no-repeat;
   /* background-size: cover; */
 }
 
-.sectionTrusted__inner{
+.sectionTrusted__inner {
   display: flex;
   align-items: center;
-  gap:25px;
+  gap: 25px;
 }
 
-.sectionTrusted__info{
+.sectionTrusted__info {
   margin-top: 40px;
   margin-bottom: 40px;
 }
 
-.sectionTrusted__info-title{
+.sectionTrusted__info-title {
   font-size: 56px;
   font-weight: 600;
   letter-spacing: -0.32px;
   margin-bottom: 20px;
 }
 
-.sectionTrusted__info-items{
+.sectionTrusted__info-items {
   display: flex;
   align-items: center;
-  gap:25px;
+  gap: 25px;
 }
 
-.sectionTrusted__info-subtitle{
+.sectionTrusted__info-subtitle {
   font-size: 16px;
   font-weight: 400;
   color: #808080;
@@ -2720,51 +2728,52 @@ a {
   letter-spacing: -0.28px;
 }
 
-.sectionTrusted__items-item{
+.sectionTrusted__items-item {
   display: flex;
   align-items: center;
-  gap:16px;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
-.sectionTrusted__item-title{
+.sectionTrusted__item-title {
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.32px;
   margin-bottom: 8px;
-  text-wrap: nowrap; /* указываем это свойство,чтобы текст не заворачивал слова на следующую строчку,а чтобы они шли только в одну линию */
+  text-wrap: nowrap;
+  /* указываем это свойство,чтобы текст не заворачивал слова на следующую строчку,а чтобы они шли только в одну линию */
 }
 
-.sectionTrusted__item-subtitle{
+.sectionTrusted__item-subtitle {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.28px;
   color: #808080;
 }
 
-.sectionDelivery{
+.sectionDelivery {
   margin-top: 70px;
   padding: 0;
 }
 
-.sectionDelivery__info-subtitle{
+.sectionDelivery__info-subtitle {
   max-width: 536px;
 }
 
-.sectionDelivery__items-item{
+.sectionDelivery__items-item {
   display: flex;
   align-items: center;
-  gap:8px;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
-.sectionDelivery__item-text{
+.sectionDelivery__item-text {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
 }
 
-.sectionDelivery__img{
+.sectionDelivery__img {
   max-width: 750px;
 }
 
@@ -2778,10 +2787,10 @@ a {
   max-width: 136px;
   border-radius: 8px;
   position: relative;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.sectionDelivery__btn:hover{
+.sectionDelivery__btn:hover {
   background-color: #7a5dc4;
 }
 
@@ -2789,12 +2798,12 @@ a {
   animation: sectionTopLinkArrowAnim 1s ease infinite;
 }
 
-.sectionTeam{
+.sectionTeam {
   padding: 70px 0;
-  background-image: linear-gradient(to bottom,#F2F2F2,#FFFFFF);
+  background-image: linear-gradient(to bottom, #F2F2F2, #FFFFFF);
 }
 
-.sectionTeam__title{
+.sectionTeam__title {
   font-size: 48px;
   font-weight: 600;
   letter-spacing: -0.32px;
@@ -2802,193 +2811,362 @@ a {
   text-align: center;
 }
 
-.sectionTeam__subtitle{
+.sectionTeam__subtitle {
   font-size: 16px;
   font-weight: 400;
   color: #808080;
-  margin:0 auto 50px auto;
+  margin: 0 auto 50px auto;
   text-align: center;
   max-width: 640px;
 }
 
-.sectionTeam__items{
+.sectionTeam__items {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap:24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
 }
 
-.sectionTeam__items-item{
-  border:1px solid #E6E6E6;
+.sectionTeam__items-item {
+  border: 1px solid #E6E6E6;
   border-radius: 8px;
 }
 
-.sectionTeam__item-img{
+.sectionTeam__item-img {
   width: 100%;
 }
 
-.sectionTeam__item-textBlock{
+.sectionTeam__item-textBlock {
   padding: 16px 20px 20px 20px;
 }
 
-.sectionTeam__item-title{
+.sectionTeam__item-title {
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.32px;
   margin-bottom: 4px;
 }
 
-.sectionTeam__item-text{
+.sectionTeam__item-text {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
   letter-spacing: -0.28px;
 }
 
-.sectionArrivals__item-textAlreadyInCart{
+.sectionArrivals__item-textAlreadyInCart {
   margin-top: 17px;
 }
 
 @media (max-width:1225px) {
-    
-  .sectionNewArrivals__items-item{
+
+  .sectionNewArrivals__items-item {
     padding: 10px;
+  }
+
+  .sectionBestSellers__itemsBlock {
+    gap: 10px;
+  }
+
+  .sectionBestSellers__itemsBlockSide-item {
+    gap: 5px;
+  }
+
+  .sectionBestSellers__midBlock-itemImg {
+    max-height: 300px;
   }
 
 }
 
 @media (max-width:1075px) {
-    
-  .sectionNewArrivals__items{
-    grid-template-columns: repeat(4,1fr);
+
+  .sectionNewArrivals__items {
+    grid-template-columns: repeat(4, 1fr);
   }
 
-  .sectionNewArrivals__items-item{
+  .sectionNewArrivals__items-item {
     border-bottom: 1px solid #E5E7EB;
   }
 
-  .sectionNewArrivals__items-itemFirst{
+  .sectionNewArrivals__items-itemFirst {
     border-radius: 0;
   }
 
-  .sectionNewArrivals__items-itemFirst:nth-child(5){
+  .sectionNewArrivals__items-itemFirst:nth-child(5) {
     border-radius: 0;
     border-bottom: none;
   }
 
-  .sectionDontMiss__inner{
+  .sectionBestSellers__midBlock-item.sectionNewArrivals__items-item {
+    border-bottom: 4px solid #DC2626;
+  }
+
+  .sectionDontMiss__inner {
     gap: 10px;
+  }
+
+  .sectionBestSellers__midBlock-itemImg {
+    max-width: 100%;
+  }
+
+  .sectionNewArrivals__item-img {
+    width: 100%;
   }
 
 }
 
 @media (max-width:920px) {
-    
-  .sectionTop{
+
+  .sectionTop {
     padding: 100px 0;
   }
 
-  .sectionCategoryItems__inner{
-    gap:20px;
+  .sectionCategoryItems__inner {
+    gap: 20px;
   }
 
-  .sectionNewArrivals__items{
-    grid-template-columns: repeat(3,1fr);
+  .sectionNewArrivals__items {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .sectionDontMiss{
+  .sectionDontMiss {
     padding: 20px 0;
   }
 
-  .sectionDontMiss__inner{
-    grid-template-columns: repeat(2,1fr);
+  .sectionDontMiss__inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectionNewArrivals__item-img {
+    min-width: 0;
+  }
+
+  .sectionNewArrivals__item-img.sectionBestSellers__midBlock-itemImg {
+    max-height: 183px;
+    max-width: 145px;
+  }
+
+  .sectionBestSellers{
+    padding-bottom: 10px;
+  }
+
+  .sectionDontMiss{
+    padding-top: 10px;
+  }
+
+  .sectionPromo__promoTop{
+    margin-bottom: 0;
   }
 
 }
 
 @media (max-width:850px) {
-    
-  .sectionCategoryItems__inner{
+
+  .sectionCategoryItems__inner {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectionBestSellers__itemsBlock {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .sectionBestSellers__itemsBlock-midBlockPassive {
+    grid-column: 2 / 4;
+    /* указываем положение этого элемента у сетки grid(родительский элемент с display grid и тд),указываем по колонкам по горизонтали с первой(самой левой границы сетки грид) по 3 границу сетки грид */
+  }
+
+  .sectionBestSellers__itemsBlockSideLeft {
+    grid-row: 2 / 3;
+    /* указываем положение этого элемента у сетки grid(родительский элемент с display grid и тд),указываем по рядам по вертикали со второй  границы сетки грид по 3 */
+    grid-column: 1 / 3;
+  }
+
+  .sectionBestSellers__itemsBlockSideRight {
+    grid-row: 2 / 3;
+    grid-column: 3 / 5;
+  }
+
+  .sectionBestSellers .sectionNewArrivals__item-img {
+    max-height: 130px;
+  }
+
+  .sectionBestSellers__midItem-text {
+    max-width: none;
+  }
+
+  .sectionPromo__sales-item{
+    background-position: right;
   }
 
 }
 
 @media (max-width:760px) {
-    
-  .sectionTop{
+
+  .sectionTop {
     padding: 80px 0;
   }
 
-  .sectionTop__title{
+  .sectionTop__title {
     font-size: 48px;
   }
 
-  .sectionTop__desc{
+  .sectionTop__desc {
     margin-bottom: 30px;
     color: #000;
   }
 
-  .sectionNewArrivals{
+  .sectionNewArrivals {
     padding: 30px 0 10px;
+  }
+
+  .sectionNewArrivals__items-item {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .sectionBestSellers__item-imgBlock {
+    align-self: center;
+  }
+
+  .sectionBestSellers__top-leftBlock {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .sectionPromo__item-title{
+    font-size: 16px;
+  }
+
+  .sectionPromo__sales-item{
+    padding: 10px;
+  }
+
+  .sectionPromo__sales{
+    gap: 15px;
   }
 
 }
 
 @media (max-width:620px) {
-    
-  .sectionTop{
+
+  .sectionTop {
     padding: 50px 0;
   }
 
-  .sectionTop__title{
+  .sectionTop__title {
     font-size: 38px;
     line-height: 44px;
   }
 
-  .sectionTop__desc{
+  .sectionTop__desc {
     margin-bottom: 20px;
   }
 
-  .sectionNewArrivals__items{
+  .sectionNewArrivals__items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectionBestSellers__top {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .sectionNewArrivals__top-link {
+    align-self: end;
+  }
+
+  .sectionBestSellers__itemsBlock-midBlockPassive {
+    grid-column: 1 / 5;
+  }
+
+  .sectoinBestSellers__midBlock-itemDesc{
+    margin-top: 14px;
+  }
+
+  .sectionPromo__promoTop{
+    padding: 10px;
+  }
+
+  .sectionPromo__promoTop-title{
+    margin-bottom: 10px;
+  }
+
+  .sectionPromo__sales{
     grid-template-columns: repeat(2,1fr);
+  }
+
+  .sectionPromo__sales-itemThird{
+    grid-column: 1/3;
+  }
+
+  .sectionPromo__sales-itemThird.sectionPromo__item-titleThird{
+    max-width: none;
+  }
+
+  .sectionPromo__item-text{
+    margin-bottom: 12px;
+  }
+
+}
+
+@media (max-width:495px) {
+
+  .sectionBestSellers__itemsBlockSideRight {
+    grid-row: 3 / 4;
+    grid-column: 1 / 5;
+  }
+
+  .sectionBestSellers__itemsBlockSideLeft {
+    grid-column: 1 / 5;
   }
 
 }
 
 @media (max-width:470px) {
-    
-  .sectionCategoryItems__inner{
+
+  .sectionCategoryItems__inner {
     grid-template-columns: 1fr;
   }
 
-  .sectionNewArrivals__items{
+  .sectionNewArrivals__items {
     grid-template-columns: 1fr;
   }
 
-  .sectionNewArrivals__item-text{
+  .sectionNewArrivals__item-text {
     max-width: none;
   }
 
-  .sectionDontMiss__inner{
+  .sectionDontMiss__inner {
     grid-template-columns: 1fr;
   }
 
 }
 
 @media (max-width:420px) {
-    
-  .sectionTop{
+
+  .sectionTop {
     padding: 40px 0;
   }
 
-  .sectionTop__title{
+  .sectionTop__title {
     font-size: 32px;
     line-height: 40px;
   }
 
-  .sectionTop__desc{
+  .sectionTop__desc {
     margin-bottom: 20px;
+  }
+
+  .sectionPromo__promoTop-title{
+    font-size: 20px;
+  }
+
+  .sectionPromo__sales{
+    grid-template-columns: 1fr;
+  }
+
+  .sectionPromo__sales-itemThird{
+    grid-column: auto;
   }
 
 }
