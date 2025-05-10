@@ -13,6 +13,8 @@ import { useActions } from "../hooks/useActions";
 
 const Catalog = () => {
 
+    const [activeFilterBarMenu, setActiveFilterBarMenu] = useState(false); // состояние для активного мобильного меню фильтров каталога
+
     const [searchValue, setSearchValue] = useState(''); // состояние для инпута поиска
 
     const [filterCategories, setFilterCategories] = useState('');
@@ -27,7 +29,7 @@ const Catalog = () => {
 
     const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
 
-    const [limit, setLimit] = useState(1); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+    const [limit, setLimit] = useState(2); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
 
 
 
@@ -428,11 +430,127 @@ const Catalog = () => {
 
                                 </div>
                             </div>
+
+                            {/* если activeFilterBarMenu true (то есть сейчас открыто мобильное меню фильтров),то показываем блок див и onClick указываем,что изменяем состояние activeFilterBarMenu на false,то есть будем закрывать мобильное меню по клику на другую область,кроме этого меню,чтобы оно закрылось не только по кнопке,но и по области вокруг,в другом случае этот блок показан не будет */}
+                            {activeFilterBarMenu &&
+                                <div className="sectionCatalog__closeFilterBarMobileBlock" onClick={()=>setActiveFilterBarMenu(false)}></div>
+                            }
+
+                            {/* если activeFilterBarMenu true,то показываем активные классы для мобильного меню фильтров,в другом случае другие */}
+                            <div className={activeFilterBarMenu ? "sectionCatalog__filterBarMobile sectionCatalog__filterBarMobile--active" : "sectionCatalog__filterBarMobile"}>
+                                <div className="sectionCatalog__filterBar-categories">
+                                    <div className="filterBarMobile__topBlock">
+                                        <h3 className="filterBar__categories-title">Product Categories</h3>
+                                        <button className="filterBarMobile__topBlock-closeBtn" onClick={() => setActiveFilterBarMenu(false)}>
+                                            <img src="/images/sectionCatalog/CloseCircle.png" alt="" className="filterBarMobile__closeBtn-img" />
+                                        </button>
+                                    </div>
+                                    <label className="filterBar__categories-label" onClick={() => setFilterCategories('Fruits & Vegetables')}>
+                                        <input type="radio" name="radio" className="categories__label-input" />
+                                        <span className={filterCategories === 'Fruits & Vegetables' ? "categories__label-radioStyle categories__label-radioStyle--active" : "categories__label-radioStyle"}>
+                                            <span className={filterCategories === 'Fruits & Vegetables' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Fruits & Vegetables' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Fruits & Vegetables</p>
+
+                                        {/* если filterCategories !== '',то есть какая либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Fruits & Vegetables',то есть категория Fruits & Vegetables),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryFruitsAndVegetables?.length})</p>
+                                    </label>
+                                    <label className="filterBar__categories-label" onClick={() => setFilterCategories('Beverages')}>
+                                        <input type="radio" name="radio" className="categories__label-input" />
+                                        <span className={filterCategories === 'Beverages' ? "categories__label-radioStyle categories__label-radioStyle--active" : "categories__label-radioStyle"}>
+                                            <span className={filterCategories === 'Beverages' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Beverages' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Beverages</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryBeverages?.length})</p>
+                                    </label>
+                                    <label className="filterBar__categories-label" onClick={() => setFilterCategories('Meats & Seafood')}>
+                                        <input type="radio" name="radio" className="categories__label-input" />
+                                        <span className={filterCategories === 'Meats & Seafood' ? "categories__label-radioStyle categories__label-radioStyle--active" : "categories__label-radioStyle"}>
+                                            <span className={filterCategories === 'Meats & Seafood' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Meats & Seafood' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Meats & Seafood</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryMeatsAndSeafood?.length})</p>
+                                    </label>
+                                    <label className="filterBar__categories-label" onClick={() => setFilterCategories('Breads & Bakery')}>
+                                        <input type="radio" name="radio" className="categories__label-input" />
+                                        <span className={filterCategories === 'Breads & Bakery' ? "categories__label-radioStyle categories__label-radioStyle--active" : "categories__label-radioStyle"}>
+                                            <span className={filterCategories === 'Breads & Bakery' ? "label__radioStyle-before label__radioStyle-before--active" : "label__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Breads & Bakery' ? "categories__label-text categories__label-text--active" : "categories__label-text"}>Breads & Bakery</p>
+
+                                        <p className={filterCategories !== '' ? "categories__label-amount categories__label-amountDisable" : "categories__label-amount"}>({filteredCategoryBreadsAndBakery?.length})</p>
+                                    </label>
+                                </div>
+                                <div className="filterBar__priceFilterBlock">
+                                    <h3 className="filterBar__categories-title priceFilterBlock__title">Price Filter</h3>
+
+                                    <ReactSlider
+
+                                        // указываем классы для этого инпута range и для его кнопок и тд, и в файле index.css их стилизуем 
+                                        className="priceFilterBlock__inputRangeSlider"
+
+                                        thumbClassName="inputRangeSlider__thumb"
+
+                                        trackClassName="inputRangeSlider__track"
+
+                                        defaultValue={filterPrice} // поле для дефолтного значения минимального(первый элемент массива) и максимального(второй элемент массива),указываем этому полю значение как наш массив filterPrice(массив чисел для минимального(первый элемент массива) и максимального(второй элемент массива) значения)
+
+                                        max={data?.maxPriceAllProducts} // поле для максимального значения
+
+                                        min={0} // поле для минимального значения
+
+                                        value={filterPrice} // указываем поле value как наше состояние filterPrice(массив из 2 элементов для минимального и максимального значения фильтра цены),указываем это,чтобы при изменении состояния filterPrice, менялось и значение этого инпута range,то есть этого react slider(его ползунки и значения их),в данном случае это для того,чтобы при удалении фильтра цены,менялись значения ползунков этого react slider(инпут range)
+
+                                        // вместо этого сами деструктуризируем дополнительные параметры из props в коде ниже,иначе выдает ошибку в версии react 19,так как библиотека react-slider давно не обновлялась,а сам react обновился
+                                        // renderThumb={(props,state) => <div {...props}>{state.valueNow}</div>}
+
+                                        // деструктуризируем поле key и ...restProps из props(параметр у этой функции callback),чтобы потом отдельно передать в div,так как выдает ошибку в версии react 19,если сделать как код выше
+                                        renderThumb={(props, state) => {
+
+                                            const { key, ...restProps } = props; // деструктуризируем отдельно поле key из props,и остальные параметры,которые есть у props,разворачиваем в этот объект и указываем им название restProps(...restProps),потом отдельно указываем этому div поле key и остальные параметры у props(restProps),разворачиваем restProps в объект,таким образом передаем их этому div {...restProps}
+
+                                            return (
+                                                <div key={key} {...restProps}>{state.valueNow}</div>
+                                            );
+
+                                        }}
+
+                                        onChange={(value, index) => setFilterPrice(value)} // при изменении изменяем значение состояния массива filterPrice(в параметрах функция callback принимает value(массив текущих значений этого инпута) и index(индекс кнопки элемента массива,то есть за какую кнопку сейчас дергали))
+
+                                        // onAfterChange срабатывает,когда отпустили ползунок у инпута React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда отпустили ползунок у инпута,чтобы переобновить данные товаров уже с новым фильтром цены
+                                        onAfterChange={() => {
+
+                                            refetch();
+
+                                        }}
+
+                                        // onSliderClick срабатывает,когда нажали на инпут React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда нажимаем на React Slider,чтобы переобновить данные товаров уже с новым фильтром цены(если не указать это,то при клике на инпут React Slider значение будет изменяться правильно,а при запросе на сервер будут неправильные значения)
+                                        onSliderClick={() => {
+
+                                            refetch();
+
+                                        }}
+
+                                    />
+
+                                    {/* выводим минимальное текущее значение инпута range (наш ReactSlider) по индексу 0 из нашего массива filterPrice (filterPrice[0]) и выводим максимальное текущее значение по индексу 1 из нашего массива filterPrice (filterPrice[1]),используем toFixed(0),чтобы после запятой у этого числа было 0 чисел,иначе могут показываться значения с несколькими числами после запятой */}
+                                    <p className="priceFilterBlock__text">Price: ${filterPrice[0]} - ${filterPrice[1].toFixed(0)}</p>
+
+                                </div>
+                            </div>
+
                             <div className="sectionCatalog__mainBlock-productsBlock">
                                 <div className="sectionCatalog__productsBlock-searchBlock">
-                                    <div className="productsBlock__searchBlock-inputBlock">
-                                        <input type="text" className="productsBlock__searchBlock-input" placeholder="Search for products..." value={searchValue} onChange={searchValueHandler} />
-                                        <img src="/images/sectionCatalog/SearchImg.png" alt="" className="searchBlock__inputBlock-inputImg" />
+                                    <div className="sectionCatalog__searchBlock-searchAndFilterBtnBlock">
+                                        <button className="sectionCatalog__searchBlock-settingsBtn" onClick={() => setActiveFilterBarMenu(true)}>
+                                            <img src="/images/sectionCatalog/SettingsFilter.png" alt="" className="sectionCatalog__settingsBtn-img" />
+                                        </button>
+                                        <div className="productsBlock__searchBlock-inputBlock">
+                                            <input type="text" className="productsBlock__searchBlock-input" placeholder="Search for products..." value={searchValue} onChange={searchValueHandler} />
+                                            <img src="/images/sectionCatalog/SearchImg.png" alt="" className="searchBlock__inputBlock-inputImg" />
+                                        </div>
                                     </div>
                                     <div className="searchBlock__sortBlock">
                                         <p className="sortBlock__text">Sort By:</p>
