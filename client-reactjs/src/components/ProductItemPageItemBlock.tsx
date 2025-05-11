@@ -320,8 +320,8 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
             let priceDiscountObj;  // создаем переменную для объекта,указываем ей let,чтобы можно было изменять ей значение потом,делаем эту переменную для объекта,чтобы потом ее разворачивать в объект при запросе на сервер для изменения цены товара
 
-            // если inputPriceDiscountValue !== undefined(делаем эту проверку,иначе выдает ошибку,что inputPriceDiscountValue может быть undefined) и inputPriceDiscountValue больше 0,то есть админ указал новую цену со скидкой для этого товара
-            if (inputPriceDiscountValue !== undefined && inputPriceDiscountValue > 0) {
+            // если inputPriceDiscountValue !== undefined(делаем эту проверку,иначе выдает ошибку,что inputPriceDiscountValue может быть undefined) и inputPriceDiscountValue больше 0,то есть админ указал новую цену со скидкой для этого товара,в данном случае не делаем проверку на inputPriceDiscountValue больше 0,так как сделали так,что чтобы убрать скидку у товара,то надо указать inputPriceDiscountValue со значением 0,поэтому эту проверку не надо делать
+            if (inputPriceDiscountValue !== undefined) {
 
                 // изменяем переменную priceDiscountObj на значения полей priceDiscount и totalPriceDiscount, со значением как inputPriceDiscountValue(состояние инпута для цены со скидкой)
                 priceDiscountObj = {
@@ -331,17 +331,20 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
                 }
 
-            } else {
-                // в другом случае указываем значение переменной priceDiscountObj как объект с полями и значениями,как текущие значения этих полей у объекта товара(то есть они будут такими же)
-                priceDiscountObj = {
+            } 
 
-                    priceDiscount: product?.priceDiscount, // указываем значение полю priceDiscount как product?.priceDiscount(текущее значение цены товара со скидкой)
+            // так как не делали проверку на inputPriceDiscountValue больше 0,то этот код уже не нужен
+            // else {
+            //     // в другом случае указываем значение переменной priceDiscountObj как объект с полями и значениями,как текущие значения этих полей у объекта товара(то есть они будут такими же)
+            //     priceDiscountObj = {
 
-                    totalPriceDiscount: product?.totalPriceDiscount // указываем значение полю totalPriceDiscount как product?.totalPriceDiscount(текущее значение итоговой цены товара со скидкой)
+            //         priceDiscount: product?.priceDiscount, // указываем значение полю priceDiscount как product?.priceDiscount(текущее значение цены товара со скидкой)
 
-                }
+            //         totalPriceDiscount: product?.totalPriceDiscount // указываем значение полю totalPriceDiscount как product?.totalPriceDiscount(текущее значение итоговой цены товара со скидкой)
 
-            }
+            //     }
+
+            // }
 
             mutateProductPrice({ ...product, price: inputPriceValue, totalPrice: inputPriceValue, ...priceDiscountObj } as IProduct); // делаем запрос на изменение цены товара каталога, разворачиваем в объект все поля текущего объекта товара(...product),указываем поле price и totalPrice со значением inputPriceValue(значение инпута новой цены для товара),также разворачиваем объект priceDiscountObj для полей цены товара со скидкой,в зависимости от условия выше в коде,этот объект будет иметь разные значения,и вместо него будут подставлены поля,которые мы указали ему,указываем тип этого всего объекта как IProduct,то есть поля в этом объекте точно будут иметь такие же типы как и в IProduct(в данном случае указываем это,иначе выдает ошибку,что inputPriceValue может быть undefined и его нельзя назначить для поля price)
 
