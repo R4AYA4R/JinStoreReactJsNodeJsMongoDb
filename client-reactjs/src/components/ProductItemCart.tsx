@@ -29,7 +29,7 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
-    const { mutate: mutateUpdateProductCart,isPending } = useMutation({
+    const { mutate: mutateUpdateProductCart, isPending } = useMutation({
         mutationKey: ['updateProductCart'],
         mutationFn: async (productCart: IProductCart) => {
 
@@ -165,83 +165,186 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
 
     return (
-        <div className="sectionCart__table-item">
-            <div className="sectionCart__item-leftBlock">
-                <div className="sectionProductItemPage__itemBlock-imgBlock">
+        <>
+            <div className="sectionCart__table-item">
+                <div className="sectionCart__item-leftBlock">
+                    <div className="sectionProductItemPage__itemBlock-imgBlock">
 
 
-                    {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
-                    {productCart.priceDiscount ?
+                        {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
+                        {productCart.priceDiscount ?
 
-                        <>
-                            <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
+                            <>
+                                <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
 
-                            {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
-                            {valueDiscount > 30 &&
-                                <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>
-                            }
+                                {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
+                                {valueDiscount > 30 &&
+                                    <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>
+                                }
 
-                        </>
-                        : ''
-                    }
+                            </>
+                            : ''
+                        }
 
 
-                    {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта productCart(пропс(параметр) этого компонента),потом когда сделаем раздачу статики на бэкэнде,то будем указывать путь до папки на бэкэнде, в onClick указываем наш router() (то есть хук useNavigate) и в нем указываем url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,то есть на страницу товара,указываем usualProductId у productCart,так как это id обычного товара каталога,чтобы перейти на его страницу,в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля mainImage у productCart(объекта товара) */}
-                    <img src={`http://localhost:5000/${productCart.mainImage}`} alt="" className="sectionCart__item-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
-                </div>
-                <div className="sectionCart__item-leftBlockInfo">
-                    <p className="sectionCart__item-leftBlockInfoName" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</p>
-                    <div className="sectionNewArrivals__item-starsBlock sectionCart__item-starsBlock">
-                        <div className="sectionNewArrivals__item-stars">
-                            {/* если productCart.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
-                            <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                        {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта productCart(пропс(параметр) этого компонента),потом когда сделаем раздачу статики на бэкэнде,то будем указывать путь до папки на бэкэнде, в onClick указываем наш router() (то есть хук useNavigate) и в нем указываем url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,то есть на страницу товара,указываем usualProductId у productCart,так как это id обычного товара каталога,чтобы перейти на его страницу,в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля mainImage у productCart(объекта товара) */}
+                        <img src={`http://localhost:5000/${productCart.mainImage}`} alt="" className="sectionCart__item-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
+                    </div>
+                    <div className="sectionCart__item-leftBlockInfo">
+                        <p className="sectionCart__item-leftBlockInfoName" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</p>
+                        <div className="sectionNewArrivals__item-starsBlock sectionCart__item-starsBlock">
+                            <div className="sectionNewArrivals__item-stars">
+                                {/* если productCart.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                                <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            </div>
+                            <p className="starsBlock__text">({commentsForProduct?.length})</p>
                         </div>
-                        <p className="starsBlock__text">({commentsForProduct?.length})</p>
                     </div>
                 </div>
-            </div>
 
-            {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
-            {productCart.priceDiscount ?
+                {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                {productCart.priceDiscount ?
 
-                <div className="sectionNewArrivals__item-priceBlock">
-                    <p className="item__priceBlock-priceSale sectionCart__item-priceSale">${productCart.priceDiscount}</p>
-                    <p className="item__priceBlock-priceUsual">${productCart.price}</p>
-                </div>
-                :
-                <div className="sectionNewArrivals__item-priceBlock">
-                    <p className="item__priceBlock-priceUsualDefaultCart">${productCart.price}</p>
-                </div>
-            }
-            {/* <div className="sectionNewArrivals__item-priceBlock">
+                    <div className="sectionNewArrivals__item-priceBlock">
+                        <p className="item__priceBlock-priceSale sectionCart__item-priceSale">${productCart.priceDiscount}</p>
+                        <p className="item__priceBlock-priceUsual">${productCart.price}</p>
+                    </div>
+                    :
+                    <div className="sectionNewArrivals__item-priceBlock">
+                        <p className="item__priceBlock-priceUsualDefaultCart">${productCart.price}</p>
+                    </div>
+                }
+                {/* <div className="sectionNewArrivals__item-priceBlock">
                 <p className="item__priceBlock-priceSale sectionCart__item-priceSale">$8.00</p>
                 <p className="item__priceBlock-priceUsual">$10.00</p>
             </div> */}
 
-            <div className="sectionProductItemPage__infoBlock-inputBlock sectionCart__item-inputBlock">
-                <div className="infoBlock__inputBlock-leftInputBlock">
-                    <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
-                        <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
-                    </button>
-                    <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                    <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
-                        <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
-                    </button>
+                <div className="sectionProductItemPage__infoBlock-inputBlock sectionCart__item-inputBlock">
+                    <div className="infoBlock__inputBlock-leftInputBlock">
+                        <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                        </button>
+                        <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                        <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                        </button>
+                    </div>
                 </div>
+
+                {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
+                <p className="sectionCart__item-totalPrice">${subtotalPriceProduct.toFixed(2)}</p>
+
+                {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+                <button className="sectionCart__item-removeBtn" onClick={() => mutateDeleteProductCart(productCart)}>
+                    <img src="/images/sectionCart/X.png" alt="" className="sectionCart__item-removeBtnImg" />
+                </button>
             </div>
 
-            {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
-            <p className="sectionCart__item-totalPrice">${subtotalPriceProduct.toFixed(2)}</p>
+            <div className="sectionCart__table-item sectionCart__table-itemMobile">
+                <div className="sectionCart__item-leftBlock sectionCart__itemMobile-topBlock">
+                    <div className="sectionCart__itemMobile-imgAndInfoBlock">
+                        <div className="sectionProductItemPage__itemBlock-imgBlock">
 
-            {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
-            <button className="sectionCart__item-removeBtn" onClick={()=>mutateDeleteProductCart(productCart)}>
-                <img src="/images/sectionCart/X.png" alt="" className="sectionCart__item-removeBtnImg" />
-            </button>
-        </div>
+
+                            {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
+                            {productCart.priceDiscount ?
+
+                                <>
+                                    <div className="sectionNewArrivals__item-saleBlock sectionCart__item-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
+
+                                    {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
+                                    {valueDiscount > 30 &&
+                                        <div className="sectionNewArrivals__item-saleBlockHot sectionCart__item-saleBlockHot">HOT</div>
+                                    }
+
+                                </>
+                                : ''
+                            }
+
+
+                            {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта productCart(пропс(параметр) этого компонента),потом когда сделаем раздачу статики на бэкэнде,то будем указывать путь до папки на бэкэнде, в onClick указываем наш router() (то есть хук useNavigate) и в нем указываем url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,то есть на страницу товара,указываем usualProductId у productCart,так как это id обычного товара каталога,чтобы перейти на его страницу,в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и значение поля mainImage у productCart(объекта товара) */}
+                            <img src={`http://localhost:5000/${productCart.mainImage}`} alt="" className="sectionCart__item-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
+                        </div>
+                        <div className="sectionCart__item-leftBlockInfo">
+                            <p className="sectionCart__item-leftBlockInfoName" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</p>
+                            <div className="sectionNewArrivals__item-starsBlock sectionCart__item-starsBlock">
+                                <div className="sectionNewArrivals__item-stars">
+                                    {/* если productCart.rating равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                                    <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector.png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                </div>
+                                <p className="starsBlock__text">({commentsForProduct?.length})</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+                    <button className="sectionCart__item-removeBtn" onClick={() => mutateDeleteProductCart(productCart)}>
+                        <img src="/images/sectionCart/X.png" alt="" className="sectionCart__item-removeBtnImg" />
+                    </button>
+
+                </div>
+
+                <div className="sectionCart__itemMobile-bottomBlock">
+
+                    {/* если productCart.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                    {productCart.priceDiscount ?
+
+                        <div className="sectionCart__itemMobile-priceBlockItem">
+                            <p className="sectionCart__itemMobile-nameBlock">Price</p>
+                            <div className="sectionNewArrivals__item-priceBlock">
+                                <p className="item__priceBlock-priceSale sectionCart__item-priceSale">${productCart.priceDiscount}</p>
+                                <p className="item__priceBlock-priceUsual">${productCart.price}</p>
+                            </div>
+                        </div>
+                        :
+                        <div className="sectionCart__itemMobile-priceBlockItem">
+                            <p className="sectionCart__itemMobile-nameBlock">Price</p>
+                            <div className="sectionNewArrivals__item-priceBlock">
+                                <p className="item__priceBlock-priceUsualDefaultCart">${productCart.price}</p>
+                            </div>
+                        </div>
+
+                    }
+
+
+                    <div className="sectionCart__itemMobile-priceBlockItem">
+                        <p className="sectionCart__itemMobile-nameBlock">Quantity</p>
+                        <div className="sectionProductItemPage__infoBlock-inputBlock sectionCart__item-inputBlock">
+                            <div className="infoBlock__inputBlock-leftInputBlock">
+                                <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                                    <img src="/images/sectionProductItemPage/Minus.png" alt="" className="infoBlock__btn-img" />
+                                </button>
+                                <input type="number" className="infoBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                                <button className="infoBlock__inputBlock-btn infoBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                    <img src="/images/sectionProductItemPage/Plus.png" alt="" className="infoBlock__btn-img" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="sectionCart__itemMobile-priceBlockItem">
+
+                        <p className="sectionCart__itemMobile-nameBlock">Subtotal</p>
+
+                        {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
+                        <p className="sectionCart__item-totalPrice">${subtotalPriceProduct.toFixed(2)}</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </>
     )
 
 }
