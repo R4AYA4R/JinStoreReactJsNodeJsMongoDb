@@ -3069,6 +3069,14 @@ a {
     margin-bottom: 40px;
   }
 
+  .sectionUserPage__inner{
+    gap: 20px;
+  }
+
+  .sectionUserPage{
+    margin: 25px 0 40px;
+  }
+
 }
 
 @media (max-width:920px) {
@@ -3159,6 +3167,18 @@ a {
 
   .reviews__item-text {
     max-width: 400px;
+  }
+
+  .sectionUserPage__inner{
+    gap: 15px;
+  }
+
+  .sectionUserPage__menu-btn{
+    padding: 10px;
+  }
+
+  .sectionUserPage__menu-btnText{
+    text-wrap: nowrap;
   }
 
 }
@@ -3285,6 +3305,10 @@ a {
   .sectionCart__item-leftBlock {
     flex-direction: column;
     align-items: normal;
+  }
+
+  .sectionSignUp{
+    padding: 70px 0 80px;
   }
 
 }
@@ -3493,6 +3517,27 @@ a {
     padding: 0 20px;
   }
 
+  .sectionSignUp{
+    padding: 40px 0 50px;
+  }
+
+  .sectionUserPage__menu-btnText{
+    display: none;
+  }
+
+  .sectionUserPage__inner {
+    grid-template-columns:0.3fr 4fr;
+    gap:10px;
+  }
+
+  .sectionUserPage__leftBar{
+    max-width: 46px;
+  }
+
+  .adminForm__descImagesBlock{
+    flex-wrap: wrap;
+  }
+
 }
 
 @media (max-width:495px) {
@@ -3510,6 +3555,10 @@ a {
 
   .sectionCatalog__productsItems-item .textAlreadyInCart {
     font-size: 16px;
+  }
+
+  .sectionSignUp__signUpBlock{
+    min-width: 100%;
   }
 
 }
@@ -3542,6 +3591,15 @@ a {
 
   .swiper {
     max-width: 300px;
+  }
+
+  .sortBlock__topBlock{
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .sortBlock__inner{
+    width: 100%;
   }
 
 }
@@ -3586,17 +3644,50 @@ a {
   }
 
   .sectionCart__itemMobile-imgAndInfoBlock {
-    flex-direction: column;
     margin-bottom: 10px;
-    align-items: normal;
+  }
+
+  .sectionCart__item-img{
+    max-width: 80px;
+  }
+
+  .infoBlock__inputBlock-input{
+    max-width: 100px;
+    padding: 14.5px 30px;
   }
 
   .sectionCart__itemMobile-bottomBlock {
     gap: 10px;
   }
 
-  .sectionCart__itemMobile-bottomBlock{
-    grid-template-columns: repeat(2,1fr);
+  .sectionCart__item-leftBlock{
+    gap: 5px;
+  }
+
+  .sectionCart__table{
+    padding: 0 10px;
+  }
+
+  .sectionUserPage__adminForm-inputBlockMain{
+    flex-wrap: wrap;
+  }
+
+  .searchBlock__sortBlock{
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .sortBlock__topBlock{
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .sectionUserPage__formInfo-itemCategoryBlock{
+    margin-top: 10px;
+  }
+
+  .sectionProductItemPage__imgBlock-imgSlider{
+    max-width: 270px !important; /* указываем здесь !important,чтобы перебить стили,которые до этого указывали тоже с !important,иначе они не применяются */
   }
 
 }
