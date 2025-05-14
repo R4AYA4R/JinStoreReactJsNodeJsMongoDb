@@ -2692,9 +2692,18 @@ a {
 
 .sectionTrusted {
   padding: 0;
-  background-image: url('/public/images/sectionTrusted/BG.png');
+  background-image: url('/public/images/sectionTrusted/Group 26.png');
   background-repeat: no-repeat;
-  /* background-size: cover; */
+  background-position: center;
+  background-size: cover;
+}
+
+
+.sectionTrusted__innerTrue {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 25px;
 }
 
 .sectionTrusted__inner {
@@ -2706,6 +2715,10 @@ a {
 .sectionTrusted__info {
   margin-top: 40px;
   margin-bottom: 40px;
+}
+
+.sectionTrusted__infoTrue {
+  max-width: 580px;
 }
 
 .sectionTrusted__info-title {
@@ -2755,6 +2768,13 @@ a {
 .sectionDelivery {
   margin-top: 70px;
   padding: 0;
+  background-image: url('/public/images/sectionDelivery/Delivery.png');
+  background-size: cover;
+  background-position: center top;
+}
+
+.sectionDelivery__info{
+  max-width: 555px;
 }
 
 .sectionDelivery__info-subtitle {
@@ -2776,6 +2796,7 @@ a {
 
 .sectionDelivery__img {
   max-width: 750px;
+  align-self: end;
 }
 
 .sectionDelivery__btn {
@@ -3069,11 +3090,11 @@ a {
     margin-bottom: 40px;
   }
 
-  .sectionUserPage__inner{
+  .sectionUserPage__inner {
     gap: 20px;
   }
 
-  .sectionUserPage{
+  .sectionUserPage {
     margin: 25px 0 40px;
   }
 
@@ -3169,16 +3190,24 @@ a {
     max-width: 400px;
   }
 
-  .sectionUserPage__inner{
+  .sectionUserPage__inner {
     gap: 15px;
   }
 
-  .sectionUserPage__menu-btn{
+  .sectionUserPage__menu-btn {
     padding: 10px;
   }
 
-  .sectionUserPage__menu-btnText{
+  .sectionUserPage__menu-btnText {
     text-wrap: nowrap;
+  }
+
+  .sectionUserPageTop__topBlock {
+    margin-top: 10px;
+  }
+
+  .sectionTeam{
+    padding-bottom: 50px;
   }
 
 }
@@ -3307,8 +3336,34 @@ a {
     align-items: normal;
   }
 
-  .sectionSignUp{
+  .sectionSignUp {
     padding: 70px 0 80px;
+  }
+
+  .sectionCatalog__topBlock {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .sectionCatalog {
+    padding-top: 20px;
+  }
+
+  .sectionTopAboutUs__topBlock {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .sectionTeam{
+    padding: 50px 0;
+  }
+
+  .sectionTeam__item-textBlock{
+    padding: 12px;
+  }
+
+  .sectionTeam__items{
+    gap: 10px;
   }
 
 }
@@ -3331,7 +3386,7 @@ a {
     max-width: 500px;
   }
 
-  .sectionCart__inner{
+  .sectionCart__inner {
     padding-bottom: 30px;
   }
 
@@ -3506,36 +3561,66 @@ a {
   }
 
   .textEmptyCart {
-    border-top:none;
+    border-top: none;
   }
 
-  .sectionCart__bill{
+  .sectionCart__bill {
     width: 100%;
   }
 
-  .sectionCart__table{
+  .sectionCart__table {
     padding: 0 20px;
   }
 
-  .sectionSignUp{
+  .sectionSignUp {
     padding: 40px 0 50px;
   }
 
-  .sectionUserPage__menu-btnText{
+  .sectionUserPage__menu-btnText {
     display: none;
   }
 
   .sectionUserPage__inner {
-    grid-template-columns:0.3fr 4fr;
-    gap:10px;
+    grid-template-columns: 0.3fr 4fr;
+    gap: 10px;
   }
 
-  .sectionUserPage__leftBar{
+  .sectionUserPage__leftBar {
     max-width: 46px;
   }
 
-  .adminForm__descImagesBlock{
+  .adminForm__descImagesBlock {
     flex-wrap: wrap;
+  }
+
+  .sectionTrusted__innerTrue {
+    justify-content: start;
+  }
+
+  .sectionTrusted__info-items {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .sectionTrusted__infoTrue {
+    margin: 0;
+  }
+
+  .sectionDelivery{
+    margin-top: 0;
+  }
+
+  .sectionTeam__items{
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .sectionTeam__subtitle{
+    margin:0 auto 30px auto;
+  }
+
+  .sectionTeam{
+    padding: 30px 0;
   }
 
 }
@@ -3557,7 +3642,7 @@ a {
     font-size: 16px;
   }
 
-  .sectionSignUp__signUpBlock{
+  .sectionSignUp__signUpBlock {
     min-width: 100%;
   }
 
@@ -3593,13 +3678,21 @@ a {
     max-width: 300px;
   }
 
-  .sortBlock__topBlock{
+  .sortBlock__topBlock {
     min-width: 0;
     padding: 10px;
   }
 
-  .sortBlock__inner{
+  .sortBlock__inner {
     width: 100%;
+  }
+
+  .sectionTrusted__info-title {
+    font-size: 48px;
+  }
+
+  .sectionTeam__title{
+    font-size: 36px;
   }
 
 }
@@ -3647,11 +3740,11 @@ a {
     margin-bottom: 10px;
   }
 
-  .sectionCart__item-img{
+  .sectionCart__item-img {
     max-width: 80px;
   }
 
-  .infoBlock__inputBlock-input{
+  .infoBlock__inputBlock-input {
     max-width: 100px;
     padding: 14.5px 30px;
   }
@@ -3660,34 +3753,35 @@ a {
     gap: 10px;
   }
 
-  .sectionCart__item-leftBlock{
+  .sectionCart__item-leftBlock {
     gap: 5px;
   }
 
-  .sectionCart__table{
+  .sectionCart__table {
     padding: 0 10px;
   }
 
-  .sectionUserPage__adminForm-inputBlockMain{
+  .sectionUserPage__adminForm-inputBlockMain {
     flex-wrap: wrap;
   }
 
-  .searchBlock__sortBlock{
+  .searchBlock__sortBlock {
     gap: 10px;
     flex-wrap: wrap;
   }
 
-  .sortBlock__topBlock{
+  .sortBlock__topBlock {
     padding: 10px;
     gap: 10px;
   }
 
-  .sectionUserPage__formInfo-itemCategoryBlock{
+  .sectionUserPage__formInfo-itemCategoryBlock {
     margin-top: 10px;
   }
 
-  .sectionProductItemPage__imgBlock-imgSlider{
-    max-width: 270px !important; /* указываем здесь !important,чтобы перебить стили,которые до этого указывали тоже с !important,иначе они не применяются */
+  .sectionProductItemPage__imgBlock-imgSlider {
+    max-width: 270px !important;
+    /* указываем здесь !important,чтобы перебить стили,которые до этого указывали тоже с !important,иначе они не применяются */
   }
 
 }

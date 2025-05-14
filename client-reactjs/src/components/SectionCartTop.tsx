@@ -13,7 +13,7 @@ const SectionCartTop = () => {
         <section id="sectionBestSellers" className={onScreen.sectionBestSellersIntersecting ? "sectionBestSellers sectionBestSellers__active sectionUserPageTop" : "sectionBestSellers sectionUserPageTop"} ref={sectionBestSellers}>
             <div className="container">
                 <div className="sectionUserPageTop__inner">
-                    <div className="sectionCatalog__topBlock sectionUserPageTop__topBlock">
+                    <div className="sectionCatalog__topBlock sectionUserPageTop__topBlock sectionTopAboutUs__topBlock">
                         <p className="sectionCatalog__topBlock-title">Home</p>
                         <img src="/images/sectionCatalog/ArrowRight.png" alt="" className="sectionCatalog__topBlock-img" />
                         <p className="sectionCatalog__topBlock-subtitle">Cart</p>

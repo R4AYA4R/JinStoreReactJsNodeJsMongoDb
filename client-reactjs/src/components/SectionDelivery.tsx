@@ -16,7 +16,7 @@ const SectionDelivery = () => {
         <section ref={sectionCategoryItems} id="sectionCategoryItems" className={onScreen.sectionCategoryItemsIntersecting ? "sectionCategoryItems sectionCategoryItems__active sectionDelivery" : "sectionCategoryItems sectionDelivery"}>
             <div className="container">
                 <div className="sectionTrusted__inner">
-                    <div className="sectionTrusted__info">
+                    <div className="sectionTrusted__info sectionDelivery__info">
                         <h2 className="sectionTrusted__info-title">We Delivered, You Enjoy Your Order.</h2>
                         <p className="sectionTrusted__info-subtitle sectionDelivery__info-subtitle">Ut suscipit egestas suscipit. Sed posuere pellentesque nunc, ultrices consectetur velit dapibus eu. Mauris sollicitudin dignissim diam, ac mattis eros accumsan rhoncus. Curabitur auctor bibendum nunc eget elementum.</p>
                         <div className="sectionDelivery__items">
@@ -38,7 +38,6 @@ const SectionDelivery = () => {
                             </Link>
                         </div>
                     </div>
-                    <img src="/images/sectionDelivery/Image.png" alt="" className="sectionDelivery__img" />
                 </div>
             </div>
         </section>
